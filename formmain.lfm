@@ -1,0 +1,356 @@
+object frmMain: TfrmMain
+  Left = 508
+  Height = 544
+  Top = 207
+  Width = 880
+  Caption = 'OpenModbusMonitor'
+  ClientHeight = 524
+  ClientWidth = 880
+  Menu = menuMainForm
+  OnDestroy = FormDestroy
+  Position = poDesktopCenter
+  SessionProperties = 'cbIP.Text;edRegAddr.Text;edRegCount.Text;rgViewStyle.ItemIndex;cbIP.Items'
+  LCLVersion = '1.6.0.4'
+  Visible = True
+  object listMain: TListView
+    Left = 0
+    Height = 405
+    Top = 96
+    Width = 880
+    Align = alClient
+    Columns = <    
+      item
+        Caption = 'MainText'
+        Visible = False
+        Width = 150
+      end    
+      item
+        Alignment = taRightJustify
+        Caption = 'Reg'
+        MinWidth = 30
+        Width = 10
+      end    
+      item
+        Caption = 'Value'
+        Width = 10
+      end    
+      item
+        Caption = 'Type'
+        Visible = False
+      end    
+      item
+        Caption = 'Name'
+        MinWidth = 50
+        Visible = False
+        Width = 426
+      end>
+    GridLines = True
+    MultiSelect = True
+    PopupMenu = menuMainList
+    RowSelect = True
+    TabOrder = 2
+  end
+  object Panel1: TPanel
+    Left = 0
+    Height = 28
+    Top = 68
+    Width = 880
+    Align = alTop
+    BorderWidth = 2
+    ClientHeight = 28
+    ClientWidth = 880
+    TabOrder = 1
+    object ListViewFilterEdit1: TListViewFilterEdit
+      Left = 3
+      Height = 22
+      Top = 3
+      Width = 874
+      ButtonWidth = 23
+      NumGlyphs = 1
+      Align = alClient
+      MaxLength = 0
+      TabOrder = 0
+      FilteredListview = listMain
+      ByAllFields = True
+    end
+  end
+  object StatusBar1: TStatusBar
+    Left = 0
+    Height = 23
+    Top = 501
+    Width = 880
+    Panels = <    
+      item
+        Alignment = taCenter
+        Text = 'offline'
+        Width = 70
+      end    
+      item
+        Width = 200
+      end    
+      item
+        Width = 50
+      end>
+    SimplePanel = False
+  end
+  object Panel2: TPanel
+    Left = 0
+    Height = 68
+    Top = 0
+    Width = 880
+    Align = alTop
+    ClientHeight = 68
+    ClientWidth = 880
+    TabOrder = 0
+    object edRegAddr: TLabeledEdit
+      Left = 64
+      Height = 23
+      Hint = 'Examples: 0 / 1 / 400001 / 1234 / 101234'
+      Top = 40
+      Width = 56
+      EditLabel.AnchorSideTop.Control = edRegAddr
+      EditLabel.AnchorSideTop.Side = asrCenter
+      EditLabel.AnchorSideRight.Control = edRegAddr
+      EditLabel.AnchorSideBottom.Control = edRegAddr
+      EditLabel.AnchorSideBottom.Side = asrBottom
+      EditLabel.Left = 38
+      EditLabel.Height = 15
+      EditLabel.Top = 44
+      EditLabel.Width = 23
+      EditLabel.Caption = 'Reg:'
+      EditLabel.ParentColor = False
+      LabelPosition = lpLeft
+      ParentShowHint = False
+      ShowHint = True
+      TabOrder = 3
+      Text = '1'
+    end
+    object btnConnect: TButton
+      Left = 264
+      Height = 25
+      Top = 8
+      Width = 75
+      Action = actConnect
+      TabOrder = 1
+    end
+    object btnDissconect: TButton
+      Left = 345
+      Height = 25
+      Top = 9
+      Width = 75
+      Action = actDissconect
+      TabOrder = 2
+    end
+    object edRegCount: TEdit
+      Left = 200
+      Height = 23
+      Hint = 'register count'
+      Top = 40
+      Width = 56
+      ParentShowHint = False
+      TabOrder = 4
+      Text = '125'
+    end
+    object lbRegCount: TLabel
+      Left = 160
+      Height = 15
+      Top = 44
+      Width = 34
+      Alignment = taRightJustify
+      Caption = 'count:'
+      ParentColor = False
+    end
+    object lbAddr: TLabel
+      Left = 30
+      Height = 15
+      Top = 13
+      Width = 29
+      Alignment = taRightJustify
+      Caption = 'Addr:'
+      ParentColor = False
+    end
+    object cbIP: TComboBox
+      Left = 64
+      Height = 23
+      Top = 9
+      Width = 192
+      ItemHeight = 15
+      TabOrder = 0
+      Text = '127.0.0.1'
+    end
+    object cbRegisterType: TComboBox
+      Left = 264
+      Height = 23
+      Top = 40
+      Width = 156
+      ItemHeight = 15
+      ItemIndex = 3
+      Items.Strings = (
+        '1x (bool, RO) - Discrete Input'
+        '0x (bool, RW) - Discrete Coils'
+        '3x (word, RO) - Input Registers'
+        '4x (word, RW) - Holding Registers'
+      )
+      OnChange = cbRegisterTypeChange
+      Style = csDropDownList
+      TabOrder = 5
+      Text = '4x (word, RW) - Holding Registers'
+    end
+    object cbRegFormat: TComboBox
+      Left = 429
+      Height = 23
+      Top = 40
+      Width = 147
+      ItemHeight = 15
+      ItemIndex = 0
+      Items.Strings = (
+        'Dectimal (123)'
+        'Hex (F0A5)'
+        'Bin (0000 0000 0000 0001)'
+        'Boolean (0-gray, 1-green)'
+        'Float (0.123 - 4 byte)'
+        'Double Float (0.123 - 8 byte)'
+      )
+      OnChange = cbRegFormatChange
+      Style = csDropDownList
+      TabOrder = 6
+      Text = 'Dectimal (123)'
+    end
+    object rgViewStyle: TRadioGroup
+      Left = 584
+      Height = 60
+      Top = 3
+      Width = 88
+      AutoFill = True
+      Caption = 'View style'
+      ChildSizing.LeftRightSpacing = 6
+      ChildSizing.EnlargeHorizontal = crsHomogenousChildResize
+      ChildSizing.EnlargeVertical = crsHomogenousChildResize
+      ChildSizing.ShrinkHorizontal = crsScaleChilds
+      ChildSizing.ShrinkVertical = crsScaleChilds
+      ChildSizing.Layout = cclLeftToRightThenTopToBottom
+      ChildSizing.ControlsPerLine = 1
+      ClientHeight = 40
+      ClientWidth = 84
+      ItemIndex = 1
+      Items.Strings = (
+        'Table'
+        'Short list'
+      )
+      OnClick = rgViewStyleClick
+      TabOrder = 7
+    end
+  end
+  object TimerReadMB: TTimer
+    left = 48
+    top = 248
+  end
+  object ApplicationProperties1: TApplicationProperties
+    CaptureExceptions = False
+    left = 48
+    top = 320
+  end
+  object TimerInit: TTimer
+    Interval = 10
+    OnTimer = TimerInitTimer
+    left = 160
+    top = 320
+  end
+  object ActionList1: TActionList
+    left = 160
+    top = 248
+    object actDissconect: TAction
+      Caption = 'Dissconect'
+      Enabled = False
+      OnExecute = actDissconectExecute
+      OnUpdate = actDissconectUpdate
+    end
+    object actConnect: TAction
+      Caption = 'Connect'
+      OnExecute = actConnectExecute
+      OnUpdate = actConnectUpdate
+    end
+    object actAbout: TAction
+      Caption = 'About'
+    end
+    object actExit: TAction
+      Caption = 'Exit'
+    end
+    object actOptions: TAction
+      Caption = 'Options'
+    end
+    object actCopy: TAction
+      Caption = 'Copy'
+    end
+    object actCopyValue: TAction
+      Caption = 'Copy value'
+    end
+    object actPaste: TAction
+      Caption = 'Paste'
+    end
+    object actSet0: TAction
+      Caption = 'Set 0'
+    end
+    object actSet1: TAction
+      Caption = 'Set 1'
+    end
+  end
+  object menuMainList: TPopupMenu
+    left = 160
+    top = 176
+    object mnCopy: TMenuItem
+      Action = actCopy
+    end
+    object mnCopyValueOnly: TMenuItem
+      Action = actCopyValue
+    end
+    object mnPaste: TMenuItem
+      Action = actPaste
+    end
+    object mnSet0: TMenuItem
+      Action = actSet0
+    end
+    object mnSet1: TMenuItem
+      Action = actSet1
+    end
+  end
+  object IniPropStorage1: TIniPropStorage
+    StoredValues = <>
+    IniFileName = 'OpenModBusMonitor.ini'
+    left = 48
+    top = 392
+  end
+  object menuMainForm: TMainMenu
+    left = 48
+    top = 176
+    object MenuItem1: TMenuItem
+      Caption = 'Connect'
+      object MenuItem2: TMenuItem
+        Action = actConnect
+      end
+      object MenuItem3: TMenuItem
+        Action = actDissconect
+      end
+      object MenuItem7: TMenuItem
+        Action = actOptions
+      end
+      object MenuItem4: TMenuItem
+        Caption = '-'
+      end
+      object MenuItem5: TMenuItem
+        Action = actExit
+      end
+    end
+    object MenuItem6: TMenuItem
+      Action = actAbout
+    end
+  end
+  object IdTCPClient1: TIdTCPClient
+    ConnectTimeout = 0
+    IPVersion = Id_IPv4
+    Port = 0
+    ReadTimeout = -1
+    left = 293
+    top = 133
+  end
+end

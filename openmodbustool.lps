@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CONFIG>
+  <ProjectSession>
+    <PathDelim Value="\"/>
+    <Version Value="9"/>
+    <BuildModes Active="Default"/>
+    <Units Count="4">
+      <Unit0>
+        <Filename Value="OpenModBusTool.lpr"/>
+        <IsPartOfProject Value="True"/>
+        <EditorIndex Value="-1"/>
+        <CursorPos Y="10"/>
+        <UsageCount Value="80"/>
+      </Unit0>
+      <Unit1>
+        <Filename Value="formmain.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="frmMain"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="FormMain"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="280"/>
+        <CursorPos Y="282"/>
+        <UsageCount Value="80"/>
+        <LoadedDesigner Value="True"/>
+      </Unit1>
+      <Unit2>
+        <Filename Value="formoptions.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="frmOptions"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="FormOptions"/>
+        <EditorIndex Value="-1"/>
+        <CursorPos X="16"/>
+        <UsageCount Value="49"/>
+      </Unit2>
+      <Unit3>
+        <Filename Value="threadmodbus.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="ThreadModBus"/>
+        <IsVisibleTab Value="True"/>
+        <TopLine Value="342"/>
+        <CursorPos X="17" Y="349"/>
+        <UsageCount Value="49"/>
+        <Bookmarks Count="2">
+          <Item0 Y="384" ID="5"/>
+          <Item1 Y="333" ID="3"/>
+        </Bookmarks>
+        <Loaded Value="True"/>
+      </Unit3>
+    </Units>
+  </ProjectSession>
+  <Debugging>
+    <BreakPoints Count="1">
+      <Item1>
+        <Kind Value="bpkSource"/>
+        <WatchScope Value="wpsLocal"/>
+        <WatchKind Value="wpkWrite"/>
+        <Source Value="threadmodbus.pas"/>
+        <Line Value="208"/>
+      </Item1>
+    </BreakPoints>
+    <Watches Count="1">
+      <Item1 ClassAutoCast="True">
+        <Expression Value="MBWord[499]"/>
+      </Item1>
+    </Watches>
+  </Debugging>
+</CONFIG>
