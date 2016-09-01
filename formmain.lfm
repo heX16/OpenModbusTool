@@ -3,7 +3,7 @@ object frmMain: TfrmMain
   Height = 544
   Top = 207
   Width = 880
-  Caption = 'OpenModbusMonitor'
+  Caption = 'OpenModbusTool'
   ClientHeight = 524
   ClientWidth = 880
   Menu = menuMainForm
@@ -275,6 +275,7 @@ object frmMain: TfrmMain
     end
     object actExit: TAction
       Caption = 'Exit'
+      OnExecute = actExitExecute
     end
     object actOptions: TAction
       Caption = 'Options'
@@ -316,7 +317,7 @@ object frmMain: TfrmMain
   end
   object IniPropStorage1: TIniPropStorage
     StoredValues = <>
-    IniFileName = 'OpenModBusMonitor.ini'
+    IniFileName = 'openmodbustool.ini'
     left = 48
     top = 392
   end

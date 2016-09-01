@@ -71,6 +71,7 @@ type
     procedure actConnectUpdate(Sender: TObject);
     procedure actDissconectExecute(Sender: TObject);
     procedure actDissconectUpdate(Sender: TObject);
+    procedure actExitExecute(Sender: TObject);
     procedure cbRegFormatChange(Sender: TObject);
     procedure cbRegisterTypeChange(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -253,6 +254,11 @@ procedure TfrmMain.actDissconectUpdate(Sender: TObject);
 begin
   if threadRead = nil then
     actDissconect.Enabled:=false;
+end;
+
+procedure TfrmMain.actExitExecute(Sender: TObject);
+begin
+  Application.Terminate;
 end;
 
 procedure TfrmMain.cbRegFormatChange(Sender: TObject);

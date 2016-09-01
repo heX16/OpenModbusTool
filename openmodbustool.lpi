@@ -22,7 +22,7 @@
       <UseVersionInfo Value="True"/>
       <AutoIncrementBuild Value="True"/>
       <MajorVersionNr Value="1"/>
-      <BuildNr Value="10"/>
+      <BuildNr Value="16"/>
       <StringTable Comments="constructor heX (www.hex.name)" ProductVersion=""/>
     </VersionInfo>
     <BuildModes Count="2">
@@ -32,17 +32,14 @@
           <Version Value="11"/>
           <PathDelim Value="\"/>
           <Target>
-            <Filename Value="OpenModBusMonitor"/>
+            <Filename Value="OpenModBusTool"/>
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
-            <OtherUnitFiles Value="d:\Programs\lazarus\fpc\3.0.0\source\packages\indylaz\;d:\Programs\lazarus\components\delphimodbus\source\;d:\Programs\lazarus\components\delphimodbus\packages\;d:\Programs\lazarus\components\indylaz\"/>
+            <OtherUnitFiles Value="d:\Programs\lazarus\fpc\3.0.0\source\packages\indylaz\;d:\Programs\lazarus\components\delphimodbus\source\;d:\Programs\lazarus\components\delphimodbus\packages\;d:\Programs\lazarus\components\indylaz\;d:\Programs\lazarus\components\indy\fpc\;d:\Programs\lazarus\components\indy\lazarus\"/>
             <UnitOutputDirectory Value="$Env(tmp)\tmp\Lazarus"/>
           </SearchPaths>
           <CodeGeneration>
-            <Checks>
-              <RangeChecks Value="True"/>
-            </Checks>
             <TargetCPU Value="i386"/>
             <Optimizations>
               <OptimizationLevel Value="3"/>
@@ -51,6 +48,7 @@
           <Linking>
             <Debugging>
               <GenerateDebugInfo Value="False"/>
+              <StripSymbols Value="True"/>
             </Debugging>
             <Options>
               <Win32>

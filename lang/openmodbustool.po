@@ -46,7 +46,7 @@ msgid "Set 1"
 msgstr ""
 
 #: tfrmmain.caption
-msgid "OpenModbusMonitor"
+msgid "OpenModbusTool"
 msgstr ""
 
 #: tfrmmain.cbip.text

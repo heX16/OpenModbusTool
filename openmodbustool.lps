@@ -3,7 +3,7 @@
   <ProjectSession>
     <PathDelim Value="\"/>
     <Version Value="9"/>
-    <BuildModes Active="Default"/>
+    <BuildModes Active="release"/>
     <Units Count="4">
       <Unit0>
         <Filename Value="openmodbustool.lpr"/>
@@ -20,9 +20,12 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="FormMain"/>
-        <CursorPos X="29" Y="10"/>
+        <IsVisibleTab Value="True"/>
+        <TopLine Value="247"/>
+        <CursorPos X="25" Y="261"/>
         <UsageCount Value="80"/>
         <Loaded Value="True"/>
+        <LoadedDesigner Value="True"/>
       </Unit1>
       <Unit2>
         <Filename Value="formoptions.pas"/>
@@ -39,10 +42,9 @@
         <Filename Value="threadmodbus.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="ThreadModBus"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="1"/>
         <TopLine Value="277"/>
-        <CursorPos Y="287"/>
+        <CursorPos X="61" Y="297"/>
         <UsageCount Value="49"/>
         <Bookmarks Count="2">
           <Item0 Y="384" ID="5"/>
