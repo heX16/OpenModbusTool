@@ -1,4 +1,4 @@
 # OpenModbusTool
 
-This is free, crossplatform and opensource Modbus-TCP client.
+This is free, crossplatform, multilanguages and opensource Modbus-TCP client.
 

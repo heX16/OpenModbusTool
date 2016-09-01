@@ -22,7 +22,7 @@
       <UseVersionInfo Value="True"/>
       <AutoIncrementBuild Value="True"/>
       <MajorVersionNr Value="1"/>
-      <BuildNr Value="9"/>
+      <BuildNr Value="10"/>
       <StringTable Comments="constructor heX (www.hex.name)" ProductVersion=""/>
     </VersionInfo>
     <BuildModes Count="2">
@@ -36,7 +36,7 @@
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
-            <OtherUnitFiles Value="d:\Programs\lazarus\fpc\3.0.0\source\packages\indylaz;d:\Programs\lazarus\components\delphimodbus\source;d:\Programs\lazarus\components\delphimodbus\packages;d:\Programs\lazarus\components\indylaz"/>
+            <OtherUnitFiles Value="d:\Programs\lazarus\fpc\3.0.0\source\packages\indylaz\;d:\Programs\lazarus\components\delphimodbus\source\;d:\Programs\lazarus\components\delphimodbus\packages\;d:\Programs\lazarus\components\indylaz\"/>
             <UnitOutputDirectory Value="$Env(tmp)\tmp\Lazarus"/>
           </SearchPaths>
           <CodeGeneration>
@@ -87,8 +87,9 @@
     </RequiredPackages>
     <Units Count="4">
       <Unit0>
-        <Filename Value="OpenModBusTool.lpr"/>
+        <Filename Value="openmodbustool.lpr"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="OpenModBusTool"/>
       </Unit0>
       <Unit1>
         <Filename Value="formmain.pas"/>
@@ -118,12 +119,9 @@
     <PathDelim Value="\"/>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir)"/>
-      <OtherUnitFiles Value="d:\Programs\lazarus\fpc\3.0.0\source\packages\indylaz;d:\Programs\lazarus\components\delphimodbus\source;d:\Programs\lazarus\components\delphimodbus\packages;d:\Programs\lazarus\components\indylaz"/>
+      <OtherUnitFiles Value="d:\Programs\lazarus\fpc\3.0.0\source\packages\indylaz\;d:\Programs\lazarus\components\delphimodbus\source\;d:\Programs\lazarus\components\delphimodbus\packages\;d:\Programs\lazarus\components\indylaz\;d:\Programs\lazarus\components\indy\fpc\;d:\Programs\lazarus\components\indy\lazarus\"/>
       <UnitOutputDirectory Value="$Env(tmp)\tmp\Lazarus"/>
     </SearchPaths>
-    <CodeGeneration>
-      <TargetCPU Value="i386"/>
-    </CodeGeneration>
     <Linking>
       <Debugging>
         <TrashVariables Value="True"/>

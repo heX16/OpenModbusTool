@@ -7,7 +7,7 @@ interface
 uses
   Classes, SysUtils, FileUtil, ListViewFilterEdit,
   Forms, Controls, Graphics, Dialogs, ExtCtrls, ComCtrls,
-  IdComponent, IdTCPClient, fpspreadsheetgrid, StdCtrls,
+  IdComponent, IdTCPClient, StdCtrls,
   ActnList, Menus, IniPropStorage,
   ThreadModBus;
 
