@@ -69,12 +69,21 @@ type
     TimerReadMB: TTimer;
     procedure actConnectExecute(Sender: TObject);
     procedure actConnectUpdate(Sender: TObject);
+    procedure actCopyExecute(Sender: TObject);
+    procedure actCopyValueExecute(Sender: TObject);
     procedure actDissconectExecute(Sender: TObject);
     procedure actDissconectUpdate(Sender: TObject);
     procedure actExitExecute(Sender: TObject);
+    procedure actPasteExecute(Sender: TObject);
+    procedure actSet0Execute(Sender: TObject);
+    procedure actSet1Execute(Sender: TObject);
     procedure cbRegFormatChange(Sender: TObject);
     procedure cbRegisterTypeChange(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
+    procedure listMainEdited(Sender: TObject; Item: TListItem;
+      var AValue: string);
+    procedure listMainEditing(Sender: TObject; Item: TListItem;
+      var AllowEdit: Boolean);
     procedure rgViewStyleClick(Sender: TObject);
     procedure TimerInitTimer(Sender: TObject);
     procedure treeMainDblClick(Sender: TObject);
@@ -85,6 +94,11 @@ type
     { public declarations }
     threadRead: TThreadModBus;
     function LoadListRegs(Filename: String): boolean;
+    procedure listMainDoOnSelected(Proc: TLVDataEvent);
+    procedure DoCopy(Sender: TObject; Item: TListItem);
+    procedure CopyValue(Sender: TObject; Item: TListItem);
+    procedure SetTo0(Sender: TObject; Item: TListItem);
+    procedure SetTo1(Sender: TObject; Item: TListItem);
   end;
 
 var
@@ -93,10 +107,10 @@ var
 const
   // index
   idxColumnMainText = 0;
-  idxColumnReg = 1;
-  idxColumnValue = 2;
-  idxColumnType = 3;
-  idxColumnName = 4;
+  idxColumnReg = 0;
+  idxColumnValue = 1;
+  idxColumnType = 2;
+  idxColumnName = 3;
   idxStatusBarStatus = 0;
   idxStatusBarErrorCount = 1;
   idxStatusBarMainText = 2;
@@ -110,6 +124,7 @@ implementation
 
 uses
   StrUtils,
+  Clipbrd,
   csvreadwrite;
 
 { TfrmMain }
@@ -203,6 +218,36 @@ begin
   end;
 end;
 
+procedure TfrmMain.listMainDoOnSelected(Proc: TLVDataEvent);
+var i: integer;
+begin
+  for i:=0 to listMain.Items.Count-1 do
+    if listMain.Items[i].Selected then
+      Proc(nil, listMain.Items[i]);
+end;
+
+procedure TfrmMain.DoCopy(Sender: TObject; Item: TListItem);
+begin
+  Clipboard.AsText := Clipboard.AsText + #13 + Item.SubItems[idxColumnReg] + '=' + Item.SubItems[idxColumnValue];
+end;
+
+procedure TfrmMain.CopyValue(Sender: TObject; Item: TListItem);
+begin
+  Clipboard.AsText := Clipboard.AsText + #13 + Item.SubItems[idxColumnValue];
+end;
+
+procedure TfrmMain.SetTo0(Sender: TObject; Item: TListItem);
+begin
+  if threadRead <> nil then
+    threadRead.Send(Item.SubItems[idxColumnReg], '0');
+end;
+
+procedure TfrmMain.SetTo1(Sender: TObject; Item: TListItem);
+begin
+  if threadRead <> nil then
+    threadRead.Send(Item.SubItems[idxColumnReg], '1');
+end;
+
 procedure TfrmMain.actConnectExecute(Sender: TObject);
 var ip: string;
 begin
@@ -237,6 +282,18 @@ begin
   actConnect.Enabled := threadRead = nil;
 end;
 
+procedure TfrmMain.actCopyExecute(Sender: TObject);
+begin
+  Clipboard.AsText:='';
+  listMainDoOnSelected(@DoCopy);
+end;
+
+procedure TfrmMain.actCopyValueExecute(Sender: TObject);
+begin
+  Clipboard.AsText:='';
+  listMainDoOnSelected(@CopyValue);
+end;
+
 procedure TfrmMain.actDissconectExecute(Sender: TObject);
 begin
   {  if not Terminated then Terminate;
@@ -259,6 +316,21 @@ end;
 procedure TfrmMain.actExitExecute(Sender: TObject);
 begin
   Application.Terminate;
+end;
+
+procedure TfrmMain.actPasteExecute(Sender: TObject);
+begin
+  //todo: WIP!
+end;
+
+procedure TfrmMain.actSet0Execute(Sender: TObject);
+begin
+  listMainDoOnSelected(@SetTo0);
+end;
+
+procedure TfrmMain.actSet1Execute(Sender: TObject);
+begin
+  listMainDoOnSelected(@SetTo0);
 end;
 
 procedure TfrmMain.cbRegFormatChange(Sender: TObject);
@@ -284,6 +356,39 @@ procedure TfrmMain.FormDestroy(Sender: TObject);
 begin
   if threadRead <> nil then
     actDissconect.Execute;
+end;
+
+procedure TfrmMain.listMainEdited(Sender: TObject; Item: TListItem;
+  var AValue: string);
+var itm: TModbusItem;
+begin
+  if threadRead<> nil then
+  begin
+    if StrToIntDef(Item.SubItems[idxColumnReg], 65536) < 65536 then
+    begin
+      itm.Addr:=StrToInt(Item.SubItems[idxColumnReg]);
+      if StrToIntDef(AValue, 65536) < 65536 then
+      begin
+        itm.Value:=StrToInt(AValue);
+        itm.RegType:=threadRead.RegType;
+        threadRead.SectionWriteQueueWork.Enter;
+        threadRead.WriteQueue.PushFront(itm);
+        threadRead.SectionWriteQueueWork.Leave;
+      end;
+    end else
+      StatusBar1.Panels[idxStatusBarMainText].Text:='Invalid value';
+  end;
+end;
+
+procedure TfrmMain.listMainEditing(Sender: TObject; Item: TListItem;
+  var AllowEdit: Boolean);
+begin
+  if threadRead <> nil then
+    AllowEdit:=false;
+  if listMain.ViewStyle=vsReport then
+  begin
+    AllowEdit:=false;
+  end;
 end;
 
 procedure TfrmMain.rgViewStyleClick(Sender: TObject);
@@ -357,7 +462,7 @@ begin
     threadRead := nil; // just drop pointer!   (FreeOnTerminate=true, give error - very strange...)
     //FreeAndNil(threadRead); - error (FreeOnTerminate=false, but error - strange...)
   end;
-  frmMain.StatusBar1.Panels[idxStatusBarStatus].Text := 'OFFLINE';
+  //frmMain.StatusBar1.Panels[idxStatusBarStatus].Text := 'OFFLINE';
 end;
 
 end.

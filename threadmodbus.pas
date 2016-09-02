@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils,
-  syncobjs,
+  syncobjs, gdeque,
   IdModBusClient, ModbusTypes;
 
 type
@@ -33,11 +33,19 @@ type
     tRegWordRW=3  // 4x holding reg
   );
 
+  TModbusItem = record
+    Addr: word;
+    Value: word;
+    RegType: TRegReadType;
+  end;
+
+  TModbusItemQueue = specialize TDeque<TModbusItem>;
+
   { TThreadModBus }
 
   TThreadModBus = class(TThread)
   protected
-    // thread code (NO access to form)
+    // thread code (NO access to forms)
     procedure Execute; override;
     procedure CheckSize;
     procedure ModBusClientErrorEvent(const FunctionCode: Byte;
@@ -61,17 +69,22 @@ type
     RegStart: integer;
     SetNewSize: integer;
     RegFormat: TRegShowFormat;
+    WriteQueue: TModbusItemQueue;
 
     EventPauseAfterRead: TEventObject;
+    SectionWriteQueueWork: TCriticalSection;
 
     constructor Create(CreateSuspended : boolean);
 
     // SYNC ZONE:
-    // (thread safe zone - can access to form)
+    // (thread safe zone - can access to forms)
+    procedure Send(Addr, Value: Word);
+    procedure Send(Addr, Value: string);
     procedure SyncDrawList;
     procedure SyncWriteStatusBar;
     procedure SyncUpdateVars;
     procedure SyncUpdateVarsOnChange;
+    procedure SyncRemoveFromMainProg;
   end;
 
 
@@ -133,7 +146,7 @@ begin
     if i > frmMain.listMain.Items.Count-1 then
     begin
       itm := frmMain.listMain.Items.Add;
-      itm.SubItems.Add(IntToStr(i));//reg
+      itm.SubItems.Add(IntToStr(i+RegStart));//reg
       itm.SubItems.Add('');//val
       itm.SubItems.Add('');//type
       itm.SubItems.Add('');//name
@@ -146,7 +159,7 @@ begin
         frmMain.listMain.Items[i].SubItems[idxColumnValue] := BoolStr(MBBool[i]);
     end;
 
-    frmMain.listMain.Items[i].Caption := IntToStr(i+RegStart) + '=' + frmMain.listMain.Items[i].SubItems[idxColumnValue];
+    frmMain.listMain.Items[i].Caption := frmMain.listMain.Items[i].SubItems[idxColumnReg] + '=' + frmMain.listMain.Items[i].SubItems[idxColumnValue];
   end;
 
   if frmMain.listMain.Items.Count-1 > High(MBWord) then
@@ -181,6 +194,12 @@ procedure TThreadModBus.SyncUpdateVarsOnChange;
 begin
   if not frmMain.cbRegFormat.DroppedDown then
     RegFormat:=TRegShowFormat(frmMain.cbRegFormat.ItemIndex);
+end;
+
+procedure TThreadModBus.SyncRemoveFromMainProg;
+begin
+  if frmMain.threadRead <> nil then
+    frmMain.threadRead := nil; // just drop pointer!   (FreeOnTerminate=true, give error - very strange...)
 end;
 
 procedure TThreadModBus.CheckSize;
@@ -218,7 +237,10 @@ end;
 
 constructor TThreadModBus.Create(CreateSuspended: boolean);
 begin
-  IdModBusClient:=TIdModBusClient.Create;
+  SectionWriteQueueWork := TCriticalSection.Create();
+  WriteQueue := TModbusItemQueue.Create();
+
+  IdModBusClient := TIdModBusClient.Create;
   IdModBusClient.AutoConnect:=false;
   IdModBusClient.Host:=frmMain.cbIP.Text;
   IdModBusClient.UnitID:=1;
@@ -238,9 +260,38 @@ begin
   inherited Create(CreateSuspended);
 end;
 
+procedure TThreadModBus.Send(Addr, Value: Word);
+var itm: TModbusItem;
+begin
+  itm.RegType:=self.RegType;
+  itm.Addr:=Addr;
+  itm.Value:=Value;
+  SectionWriteQueueWork.Enter;
+  WriteQueue.PushFront(itm);
+  SectionWriteQueueWork.Leave;
+end;
+
+procedure TThreadModBus.Send(Addr, Value: string);
+var itm: TModbusItem;
+begin
+  if StrToIntDef(Addr, 65536) < 65536 then
+  begin
+    itm.Addr:=StrToInt(Addr);
+    if StrToIntDef(Value, 65536) < 65536 then
+    begin
+      itm.Value:=StrToInt(Value);
+      itm.RegType:=self.RegType;
+      SectionWriteQueueWork.Enter;
+      WriteQueue.PushFront(itm);
+      SectionWriteQueueWork.Leave;
+    end;
+  end;
+end;
+
 procedure TThreadModBus.Execute;
 var
   i, RegCountMax, Count, Max: integer;
+  itm: TModbusItem;
 label
   pauseAgain;
 
@@ -275,6 +326,21 @@ begin
         Max := 125;
         if RegStart >= 0 then
         begin
+          // write all variable from queue
+          while not WriteQueue.IsEmpty() do
+          begin
+            // safe extract
+            SectionWriteQueueWork.Enter;
+            itm := WriteQueue.Back();
+            WriteQueue.PopBack();
+            SectionWriteQueueWork.Leave;
+            // write
+            case itm.RegType of
+              tRegBoolRW: IdModBusClient.WriteCoil(itm.Addr, itm.Value <> 0);
+              tRegWordRW: IdModBusClient.WriteRegister(itm.Addr, itm.Value);
+            end;
+          end;
+
           // set in handler 'ModBusClientErrorEvent'
           ErrorLastCode := 0;
           ErrorPresent := false;
@@ -362,15 +428,19 @@ begin
       if IdModBusClient.Connected then
         IdModBusClient.Disconnect;
     except
+      // skip any disconnect error
     end;
+
     if StatusBarStatus = StatusBarOnline then
     begin
       StatusBarStatus := StatusBarOffline;
       Synchronize(@SyncWriteStatusBar);
     end;
 
+    Synchronize(@SyncRemoveFromMainProg);
     FreeAndNil(IdModBusClient);
     FreeAndNil(EventPauseAfterRead);
+    FreeAndNil(WriteQueue);
     connected:=false;
   except
     on e: Exception do

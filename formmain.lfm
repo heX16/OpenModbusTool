@@ -49,6 +49,8 @@ object frmMain: TfrmMain
     PopupMenu = menuMainList
     RowSelect = True
     TabOrder = 2
+    OnEdited = listMainEdited
+    OnEditing = listMainEditing
   end
   object Panel1: TPanel
     Left = 0
@@ -282,18 +284,23 @@ object frmMain: TfrmMain
     end
     object actCopy: TAction
       Caption = 'Copy'
+      OnExecute = actCopyExecute
     end
     object actCopyValue: TAction
       Caption = 'Copy value'
+      OnExecute = actCopyValueExecute
     end
     object actPaste: TAction
       Caption = 'Paste'
+      OnExecute = actPasteExecute
     end
     object actSet0: TAction
       Caption = 'Set 0'
+      OnExecute = actSet0Execute
     end
     object actSet1: TAction
       Caption = 'Set 1'
+      OnExecute = actSet1Execute
     end
   end
   object menuMainList: TPopupMenu
