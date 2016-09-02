@@ -1,0 +1,51 @@
+object frmAbout: TfrmAbout
+  Left = 380
+  Height = 240
+  Top = 196
+  Width = 320
+  Caption = 'About'
+  ClientHeight = 240
+  ClientWidth = 320
+  Position = poMainFormCenter
+  LCLVersion = '1.6.0.4'
+  object Label1: TLabel
+    Left = 8
+    Height = 24
+    Top = 8
+    Width = 300
+    AutoSize = False
+    Caption = 'OpenModbusTool'
+    Font.Height = -16
+    Font.Style = [fsBold]
+    ParentColor = False
+    ParentFont = False
+  end
+  object Label2: TLabel
+    Left = 8
+    Height = 64
+    Top = 40
+    Width = 300
+    AutoSize = False
+    Caption = 'This is free, crossplatform, multilanguages and opensource Modbus-TCP client.'#13#10'Author: heXor.'
+    ParentColor = False
+    WordWrap = True
+  end
+  object LabeledEdit1: TLabeledEdit
+    Left = 8
+    Height = 23
+    Top = 128
+    Width = 300
+    EditLabel.AnchorSideLeft.Control = LabeledEdit1
+    EditLabel.AnchorSideRight.Control = LabeledEdit1
+    EditLabel.AnchorSideRight.Side = asrBottom
+    EditLabel.AnchorSideBottom.Control = LabeledEdit1
+    EditLabel.Left = 8
+    EditLabel.Height = 15
+    EditLabel.Top = 110
+    EditLabel.Width = 300
+    EditLabel.Caption = 'Source code reposytory:'
+    EditLabel.ParentColor = False
+    TabOrder = 0
+    Text = 'https://bitbucket.org/heXor/OpenModbusTool'
+  end
+end

@@ -8,7 +8,7 @@ object frmMain: TfrmMain
   ClientWidth = 880
   Menu = menuMainForm
   OnDestroy = FormDestroy
-  Position = poDesktopCenter
+  Position = poScreenCenter
   SessionProperties = 'cbIP.Text;edRegAddr.Text;edRegCount.Text;rgViewStyle.ItemIndex;cbIP.Items'
   LCLVersion = '1.6.0.4'
   Visible = True
@@ -210,8 +210,8 @@ object frmMain: TfrmMain
         'Hex (F0A5)'
         'Bin (0000 0000 0000 0001)'
         'Boolean (0-gray, 1-green)'
-        'Float (0.123 - 4 byte)'
-        'Double Float (0.123 - 8 byte)'
+        'Float (4 byte)'
+        'Double Float (8 byte)'
       )
       OnChange = cbRegFormatChange
       Style = csDropDownList
@@ -274,6 +274,7 @@ object frmMain: TfrmMain
     end
     object actAbout: TAction
       Caption = 'About'
+      OnExecute = actAboutExecute
     end
     object actExit: TAction
       Caption = 'Exit'

@@ -67,6 +67,7 @@ type
     StatusBar1: TStatusBar;
     TimerInit: TTimer;
     TimerReadMB: TTimer;
+    procedure actAboutExecute(Sender: TObject);
     procedure actConnectExecute(Sender: TObject);
     procedure actConnectUpdate(Sender: TObject);
     procedure actCopyExecute(Sender: TObject);
@@ -123,6 +124,7 @@ implementation
 {$R *.lfm}
 
 uses
+  FormAbout,
   StrUtils,
   Clipbrd,
   csvreadwrite;
@@ -275,6 +277,11 @@ begin
       cbIP.Items.Delete(30);
     cbIP.Text:=ip;
   end;
+end;
+
+procedure TfrmMain.actAboutExecute(Sender: TObject);
+begin
+  frmAbout.ShowModal;
 end;
 
 procedure TfrmMain.actConnectUpdate(Sender: TObject);

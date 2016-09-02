@@ -22,7 +22,8 @@
       <UseVersionInfo Value="True"/>
       <AutoIncrementBuild Value="True"/>
       <MajorVersionNr Value="1"/>
-      <BuildNr Value="16"/>
+      <MinorVersionNr Value="1"/>
+      <BuildNr Value="18"/>
       <StringTable Comments="constructor heX (www.hex.name)" ProductVersion=""/>
     </VersionInfo>
     <BuildModes Count="2">
@@ -83,7 +84,7 @@
         <PackageName Value="LCL"/>
       </Item4>
     </RequiredPackages>
-    <Units Count="4">
+    <Units Count="5">
       <Unit0>
         <Filename Value="openmodbustool.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -110,6 +111,13 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="ThreadModBus"/>
       </Unit3>
+      <Unit4>
+        <Filename Value="formabout.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="frmAbout"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="FormAbout"/>
+      </Unit4>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

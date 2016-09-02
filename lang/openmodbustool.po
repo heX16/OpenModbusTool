@@ -1,7 +1,30 @@
-msgid ""
+msgid "Author: heXor."
 msgstr "Content-Type: text/plain; charset=UTF-8"
 
+#: tfrmabout.caption
+msgctxt "TFRMABOUT.CAPTION"
+msgid "About"
+msgstr ""
+
+#: tfrmabout.label1.caption
+msgctxt "TFRMABOUT.LABEL1.CAPTION"
+msgid "OpenModbusTool"
+msgstr ""
+
+#: tfrmabout.label2.caption
+msgid "This is free, crossplatform, multilanguages and opensource Modbus-TCP client."
+msgstr ""
+
+#: tfrmabout.labelededit1.editlabel.caption
+msgid "Source code reposytory:"
+msgstr ""
+
+#: tfrmabout.labelededit1.text
+msgid "https://bitbucket.org/heXor/OpenModbusTool"
+msgstr ""
+
 #: tfrmmain.actabout.caption
+msgctxt "tfrmmain.actabout.caption"
 msgid "About"
 msgstr ""
 
@@ -46,6 +69,7 @@ msgid "Set 1"
 msgstr ""
 
 #: tfrmmain.caption
+msgctxt "tfrmmain.caption"
 msgid "OpenModbusTool"
 msgstr ""
 
