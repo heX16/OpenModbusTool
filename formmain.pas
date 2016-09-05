@@ -28,6 +28,7 @@ type
     actExit: TAction;
     actCopy: TAction;
     actCopyValue: TAction;
+    actSetX: TAction;
     actSet1: TAction;
     actSet0: TAction;
     actPaste: TAction;
@@ -40,13 +41,13 @@ type
     cbRegisterType: TComboBox;
     cbRegFormat: TComboBox;
     edRegCount: TEdit;
-    IdTCPClient1: TIdTCPClient;
     IniPropStorage1: TIniPropStorage;
     lbRegCount: TLabel;
     lbAddr: TLabel;
     edRegAddr: TLabeledEdit;
     listMain: TListView;
     ListViewFilterEdit1: TListViewFilterEdit;
+    mnSetX: TMenuItem;
     menuMainForm: TMainMenu;
     MenuItem1: TMenuItem;
     MenuItem2: TMenuItem;
@@ -78,6 +79,7 @@ type
     procedure actPasteExecute(Sender: TObject);
     procedure actSet0Execute(Sender: TObject);
     procedure actSet1Execute(Sender: TObject);
+    procedure actSetXExecute(Sender: TObject);
     procedure cbRegFormatChange(Sender: TObject);
     procedure cbRegisterTypeChange(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -94,12 +96,14 @@ type
   public
     { public declarations }
     threadRead: TThreadModBus;
+    SetToXValue: string;
     function LoadListRegs(Filename: String): boolean;
     procedure listMainDoOnSelected(Proc: TLVDataEvent);
     procedure DoCopy(Sender: TObject; Item: TListItem);
     procedure CopyValue(Sender: TObject; Item: TListItem);
     procedure SetTo0(Sender: TObject; Item: TListItem);
     procedure SetTo1(Sender: TObject; Item: TListItem);
+    procedure SetToX(Sender: TObject; Item: TListItem);
   end;
 
 var
@@ -125,7 +129,6 @@ implementation
 
 uses
   FormAbout,
-  StrUtils,
   Clipbrd,
   csvreadwrite;
 
@@ -250,6 +253,12 @@ begin
     threadRead.Send(Item.SubItems[idxColumnReg], '1');
 end;
 
+procedure TfrmMain.SetToX(Sender: TObject; Item: TListItem);
+begin
+  if threadRead <> nil then
+    threadRead.Send(Item.SubItems[idxColumnReg], SetToXValue);
+end;
+
 procedure TfrmMain.actConnectExecute(Sender: TObject);
 var ip: string;
 begin
@@ -287,6 +296,7 @@ end;
 procedure TfrmMain.actConnectUpdate(Sender: TObject);
 begin
   actConnect.Enabled := threadRead = nil;
+  cbIP.Enabled := actConnect.Enabled;
 end;
 
 procedure TfrmMain.actCopyExecute(Sender: TObject);
@@ -303,14 +313,16 @@ end;
 
 procedure TfrmMain.actDissconectExecute(Sender: TObject);
 begin
-  {  if not Terminated then Terminate;
-    EventPauseAfterRead.SetEvent;
-    WaitForThreadTerminate(Self.ThreadID, 1000);
-    }
-
-  if threadRead <> nil then
+  if (threadRead <> nil) then
+  begin
     threadRead.Terminate;
-    //FreeAndNil(threadRead);
+    // wake up! - time for death
+    threadRead.EventPauseAfterRead.SetEvent;
+  end;
+  {
+  TThreadModBus.SyncRemoveFromMainProg and TfrmMain.threadReadTerminating
+  make all other actions.
+  }
   actDissconect.Enabled:=false;
 end;
 
@@ -337,7 +349,14 @@ end;
 
 procedure TfrmMain.actSet1Execute(Sender: TObject);
 begin
-  listMainDoOnSelected(@SetTo0);
+  listMainDoOnSelected(@SetTo1);
+end;
+
+procedure TfrmMain.actSetXExecute(Sender: TObject);
+begin
+  SetToXValue := Trim(InputBox(strEnterValue, strEnterValue, ''));
+  if SetToXValue <> '' then
+    listMainDoOnSelected(@SetToX);
 end;
 
 procedure TfrmMain.cbRegFormatChange(Sender: TObject);
@@ -378,9 +397,9 @@ begin
       begin
         itm.Value:=StrToInt(AValue);
         itm.RegType:=threadRead.RegType;
-        threadRead.SectionWriteQueueWork.Enter;
+        threadRead.CritWriteQueueWork.Enter;
         threadRead.WriteQueue.PushFront(itm);
-        threadRead.SectionWriteQueueWork.Leave;
+        threadRead.CritWriteQueueWork.Leave;
       end;
     end else
       StatusBar1.Panels[idxStatusBarMainText].Text:='Invalid value';
@@ -390,12 +409,10 @@ end;
 procedure TfrmMain.listMainEditing(Sender: TObject; Item: TListItem;
   var AllowEdit: Boolean);
 begin
-  if threadRead <> nil then
+  if threadRead = nil then
     AllowEdit:=false;
   if listMain.ViewStyle=vsReport then
-  begin
     AllowEdit:=false;
-  end;
 end;
 
 procedure TfrmMain.rgViewStyleClick(Sender: TObject);
@@ -465,11 +482,10 @@ procedure TfrmMain.threadReadTerminating(Sender: TObject);
 begin
   // thread report about death
   if threadRead <> nil then
-  begin
-    threadRead := nil; // just drop pointer!   (FreeOnTerminate=true, give error - very strange...)
-    //FreeAndNil(threadRead); - error (FreeOnTerminate=false, but error - strange...)
-  end;
-  //frmMain.StatusBar1.Panels[idxStatusBarStatus].Text := 'OFFLINE';
+    threadRead := nil; // just drop pointer. (FreeOnTerminate=true)
+  {Note: this operation thread-safe:
+    this action placed in main thread - other access to this pointer is imposible.
+  }
 end;
 
 end.

@@ -22,8 +22,8 @@
       <UseVersionInfo Value="True"/>
       <AutoIncrementBuild Value="True"/>
       <MajorVersionNr Value="1"/>
-      <MinorVersionNr Value="1"/>
-      <BuildNr Value="18"/>
+      <MinorVersionNr Value="2"/>
+      <BuildNr Value="20"/>
       <StringTable Comments="constructor heX (www.hex.name)" ProductVersion=""/>
     </VersionInfo>
     <BuildModes Count="2">
@@ -41,6 +41,9 @@
             <UnitOutputDirectory Value="$Env(tmp)\tmp\Lazarus"/>
           </SearchPaths>
           <CodeGeneration>
+            <Checks>
+              <RangeChecks Value="True"/>
+            </Checks>
             <TargetCPU Value="i386"/>
             <Optimizations>
               <OptimizationLevel Value="3"/>
@@ -84,7 +87,7 @@
         <PackageName Value="LCL"/>
       </Item4>
     </RequiredPackages>
-    <Units Count="5">
+    <Units Count="6">
       <Unit0>
         <Filename Value="openmodbustool.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -118,6 +121,14 @@
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="FormAbout"/>
       </Unit4>
+      <Unit5>
+        <Filename Value="formbitedit.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="frmBitEdit"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="formBitEdit"/>
+      </Unit5>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
@@ -128,6 +139,11 @@
       <OtherUnitFiles Value="d:\Programs\lazarus\fpc\3.0.0\source\packages\indylaz\;d:\Programs\lazarus\components\delphimodbus\source\;d:\Programs\lazarus\components\delphimodbus\packages\;d:\Programs\lazarus\components\indylaz\;d:\Programs\lazarus\components\indy\fpc\;d:\Programs\lazarus\components\indy\lazarus\"/>
       <UnitOutputDirectory Value="$Env(tmp)\tmp\Lazarus"/>
     </SearchPaths>
+    <CodeGeneration>
+      <Checks>
+        <RangeChecks Value="True"/>
+      </Checks>
+    </CodeGeneration>
     <Linking>
       <Debugging>
         <TrashVariables Value="True"/>

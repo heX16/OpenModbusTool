@@ -303,6 +303,10 @@ object frmMain: TfrmMain
       Caption = 'Set 1'
       OnExecute = actSet1Execute
     end
+    object actSetX: TAction
+      Caption = 'actSetX'
+      OnExecute = actSetXExecute
+    end
   end
   object menuMainList: TPopupMenu
     left = 160
@@ -321,6 +325,9 @@ object frmMain: TfrmMain
     end
     object mnSet1: TMenuItem
       Action = actSet1
+    end
+    object mnSetX: TMenuItem
+      Action = actSetX
     end
   end
   object IniPropStorage1: TIniPropStorage
@@ -353,13 +360,5 @@ object frmMain: TfrmMain
     object MenuItem6: TMenuItem
       Action = actAbout
     end
-  end
-  object IdTCPClient1: TIdTCPClient
-    ConnectTimeout = 0
-    IPVersion = Id_IPv4
-    Port = 0
-    ReadTimeout = -1
-    left = 293
-    top = 133
   end
 end

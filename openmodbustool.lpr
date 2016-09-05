@@ -8,7 +8,7 @@ uses
   {$ENDIF}{$ENDIF}
   Interfaces, // this includes the LCL widgetset
   Forms, lazcontrols, delphimodbuslazarus, FormMain, formOptions, ThreadModBus,
-  FormAbout
+  FormAbout, formBitEdit
   { you can add units after this };
 
 {$R *.res}
@@ -20,6 +20,7 @@ begin
   Application.CreateForm(TfrmMain, frmMain);
   Application.CreateForm(TfrmOptions, frmOptions);
   Application.CreateForm(TfrmAbout, frmAbout);
+  Application.CreateForm(TfrmBitEdit, frmBitEdit);
   Application.Run;
 end.
 

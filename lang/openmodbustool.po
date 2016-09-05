@@ -68,6 +68,10 @@ msgstr ""
 msgid "Set 1"
 msgstr ""
 
+#: tfrmmain.actsetx.caption
+msgid "actSetX"
+msgstr ""
+
 #: tfrmmain.caption
 msgctxt "tfrmmain.caption"
 msgid "OpenModbusTool"
@@ -170,5 +174,9 @@ msgstr ""
 
 #: threadmodbus.statusbartimeout
 msgid "timeout"
+msgstr ""
+
+#: threadmodbus.strentervalue
+msgid "Enter register value"
 msgstr ""
 

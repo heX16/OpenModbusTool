@@ -47,6 +47,7 @@ type
   protected
     // thread code (NO access to forms)
     procedure Execute; override;
+    procedure ReadMB(RegType: TRegReadType; Addr: word; Count: word);
     procedure CheckSize;
     procedure ModBusClientErrorEvent(const FunctionCode: Byte;
       const ErrorCode: Byte; const ResponseBuffer: TModBusResponseBuffer);
@@ -72,9 +73,9 @@ type
     WriteQueue: TModbusItemQueue;
 
     EventPauseAfterRead: TEventObject;
-    SectionWriteQueueWork: TCriticalSection;
+    CritWriteQueueWork: TCriticalSection;
 
-    constructor Create(CreateSuspended : boolean);
+    //constructor Create(CreateSuspended : boolean);
 
     // SYNC ZONE:
     // (thread safe zone - can access to forms)
@@ -97,6 +98,7 @@ resourcestring
   StatusBarError = 'ERROR';
   StatusBarDisconnect = 'disconnect';
   StatusBarTimeout = 'timeout';
+  strEnterValue = 'Enter register value';
 
 implementation
 
@@ -233,42 +235,15 @@ begin
   end;
 end;
 
-////////////////////////////////////////////////////////////////////////////////
-
-constructor TThreadModBus.Create(CreateSuspended: boolean);
-begin
-  SectionWriteQueueWork := TCriticalSection.Create();
-  WriteQueue := TModbusItemQueue.Create();
-
-  IdModBusClient := TIdModBusClient.Create;
-  IdModBusClient.AutoConnect:=false;
-  IdModBusClient.Host:=frmMain.cbIP.Text;
-  IdModBusClient.UnitID:=1;
-  IdModBusClient.OnDisconnected:=@TCP_Disconnect;
-  IdModBusClient.OnResponseError:=@ModBusClientErrorEvent;
-  IdModBusClient.ConnectTimeout:=2000;
-
-  self.OnTerminate:=@frmMain.threadReadTerminating;
-
-  EventPauseAfterRead := TEventObject.Create(nil, false, false, '');
-
-  SyncUpdateVars;
-  CheckSize;
-
-  connected:=false;
-  FreeOnTerminate := false;
-  inherited Create(CreateSuspended);
-end;
-
 procedure TThreadModBus.Send(Addr, Value: Word);
 var itm: TModbusItem;
 begin
   itm.RegType:=self.RegType;
   itm.Addr:=Addr;
   itm.Value:=Value;
-  SectionWriteQueueWork.Enter;
+  CritWriteQueueWork.Enter;
   WriteQueue.PushFront(itm);
-  SectionWriteQueueWork.Leave;
+  CritWriteQueueWork.Leave;
 end;
 
 procedure TThreadModBus.Send(Addr, Value: string);
@@ -281,21 +256,84 @@ begin
     begin
       itm.Value:=StrToInt(Value);
       itm.RegType:=self.RegType;
-      SectionWriteQueueWork.Enter;
+      CritWriteQueueWork.Enter;
       WriteQueue.PushFront(itm);
-      SectionWriteQueueWork.Leave;
+      CritWriteQueueWork.Leave;
     end;
   end;
+end;
+
+
+////////////////////////////////////////////////////////////////////////////////
+
+{constructor TThreadModBus.Create(CreateSuspended: boolean);
+begin
+  inherited Create(CreateSuspended);
+end;}
+
+procedure TThreadModBus.ReadMB(RegType: TRegReadType; Addr: word; Count: word);
+var i2: integer;
+var
+  TempWordArr: array of word;
+  TempBoolArr: array of boolean;
+begin
+  SetLength(TempWordArr, Count);
+  SetLength(TempBoolArr, Count);
+  //Note: we cant transfer to function 'pointer' of part array, because this function use dynamic array
+  //IdModBusClient.ReadHoldingRegisters(RegStart+(i*Max), Max, MBWord[i*Max]); - incorrect! memory is corrupted!
+
+  case RegType of
+    tRegBoolRO:
+      IdModBusClient.ReadInputBits(Addr, Count, TempBoolArr);
+    tRegBoolRW:
+      IdModBusClient.ReadCoils(Addr, Count, TempBoolArr);
+    tRegWordRO:
+      IdModBusClient.ReadInputRegisters(Addr, Count, TempWordArr);
+    tRegWordRW:
+      IdModBusClient.ReadHoldingRegisters(Addr, Count, TempWordArr);
+  end;
+  case RegType of
+    tRegBoolRO, tRegBoolRW: begin
+      for i2:=0 to Count-1 do
+        MBBool[Addr+i2-1] := TempBoolArr[i2];
+    end;
+    tRegWordRO, tRegWordRW: begin
+      for i2:=0 to Count-1 do
+        MBWord[Addr+i2-1] := TempWordArr[i2];
+    end;
+  end;
+  FillChar(MBReadErr[Addr-1], Count, ErrorLastCode);
 end;
 
 procedure TThreadModBus.Execute;
 var
   i, RegCountMax, Count, Max: integer;
   itm: TModbusItem;
+
 label
   pauseAgain;
 
 begin
+  CritWriteQueueWork := TCriticalSection.Create();
+  WriteQueue := TModbusItemQueue.Create();
+
+  IdModBusClient := TIdModBusClient.Create;
+  IdModBusClient.AutoConnect:=false;
+  IdModBusClient.Host:=frmMain.cbIP.Text;
+  IdModBusClient.UnitID:=1;
+  IdModBusClient.OnDisconnected:=@TCP_Disconnect;
+  IdModBusClient.OnResponseError:=@ModBusClientErrorEvent;
+  IdModBusClient.ConnectTimeout:=2000;
+  IdModBusClient.ReadTimeout:=1000;
+
+  Self.OnTerminate:=@frmMain.threadReadTerminating;
+  Self.FreeOnTerminate := true;
+
+  EventPauseAfterRead := TEventObject.Create(nil, false, false, '');
+
+  SyncUpdateVars;
+  CheckSize;
+
   try
     try
       IdModBusClient.Connect;
@@ -330,10 +368,10 @@ begin
           while not WriteQueue.IsEmpty() do
           begin
             // safe extract
-            SectionWriteQueueWork.Enter;
+            CritWriteQueueWork.Enter;
             itm := WriteQueue.Back();
             WriteQueue.PopBack();
-            SectionWriteQueueWork.Leave;
+            CritWriteQueueWork.Leave;
             // write
             case itm.RegType of
               tRegBoolRW: IdModBusClient.WriteCoil(itm.Addr, itm.Value <> 0);
@@ -347,36 +385,14 @@ begin
 
           RegCountMax := High(MBWord)+1;
           Count := RegCountMax div Max;
-          for i:=0 to Count do
-          begin
-            case RegType of
-              tRegBoolRO:
-                IdModBusClient.ReadInputBits(RegStart+(i*Max), Max, MBBool[i*Max]);
-              tRegBoolRW:
-                IdModBusClient.ReadCoils(RegStart+(i*Max), Max, MBBool[i*Max]);
-              tRegWordRO:
-                IdModBusClient.ReadInputRegisters(RegStart+(i*Max), Max, MBWord[i*Max]);
-              tRegWordRW:
-                IdModBusClient.ReadHoldingRegisters(RegStart+(i*Max), Max, MBWord[i*Max]);
-            end;
-            FillChar(MBReadErr[i*Max], Max, ErrorLastCode);
-          end;
+          for i:=0 to Count-1 do
+            ReadMB(RegType, RegStart+(i*Max), Max);
 
           Count := RegCountMax mod Max;
           if Count <> 0 then
           begin
             i := ((RegCountMax div Max) * Max);
-            case RegType of
-              tRegBoolRO:
-                IdModBusClient.ReadInputBits(RegStart+i, Count, MBBool[RegStart+i]);
-              tRegBoolRW:
-                IdModBusClient.ReadCoils(RegStart+i, Count, MBBool[RegStart+i]);
-              tRegWordRO:
-                IdModBusClient.ReadInputRegisters(RegStart+i, Count, MBWord[RegStart+i]);
-              tRegWordRW:
-                IdModBusClient.ReadHoldingRegisters(RegStart+i, Count, MBWord[RegStart+i]);
-            end;
-            FillChar(MBReadErr[RegStart+i], Count, ErrorLastCode);
+            ReadMB(RegType, i, Count);
           end;
           Synchronize(@SyncDrawList);
 
@@ -412,8 +428,6 @@ begin
       pauseAgain:
       if (EventPauseAfterRead.WaitFor(1000)=wrSignaled) and (not Terminated) then
       begin
-        if Terminated then
-          break;
         Synchronize(@SyncUpdateVarsOnChange);
         CheckSize;
         Synchronize(@SyncDrawList);
@@ -425,8 +439,14 @@ begin
     IdModBusClient.OnDisconnected:=nil;
 
     try
-      if IdModBusClient.Connected then
-        IdModBusClient.Disconnect;
+      { if IdModBusClient.Connected then
+      "Connected" make infinity loop!
+      IdIOHandlerStack.pas:
+        function TIdIOHandlerStack.Connected: Boolean;
+        begin
+          ReadFromSource(False, 0, False); <-!!!
+      }
+      IdModBusClient.Disconnect;
     except
       // skip any disconnect error
     end;
@@ -441,6 +461,10 @@ begin
     FreeAndNil(IdModBusClient);
     FreeAndNil(EventPauseAfterRead);
     FreeAndNil(WriteQueue);
+    FreeAndNil(CritWriteQueueWork);
+    SetLength(MBWord, 0);
+    SetLength(MBBool, 0);
+    SetLength(MBReadErr, 0);
     connected:=false;
   except
     on e: Exception do
