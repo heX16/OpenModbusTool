@@ -2,6 +2,14 @@ unit FormMain;
 
 {$mode objfpc}{$H+}
 
+{
+IDE: Lazarus 1.6 (FPC 3.0.0)
+
+Dependency:
+  delphimodbus-1.6.3
+  indy-10.2.0.3
+}
+
 interface
 
 uses
