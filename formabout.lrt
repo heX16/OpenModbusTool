@@ -1,6 +1,5 @@
 TFRMABOUT.CAPTION=About
-TFRMABOUT.LABEL1.CAPTION=OpenModbusTool
-TFRMABOUT.LABEL2.CAPTION=This is free, crossplatform, multilanguages and opensource Modbus-TCP client.
-Author: heXor.
-TFRMABOUT.LABELEDEDIT1.EDITLABEL.CAPTION=Source code reposytory:
-TFRMABOUT.LABELEDEDIT1.TEXT=https://bitbucket.org/heXor/OpenModbusTool
+TFRMABOUT.LBABOUTTEXT.CAPTION=This is free, crossplatform, multilanguages and opensource Modbus-TCP client.
+TFRMABOUT.LBREPURL.EDITLABEL.CAPTION=Source code reposytory:
+TFRMABOUT.LBREPURL.TEXT=https://bitbucket.org/heXor/OpenModbusTool
+TFRMABOUT.LBTRANSLATEAUTHOR.CAPTION=Author of localization: -

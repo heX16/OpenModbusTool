@@ -1,2 +1,5 @@
 *.lnk
 list.csv
+/other
+
+OpenModBusTool.exe

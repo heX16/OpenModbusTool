@@ -47,7 +47,7 @@ type
   protected
     // thread code (NO access to forms)
     procedure Execute; override;
-    procedure ReadMB(RegType: TRegReadType; Addr: word; Count: word);
+    procedure ReadMB(RegType: TRegReadType; Addr, ArrOffs: word; Count: word);
     procedure CheckSize;
     procedure ModBusClientErrorEvent(const FunctionCode: Byte;
       const ErrorCode: Byte; const ResponseBuffer: TModBusResponseBuffer);
@@ -64,6 +64,7 @@ type
     MBReadErr: array of byte;
     ErrorPresent: boolean;
     ErrorLastCode: Byte;
+    ErrorCount: integer;
 
     // sync vars
     RegType: TRegReadType;
@@ -93,6 +94,7 @@ type
 function RegToString(RegN: integer; Regs: array of word; format: TRegShowFormat): string;
 
 resourcestring
+  StatusBarErrorCount = 'Errors';
   StatusBarOffline = 'offline';
   StatusBarOnline = 'ONLINE';
   StatusBarError = 'ERROR';
@@ -143,38 +145,60 @@ procedure TThreadModBus.SyncDrawList;
 var i: integer;
     itm: TListItem;
 begin
-  for i:=0 to High(MBWord) do
-  begin
-    if i > frmMain.listMain.Items.Count-1 then
+  frmMain.listMain.BeginUpdate;
+  try
+    for i:=0 to High(MBWord) do
     begin
-      itm := frmMain.listMain.Items.Add;
-      itm.SubItems.Add(IntToStr(i+RegStart));//reg
-      itm.SubItems.Add('');//val
-      itm.SubItems.Add('');//type
-      itm.SubItems.Add('');//name
-      //itm.Caption:=row[0]+'=?';//main text
-    end;
-    case RegType of
-      tRegWordRO, tRegWordRW:
-        frmMain.listMain.Items[i].SubItems[idxColumnValue] := RegToString(i, MBWord, RegFormat);
-      tRegBoolRO, tRegBoolRW:
-        frmMain.listMain.Items[i].SubItems[idxColumnValue] := BoolStr(MBBool[i]);
+      // add items
+      if i > frmMain.listMain.Items.Count-1 then
+      begin
+        itm := frmMain.listMain.Items.Add;
+        itm.SubItems.Add('');//reg
+        itm.SubItems.Add('');//val
+        itm.SubItems.Add('');//type
+        itm.SubItems.Add('');//name
+        //itm.Caption:=row[0]+'=?';//main text
+      end;
+      // update reg num
+      frmMain.listMain.Items[i].SubItems[idxColumnReg] := IntToStr(i+RegStart);
+      // update value
+      if MBReadErr[i] <> 0 then
+        frmMain.listMain.Items[i].SubItems[idxColumnValue] := 'Err'+IntToStr(MBReadErr[i]) else
+        begin
+          case RegType of
+            tRegWordRO, tRegWordRW:
+              frmMain.listMain.Items[i].SubItems[idxColumnValue] := RegToString(i, MBWord, RegFormat);
+            tRegBoolRO, tRegBoolRW:
+              frmMain.listMain.Items[i].SubItems[idxColumnValue] := BoolStr(MBBool[i]);
+          end;
+        end;
+
+      frmMain.listMain.Items[i].Caption := frmMain.listMain.Items[i].SubItems[idxColumnReg] + '=' + frmMain.listMain.Items[i].SubItems[idxColumnValue];
     end;
 
-    frmMain.listMain.Items[i].Caption := frmMain.listMain.Items[i].SubItems[idxColumnReg] + '=' + frmMain.listMain.Items[i].SubItems[idxColumnValue];
+    // remove items
+    if frmMain.listMain.Items.Count-1 > High(MBWord) then
+      for i:=frmMain.listMain.Items.Count-1 downto High(MBWord)+1 do
+         frmMain.listMain.Items.Delete(i);
+
+    // update captions in out items
+    {if frmMain.listMain.Items.Count-1 > High(MBWord) then
+      for i := High(MBWord)+1 to frmMain.listMain.Items.Count-1 do
+      begin
+        frmMain.listMain.Items[i].Caption := IntToStr(i+RegStart) + '=' + '-';
+        frmMain.listMain.Items[i].SubItems[idxColumnValue] := '-';
+      end;}
+  finally
+    frmMain.listMain.EndUpdate;
   end;
-
-  if frmMain.listMain.Items.Count-1 > High(MBWord) then
-    for i := High(MBWord)+1 to frmMain.listMain.Items.Count-1 do
-    begin
-      frmMain.listMain.Items[i].Caption := IntToStr(i+RegStart) + '=' + '-';
-      frmMain.listMain.Items[i].SubItems[idxColumnValue] := '-';
-    end;
 end;
 
 procedure TThreadModBus.SyncWriteStatusBar;
 begin
   frmMain.StatusBar1.Panels[idxStatusBarStatus].Text := StatusBarStatus;
+  if ErrorCount=0 then
+    frmMain.StatusBar1.Panels[idxStatusBarErrorCount].Text := '' else
+    frmMain.StatusBar1.Panels[idxStatusBarErrorCount].Text := StatusBarErrorCount + ' = ' + IntToStr(ErrorCount);
   frmMain.StatusBar1.Panels[idxStatusBarMainText].Text := StatusBarMsg;
 end;
 
@@ -271,38 +295,44 @@ begin
   inherited Create(CreateSuspended);
 end;}
 
-procedure TThreadModBus.ReadMB(RegType: TRegReadType; Addr: word; Count: word);
+procedure TThreadModBus.ReadMB(RegType: TRegReadType; Addr, ArrOffs: word; Count: word);
 var i2: integer;
 var
   TempWordArr: array of word;
   TempBoolArr: array of boolean;
+  r: boolean;
 begin
   SetLength(TempWordArr, Count);
   SetLength(TempBoolArr, Count);
   //Note: we cant transfer to function 'pointer' of part array, because this function use dynamic array
   //IdModBusClient.ReadHoldingRegisters(RegStart+(i*Max), Max, MBWord[i*Max]); - incorrect! memory is corrupted!
 
+  // change in handler 'ModBusClientErrorEvent'
+  ErrorLastCode := 0;
+
   case RegType of
     tRegBoolRO:
-      IdModBusClient.ReadInputBits(Addr, Count, TempBoolArr);
+      r:=IdModBusClient.ReadInputBits(Addr, Count, TempBoolArr);
     tRegBoolRW:
-      IdModBusClient.ReadCoils(Addr, Count, TempBoolArr);
+      r:=IdModBusClient.ReadCoils(Addr, Count, TempBoolArr);
     tRegWordRO:
-      IdModBusClient.ReadInputRegisters(Addr, Count, TempWordArr);
+      r:=IdModBusClient.ReadInputRegisters(Addr, Count, TempWordArr);
     tRegWordRW:
-      IdModBusClient.ReadHoldingRegisters(Addr, Count, TempWordArr);
+      r:=IdModBusClient.ReadHoldingRegisters(Addr, Count, TempWordArr);
   end;
   case RegType of
     tRegBoolRO, tRegBoolRW: begin
       for i2:=0 to Count-1 do
-        MBBool[Addr+i2-1] := TempBoolArr[i2];
+        MBBool[ArrOffs+i2] := TempBoolArr[i2];
     end;
     tRegWordRO, tRegWordRW: begin
       for i2:=0 to Count-1 do
-        MBWord[Addr+i2-1] := TempWordArr[i2];
+        MBWord[ArrOffs+i2] := TempWordArr[i2];
     end;
   end;
-  FillChar(MBReadErr[Addr-1], Count, ErrorLastCode);
+  if not r then
+    Inc(ErrorCount);
+  FillChar(MBReadErr[ArrOffs], Count, ErrorLastCode);
 end;
 
 procedure TThreadModBus.Execute;
@@ -379,21 +409,20 @@ begin
             end;
           end;
 
-          // set in handler 'ModBusClientErrorEvent'
-          ErrorLastCode := 0;
-          ErrorPresent := false;
-
+          // read blocks by 125 regs
           RegCountMax := High(MBWord)+1;
           Count := RegCountMax div Max;
           for i:=0 to Count-1 do
-            ReadMB(RegType, RegStart+(i*Max), Max);
+            ReadMB(RegType, RegStart + i*Max, i*Max, Max);
 
+          // read last block
           Count := RegCountMax mod Max;
           if Count <> 0 then
           begin
             i := ((RegCountMax div Max) * Max);
-            ReadMB(RegType, i, Count);
+            ReadMB(RegType, RegStart + i, i, Count);
           end;
+
           Synchronize(@SyncDrawList);
 
           if (ErrorPresent) and (ErrorLastCode <> 0) then

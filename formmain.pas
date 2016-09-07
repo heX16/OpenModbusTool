@@ -346,8 +346,51 @@ begin
 end;
 
 procedure TfrmMain.actPasteExecute(Sender: TObject);
+var
+  i, c, v: integer;
+  strs: TStringList;
 begin
-  //todo: WIP!
+  if threadRead <> nil then
+    try
+      c := 0;
+      strs := TStringList.Create;
+      strs.Text := Clipboard.AsText;
+      if listMain.SelCount = 1 then
+      begin
+        // one value to one reg
+        if strs.Count=1 then
+          threadRead.Send(listMain.Selected.SubItems[idxColumnReg], strs[0]);
+        //ToDo: many value to many regs linear, start from selected item
+        {if strs.Count>1 then
+          for i:=0 to listMain.Items.Count-1 do
+            if listMain.Items[i].Selected then
+            begin
+              //todo: WIP!
+              threadRead.Send(listMain.Items[i].SubItems[idxColumnReg], strs[c]);
+              c := c + 1;
+            end;}
+      end;
+
+      if listMain.SelCount > 1 then
+      begin
+        // one value to many regs
+        if strs.Count=1 then
+          for i:=0 to listMain.Items.Count-1 do
+            if listMain.Items[i].Selected then
+              threadRead.Send(listMain.Items[i].SubItems[idxColumnReg], strs[0]);
+        // many value to many regs
+        if strs.Count>1 then
+          for i:=0 to listMain.Items.Count-1 do
+            if listMain.Items[i].Selected then
+            begin
+              if c > strs.Count-1 then break;
+              threadRead.Send(listMain.Items[i].SubItems[idxColumnReg], strs[c]);
+              c := c + 1;
+            end;
+      end;
+    finally
+      strs.Free;
+    end;
 end;
 
 procedure TfrmMain.actSet0Execute(Sender: TObject);

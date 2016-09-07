@@ -1,4 +1,4 @@
-msgid "Author: heXor."
+msgid "Author: heXor.Author: heXor.Author: heXor.Author: heXor.Author: heXor.Author: heXor.Author: heXor."
 msgstr "Content-Type: text/plain; charset=UTF-8"
 
 #: tfrmabout.caption
@@ -6,21 +6,27 @@ msgctxt "TFRMABOUT.CAPTION"
 msgid "About"
 msgstr ""
 
-#: tfrmabout.label1.caption
-msgctxt "TFRMABOUT.LABEL1.CAPTION"
-msgid "OpenModbusTool"
-msgstr ""
-
-#: tfrmabout.label2.caption
+#: tfrmabout.lbabouttext.caption
+msgctxt "TFRMABOUT.LBABOUTTEXT.CAPTION"
 msgid "This is free, crossplatform, multilanguages and opensource Modbus-TCP client."
 msgstr ""
 
-#: tfrmabout.labelededit1.editlabel.caption
+#: tfrmabout.lbrepurl.editlabel.caption
+msgctxt "TFRMABOUT.LBREPURL.EDITLABEL.CAPTION"
 msgid "Source code reposytory:"
 msgstr ""
 
-#: tfrmabout.labelededit1.text
+#: tfrmabout.lbrepurl.text
+msgctxt "TFRMABOUT.LBREPURL.TEXT"
 msgid "https://bitbucket.org/heXor/OpenModbusTool"
+msgstr ""
+
+#: tfrmabout.lbtranslateauthor.caption
+msgid "Author of localization: -"
+msgstr ""
+
+#: tfrmbitedit.caption
+msgid "frmBitEdit"
 msgstr ""
 
 #: tfrmmain.actabout.caption
@@ -137,15 +143,6 @@ msgstr ""
 msgid "Name"
 msgstr ""
 
-#: tfrmmain.menuitem1.caption
-msgctxt "TFRMMAIN.MENUITEM1.CAPTION"
-msgid "Connect"
-msgstr ""
-
-#: tfrmmain.menuitem4.caption
-msgid "-"
-msgstr ""
-
 #: tfrmmain.rgviewstyle.caption
 msgid "View style"
 msgstr ""
@@ -161,6 +158,10 @@ msgstr ""
 
 #: threadmodbus.statusbarerror
 msgid "ERROR"
+msgstr ""
+
+#: threadmodbus.statusbarerrorcount
+msgid "Errors"
 msgstr ""
 
 #: threadmodbus.statusbaroffline
