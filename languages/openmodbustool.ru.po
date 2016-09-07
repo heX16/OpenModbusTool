@@ -1,4 +1,4 @@
-﻿msgid "Author: heXor.Author: heXor.Author: heXor.Author: heXor.Author: heXor.Author: heXor.Author: heXor."
+﻿msgid ""
 msgstr "Content-Type: text/plain; charset=UTF-8"
 
 #: tfrmabout.caption
@@ -9,11 +9,11 @@ msgstr "О программе"
 #: tfrmabout.lbabouttext.caption
 msgctxt "TFRMABOUT.LBABOUTTEXT.CAPTION"
 msgid "This is free, crossplatform, multilanguages and opensource Modbus-TCP client."
-msgstr ""
+msgstr "Это бесплатный, кроссплатформенный, мультиязычный клиент ModbusTCP с открытым исходным кодом."
 
 #: tfrmabout.lbrepurl.editlabel.caption
 msgctxt "TFRMABOUT.LBREPURL.EDITLABEL.CAPTION"
-msgid "Source code reposytory:"
+msgid "Исходный код:"
 msgstr ""
 
 #: tfrmabout.lbrepurl.text
@@ -23,7 +23,7 @@ msgstr ""
 
 #: tfrmabout.lbtranslateauthor.caption
 msgid "Author of localization: -"
-msgstr ""
+msgstr "Автор перевода: heXor"
 
 #: tfrmbitedit.caption
 msgid "frmBitEdit"
@@ -37,46 +37,46 @@ msgstr "О программе"
 #: tfrmmain.actconnect.caption
 msgctxt "tfrmmain.actconnect.caption"
 msgid "Connect"
-msgstr ""
+msgstr "Соединиться"
 
 #: tfrmmain.actcopy.caption
 msgctxt "TFRMMAIN.ACTCOPY.CAPTION"
 msgid "Copy"
-msgstr ""
+msgstr "Копировать"
 
 #: tfrmmain.actcopyvalue.caption
 msgctxt "TFRMMAIN.ACTCOPYVALUE.CAPTION"
 msgid "Copy value"
-msgstr ""
+msgstr "Копировать значения"
 
 #: tfrmmain.actdissconect.caption
 msgid "Dissconect"
-msgstr ""
+msgstr "Отключиться"
 
 #: tfrmmain.actexit.caption
 msgid "Exit"
-msgstr ""
+msgstr "Выход"
 
 #: tfrmmain.actoptions.caption
 msgid "Options"
-msgstr ""
+msgstr "Опции"
 
 #: tfrmmain.actpaste.caption
 msgctxt "TFRMMAIN.ACTPASTE.CAPTION"
 msgid "Paste"
-msgstr ""
+msgstr "Вставить"
 
 #: tfrmmain.actset0.caption
 msgid "Set 0"
-msgstr ""
+msgstr "Установить 0"
 
 #: tfrmmain.actset1.caption
 msgid "Set 1"
-msgstr ""
+msgstr "Установить 0"
 
 #: tfrmmain.actsetx.caption
 msgid "actSetX"
-msgstr ""
+msgstr "Установить Х"
 
 #: tfrmmain.caption
 msgctxt "tfrmmain.caption"
@@ -97,7 +97,7 @@ msgstr ""
 
 #: tfrmmain.edregaddr.editlabel.caption
 msgid "Reg:"
-msgstr ""
+msgstr "Регистр:"
 
 #: tfrmmain.edregaddr.hint
 msgid "Examples: 0 / 1 / 400001 / 1234 / 101234"
@@ -117,11 +117,11 @@ msgstr ""
 
 #: tfrmmain.lbaddr.caption
 msgid "Addr:"
-msgstr ""
+msgstr "Адрес:"
 
 #: tfrmmain.lbregcount.caption
 msgid "count:"
-msgstr ""
+msgstr "Кол-во:"
 
 #: tfrmmain.listmain.columns[0].caption
 msgid "MainText"
@@ -143,18 +143,9 @@ msgstr ""
 msgid "Name"
 msgstr ""
 
-#: tfrmmain.menuitem1.caption
-msgctxt "TFRMMAIN.MENUITEM1.CAPTION"
-msgid "Connect"
-msgstr ""
-
-#: tfrmmain.menuitem4.caption
-msgid "-"
-msgstr ""
-
 #: tfrmmain.rgviewstyle.caption
 msgid "View style"
-msgstr ""
+msgstr "Отображение:"
 
 #: tfrmmain.statusbar1.panels[0].text
 msgctxt "tfrmmain.statusbar1.panels[0].text"
@@ -171,7 +162,7 @@ msgstr ""
 
 #: threadmodbus.statusbarerrorcount
 msgid "Errors"
-msgstr ""
+msgstr "Ошибки"
 
 #: threadmodbus.statusbaroffline
 msgctxt "threadmodbus.statusbaroffline"
@@ -188,5 +179,5 @@ msgstr ""
 
 #: threadmodbus.strentervalue
 msgid "Enter register value"
-msgstr ""
+msgstr "Введите новое значение регистра"
 

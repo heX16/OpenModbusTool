@@ -1,4 +1,4 @@
-msgid "Author: heXor.Author: heXor.Author: heXor.Author: heXor.Author: heXor.Author: heXor.Author: heXor."
+msgid ""
 msgstr "Content-Type: text/plain; charset=UTF-8"
 
 #: tfrmabout.caption
@@ -141,15 +141,6 @@ msgstr ""
 
 #: tfrmmain.listmain.columns[4].caption
 msgid "Name"
-msgstr ""
-
-#: tfrmmain.menuitem1.caption
-msgctxt "TFRMMAIN.MENUITEM1.CAPTION"
-msgid "Connect"
-msgstr ""
-
-#: tfrmmain.menuitem4.caption
-msgid "-"
 msgstr ""
 
 #: tfrmmain.rgviewstyle.caption
