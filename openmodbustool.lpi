@@ -16,14 +16,14 @@
     </General>
     <i18n>
       <EnableI18N Value="True"/>
-      <OutDir Value="lang"/>
+      <OutDir Value="languages"/>
     </i18n>
     <VersionInfo>
       <UseVersionInfo Value="True"/>
       <AutoIncrementBuild Value="True"/>
       <MajorVersionNr Value="1"/>
       <MinorVersionNr Value="3"/>
-      <BuildNr Value="29"/>
+      <BuildNr Value="31"/>
       <StringTable Comments="constructor heX (www.hex.name)" ProductVersion=""/>
     </VersionInfo>
     <BuildModes Count="2">

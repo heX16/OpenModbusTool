@@ -143,6 +143,15 @@ msgstr ""
 msgid "Name"
 msgstr ""
 
+#: tfrmmain.menuitem1.caption
+msgctxt "TFRMMAIN.MENUITEM1.CAPTION"
+msgid "Connect"
+msgstr ""
+
+#: tfrmmain.menuitem4.caption
+msgid "-"
+msgstr ""
+
 #: tfrmmain.rgviewstyle.caption
 msgid "View style"
 msgstr ""

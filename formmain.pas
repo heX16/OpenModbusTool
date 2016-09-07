@@ -13,6 +13,8 @@ Dependency:
 interface
 
 uses
+  //DefaultTranslator, // - forced translation
+  //LCLTranslator,
   Classes, SysUtils, FileUtil, ListViewFilterEdit,
   Forms, Controls, Graphics, Dialogs, ExtCtrls, ComCtrls,
   IdComponent, IdTCPClient, StdCtrls,
@@ -498,6 +500,8 @@ begin
     Application.ProcessMessages;
     // update
     rgViewStyleClick(nil);
+
+    //SetDefaultLang('ru', '', true); // manual localization
 
     {if Application.ParamCount < 1 then
     begin

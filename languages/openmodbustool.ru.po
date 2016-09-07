@@ -1,0 +1,192 @@
+﻿msgid "Author: heXor.Author: heXor.Author: heXor.Author: heXor.Author: heXor.Author: heXor.Author: heXor."
+msgstr "Content-Type: text/plain; charset=UTF-8"
+
+#: tfrmabout.caption
+msgctxt "TFRMABOUT.CAPTION"
+msgid "About"
+msgstr "О программе"
+
+#: tfrmabout.lbabouttext.caption
+msgctxt "TFRMABOUT.LBABOUTTEXT.CAPTION"
+msgid "This is free, crossplatform, multilanguages and opensource Modbus-TCP client."
+msgstr ""
+
+#: tfrmabout.lbrepurl.editlabel.caption
+msgctxt "TFRMABOUT.LBREPURL.EDITLABEL.CAPTION"
+msgid "Source code reposytory:"
+msgstr ""
+
+#: tfrmabout.lbrepurl.text
+msgctxt "TFRMABOUT.LBREPURL.TEXT"
+msgid "https://bitbucket.org/heXor/OpenModbusTool"
+msgstr ""
+
+#: tfrmabout.lbtranslateauthor.caption
+msgid "Author of localization: -"
+msgstr ""
+
+#: tfrmbitedit.caption
+msgid "frmBitEdit"
+msgstr ""
+
+#: tfrmmain.actabout.caption
+msgctxt "tfrmmain.actabout.caption"
+msgid "About"
+msgstr "О программе"
+
+#: tfrmmain.actconnect.caption
+msgctxt "tfrmmain.actconnect.caption"
+msgid "Connect"
+msgstr ""
+
+#: tfrmmain.actcopy.caption
+msgctxt "TFRMMAIN.ACTCOPY.CAPTION"
+msgid "Copy"
+msgstr ""
+
+#: tfrmmain.actcopyvalue.caption
+msgctxt "TFRMMAIN.ACTCOPYVALUE.CAPTION"
+msgid "Copy value"
+msgstr ""
+
+#: tfrmmain.actdissconect.caption
+msgid "Dissconect"
+msgstr ""
+
+#: tfrmmain.actexit.caption
+msgid "Exit"
+msgstr ""
+
+#: tfrmmain.actoptions.caption
+msgid "Options"
+msgstr ""
+
+#: tfrmmain.actpaste.caption
+msgctxt "TFRMMAIN.ACTPASTE.CAPTION"
+msgid "Paste"
+msgstr ""
+
+#: tfrmmain.actset0.caption
+msgid "Set 0"
+msgstr ""
+
+#: tfrmmain.actset1.caption
+msgid "Set 1"
+msgstr ""
+
+#: tfrmmain.actsetx.caption
+msgid "actSetX"
+msgstr ""
+
+#: tfrmmain.caption
+msgctxt "tfrmmain.caption"
+msgid "OpenModbusTool"
+msgstr ""
+
+#: tfrmmain.cbip.text
+msgid "127.0.0.1"
+msgstr ""
+
+#: tfrmmain.cbregformat.text
+msgid "Dectimal (123)"
+msgstr ""
+
+#: tfrmmain.cbregistertype.text
+msgid "4x (word, RW) - Holding Registers"
+msgstr ""
+
+#: tfrmmain.edregaddr.editlabel.caption
+msgid "Reg:"
+msgstr ""
+
+#: tfrmmain.edregaddr.hint
+msgid "Examples: 0 / 1 / 400001 / 1234 / 101234"
+msgstr ""
+
+#: tfrmmain.edregaddr.text
+msgid "1"
+msgstr ""
+
+#: tfrmmain.edregcount.hint
+msgid "register count"
+msgstr ""
+
+#: tfrmmain.edregcount.text
+msgid "125"
+msgstr ""
+
+#: tfrmmain.lbaddr.caption
+msgid "Addr:"
+msgstr ""
+
+#: tfrmmain.lbregcount.caption
+msgid "count:"
+msgstr ""
+
+#: tfrmmain.listmain.columns[0].caption
+msgid "MainText"
+msgstr ""
+
+#: tfrmmain.listmain.columns[1].caption
+msgid "Reg"
+msgstr ""
+
+#: tfrmmain.listmain.columns[2].caption
+msgid "Value"
+msgstr ""
+
+#: tfrmmain.listmain.columns[3].caption
+msgid "Type"
+msgstr ""
+
+#: tfrmmain.listmain.columns[4].caption
+msgid "Name"
+msgstr ""
+
+#: tfrmmain.menuitem1.caption
+msgctxt "TFRMMAIN.MENUITEM1.CAPTION"
+msgid "Connect"
+msgstr ""
+
+#: tfrmmain.menuitem4.caption
+msgid "-"
+msgstr ""
+
+#: tfrmmain.rgviewstyle.caption
+msgid "View style"
+msgstr ""
+
+#: tfrmmain.statusbar1.panels[0].text
+msgctxt "tfrmmain.statusbar1.panels[0].text"
+msgid "offline"
+msgstr ""
+
+#: threadmodbus.statusbardisconnect
+msgid "disconnect"
+msgstr ""
+
+#: threadmodbus.statusbarerror
+msgid "ERROR"
+msgstr ""
+
+#: threadmodbus.statusbarerrorcount
+msgid "Errors"
+msgstr ""
+
+#: threadmodbus.statusbaroffline
+msgctxt "threadmodbus.statusbaroffline"
+msgid "offline"
+msgstr ""
+
+#: threadmodbus.statusbaronline
+msgid "ONLINE"
+msgstr ""
+
+#: threadmodbus.statusbartimeout
+msgid "timeout"
+msgstr ""
+
+#: threadmodbus.strentervalue
+msgid "Enter register value"
+msgstr ""
+

@@ -4,14 +4,15 @@
     <PathDelim Value="\"/>
     <Version Value="9"/>
     <BuildModes Active="Default"/>
-    <Units Count="6">
+    <Units Count="8">
       <Unit0>
         <Filename Value="openmodbustool.lpr"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="OpenModBusTool"/>
-        <EditorIndex Value="-1"/>
-        <CursorPos Y="10"/>
+        <EditorIndex Value="3"/>
+        <CursorPos X="26" Y="11"/>
         <UsageCount Value="102"/>
+        <Loaded Value="True"/>
       </Unit0>
       <Unit1>
         <Filename Value="formmain.pas"/>
@@ -20,11 +21,12 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="FormMain"/>
-        <TopLine Value="101"/>
-        <CursorPos X="3" Y="123"/>
+        <IsVisibleTab Value="True"/>
+        <TopLine Value="490"/>
+        <CursorPos X="7" Y="504"/>
         <UsageCount Value="102"/>
         <Bookmarks Count="1">
-          <Item0 X="24" Y="305" ID="3"/>
+          <Item0 X="24" Y="307" ID="3"/>
         </Bookmarks>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
@@ -44,8 +46,7 @@
         <Filename Value="threadmodbus.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="ThreadModBus"/>
-        <IsVisibleTab Value="True"/>
-        <EditorIndex Value="1"/>
+        <EditorIndex Value="4"/>
         <TopLine Value="144"/>
         <CursorPos X="22" Y="173"/>
         <UsageCount Value="71"/>
@@ -78,6 +79,24 @@
         <CursorPos X="73" Y="11"/>
         <UsageCount Value="24"/>
       </Unit5>
+      <Unit6>
+        <Filename Value="D:\Programs\lazarus\lcl\defaulttranslator.pas"/>
+        <UnitName Value="DefaultTranslator"/>
+        <EditorIndex Value="1"/>
+        <TopLine Value="12"/>
+        <CursorPos X="16" Y="31"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+      </Unit6>
+      <Unit7>
+        <Filename Value="D:\Programs\lazarus\lcl\lcltranslator.pas"/>
+        <UnitName Value="LCLTranslator"/>
+        <EditorIndex Value="2"/>
+        <TopLine Value="234"/>
+        <CursorPos Y="248"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+      </Unit7>
     </Units>
   </ProjectSession>
   <Debugging>
