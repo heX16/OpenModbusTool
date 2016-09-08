@@ -13,7 +13,7 @@ msgstr "Это бесплатный, кроссплатформенный, му�
 
 #: tfrmabout.lbrepurl.editlabel.caption
 msgctxt "TFRMABOUT.LBREPURL.EDITLABEL.CAPTION"
-msgid "Исходный код:"
+msgid "Source code reposytory:"
 msgstr ""
 
 #: tfrmabout.lbrepurl.text
@@ -78,6 +78,10 @@ msgstr "Установить 0"
 msgid "actSetX"
 msgstr "Установить Х"
 
+#: tfrmmain.btnpause.caption
+msgid "btnPause"
+msgstr ""
+
 #: tfrmmain.caption
 msgctxt "tfrmmain.caption"
 msgid "OpenModbusTool"
@@ -141,6 +145,16 @@ msgstr ""
 
 #: tfrmmain.listmain.columns[4].caption
 msgid "Name"
+msgstr ""
+
+#: tfrmmain.menuitem1.caption
+#, fuzzy
+msgctxt "tfrmmain.menuitem1.caption"
+msgid "Connect"
+msgstr "Соединиться"
+
+#: tfrmmain.menuitem4.caption
+msgid "-"
 msgstr ""
 
 #: tfrmmain.rgviewstyle.caption

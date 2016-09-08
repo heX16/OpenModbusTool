@@ -80,17 +80,18 @@ type
 
     // SYNC ZONE:
     // (thread safe zone - can access to forms)
-    procedure Send(Addr, Value: Word);
-    procedure Send(Addr, Value: string);
     procedure SyncDrawList;
     procedure SyncWriteStatusBar;
     procedure SyncUpdateVars;
     procedure SyncUpdateVarsOnChange;
     procedure SyncRemoveFromMainProg;
+    // procedure for sync zone
+    procedure Send(Addr, Value: Word);
+    procedure Send(Addr, Value: string);
+    procedure UpdateRegAddr;
   end;
 
-
-
+// convert register(s) to string (for visualisation)
 function RegToString(RegN: integer; Regs: array of word; format: TRegShowFormat): string;
 
 resourcestring
@@ -104,7 +105,7 @@ resourcestring
 
 implementation
 
-uses FormMain, ComCtrls, IdStack, {IdException,} IdExceptionCore;
+uses FormMain, ComCtrls, IdStack, {IdException,} IdExceptionCore, Character;
 
 function BoolStr(Data: boolean): string;
 begin
@@ -115,25 +116,41 @@ end;
 
 function RegToString(RegN: integer; Regs: array of word; Format: TRegShowFormat
   ): string;
-var i: integer;
+var
+  i: integer;
+type
+  PFloat = ^Single;
+  PDouble = ^Double;
 begin
   Result := '';
   if RegN > High(Regs) then
     Result := '!' else
     case Format of
-      rfDec: Result := IntToStr(Regs[RegN]);
-      rfHex: Result := IntToHex(Regs[RegN], 4);
+      rfDec:
+        Result := IntToStr(Regs[RegN]);
+      rfHex:
+        Result := IntToHex(Regs[RegN], 4);
       rfBin:
         for i:=0 to 15 do begin
           Result := Result + BoolStr(GetBit(Regs[RegN], i));
-
+          if (i <> 15) and (i mod 4 = 3) then Result := Result + '.';
         end;
       tfBool:
         Result := BoolToStr(Boolean(Regs[RegN]), true);
-
-      //ToDo: float
-      //tfFloat: ;
-      //tfDouble; ;
+      tfFloat:
+        if (RegN mod 2) = 0 then
+        begin
+          if RegN+1 <= High(Regs) then
+            Result := FloatToStr(PFloat(@Regs[RegN])^) else
+            Result := '#';
+        end;
+      tfDouble:
+        if (RegN mod 4) = 0 then
+        begin
+          if RegN+3 <= High(Regs) then
+            Result := FloatToStr(PDouble(@Regs[RegN])^) else
+            Result := '#';
+        end;
     else
       Result := 'not support';
     end;
@@ -205,15 +222,9 @@ end;
 procedure TThreadModBus.SyncUpdateVars;
 begin
   SetNewSize:=StrToIntDef(frmMain.edRegCount.Text, SetNewSize);
-  RegStart:=StrToIntDef(frmMain.edRegAddr.Text, RegStart);
+  UpdateRegAddr();
   if not frmMain.cbRegFormat.DroppedDown then
     RegFormat:=TRegShowFormat(frmMain.cbRegFormat.ItemIndex);
-  if not frmMain.cbRegisterType.DroppedDown then
-  begin
-    if frmMain.cbRegisterType.ItemIndex>=0 then
-      RegType:=TRegReadType(frmMain.cbRegisterType.ItemIndex) else
-      RegType:=tRegWordRW;
-  end;
 end;
 
 procedure TThreadModBus.SyncUpdateVarsOnChange;
@@ -284,6 +295,33 @@ begin
       WriteQueue.PushFront(itm);
       CritWriteQueueWork.Leave;
     end;
+  end;
+end;
+
+procedure TThreadModBus.UpdateRegAddr;
+var a: String;
+begin
+  a := Trim(frmMain.edRegAddr.Text);
+  if (Length(a)=6) and (IsNumber(UnicodeString(a), 1)) then
+  begin
+    // 6 digit format
+    RegStart:=StrToIntDef(Copy(a, 2, 5), RegStart);
+    if not frmMain.cbRegisterType.DroppedDown then
+    begin
+      RegType:=TRegReadType(frmMain.cbRegisterType.ItemIndex);
+      case a[1] of
+        '1': frmMain.cbRegisterType.ItemIndex := 0; // 1x (bit, RO) - Discrete Input
+        '0': frmMain.cbRegisterType.ItemIndex := 1; // 0x (bit, RW) - Discrete Coils
+        '3': frmMain.cbRegisterType.ItemIndex := 2; // 3x (word, RO) - Input Registers
+        '4': frmMain.cbRegisterType.ItemIndex := 3; // 4x (word, RW) - Holding Registers
+      end;
+    end;
+  end else
+  begin
+    // normal format - just address
+    RegStart:=StrToIntDef(a, RegStart);
+    if not frmMain.cbRegisterType.DroppedDown then
+      RegType:=TRegReadType(frmMain.cbRegisterType.ItemIndex);
   end;
 end;
 

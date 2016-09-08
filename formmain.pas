@@ -78,6 +78,7 @@ type
     StatusBar1: TStatusBar;
     TimerInit: TTimer;
     TimerReadMB: TTimer;
+    btnPause: TToggleBox;
     procedure actAboutExecute(Sender: TObject);
     procedure actConnectExecute(Sender: TObject);
     procedure actConnectUpdate(Sender: TObject);
@@ -463,9 +464,18 @@ procedure TfrmMain.listMainEditing(Sender: TObject; Item: TListItem;
   var AllowEdit: Boolean);
 begin
   if threadRead = nil then
-    AllowEdit:=false;
-  if listMain.ViewStyle=vsReport then
-    AllowEdit:=false;
+    AllowEdit:=false else
+    begin
+      //todo: edit in all format! - (frmBitEdit, etc)
+      if threadRead.RegFormat <> rfDec then
+      begin
+        AllowEdit:=false;
+        ShowMessage('Edit only in "Dectimal" format, sorry');
+        frmMain.cbRegFormat.ItemIndex:=0;
+      end;
+      if listMain.ViewStyle=vsReport then
+        AllowEdit:=false;
+    end;
 end;
 
 procedure TfrmMain.rgViewStyleClick(Sender: TObject);
@@ -474,10 +484,11 @@ begin
   0: begin
     listMain.ViewStyle:=vsReport;
     listMain.Column[idxColumnMainText].Width:=0;
-    listMain.Column[idxColumnType].Width:=0;
-    listMain.Column[idxColumnReg].Width:=100;
-    listMain.Column[idxColumnValue].Width:=150;
-    listMain.Column[idxColumnName].Width:=0;
+    //todo: bug (wnd): Columns.Width applies only on start application. after start this code not work - i dont known why.
+    listMain.Column[idxColumnType+1  ].Width:=0;
+    listMain.Column[idxColumnReg+1   ].Width:=100;
+    listMain.Column[idxColumnValue+1 ].Width:=150;
+    listMain.Column[idxColumnName+1  ].Width:=0;
   end;
   1: begin
     listMain.ViewStyle:=vsList;

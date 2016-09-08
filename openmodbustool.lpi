@@ -22,8 +22,8 @@
       <UseVersionInfo Value="True"/>
       <AutoIncrementBuild Value="True"/>
       <MajorVersionNr Value="1"/>
-      <MinorVersionNr Value="3"/>
-      <BuildNr Value="31"/>
+      <MinorVersionNr Value="4"/>
+      <BuildNr Value="36"/>
       <StringTable Comments="constructor heX (www.hex.name)" ProductVersion=""/>
     </VersionInfo>
     <BuildModes Count="2">
