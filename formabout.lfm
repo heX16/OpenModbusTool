@@ -1,7 +1,7 @@
 object frmAbout: TfrmAbout
-  Left = 380
+  Left = 171
   Height = 240
-  Top = 196
+  Top = 407
   Width = 320
   Caption = 'About'
   ClientHeight = 240
@@ -33,7 +33,7 @@ object frmAbout: TfrmAbout
   end
   object lbRepURL: TLabeledEdit
     Left = 8
-    Height = 23
+    Height = 27
     Top = 160
     Width = 300
     EditLabel.AnchorSideLeft.Control = lbRepURL
@@ -41,8 +41,8 @@ object frmAbout: TfrmAbout
     EditLabel.AnchorSideRight.Side = asrBottom
     EditLabel.AnchorSideBottom.Control = lbRepURL
     EditLabel.Left = 8
-    EditLabel.Height = 15
-    EditLabel.Top = 142
+    EditLabel.Height = 17
+    EditLabel.Top = 140
     EditLabel.Width = 300
     EditLabel.Caption = 'Source code reposytory:'
     EditLabel.ParentColor = False
@@ -59,9 +59,9 @@ object frmAbout: TfrmAbout
   end
   object lbTranslateAuthor: TLabel
     Left = 8
-    Height = 15
+    Height = 17
     Top = 48
-    Width = 125
+    Width = 160
     Caption = 'Author of localization: -'
     ParentColor = False
   end

@@ -5,9 +5,10 @@ unit ThreadModBus;
 interface
 
 uses
+  Dialogs,
   Classes, SysUtils,
   syncobjs, gdeque,
-  IdModBusClient, ModbusTypes;
+  IdModbusClient, ModbusTypes;
 
 type
   {
@@ -58,7 +59,9 @@ type
     StatusBarStatus: string;
 
     IdModBusClient: TIdModBusClient;
-    connected: boolean;
+    Connected: boolean;
+    VilidDissconect: boolean;
+    AVDetect: boolean;
     MBWord: array of word;
     MBBool: array of boolean;
     MBReadErr: array of byte;
@@ -80,6 +83,8 @@ type
 
     // SYNC ZONE:
     // (thread safe zone - can access to forms)
+    procedure SyncEventConnect;
+    procedure SyncEventDissconect;
     procedure SyncDrawList;
     procedure SyncWriteStatusBar;
     procedure SyncUpdateVars;
@@ -105,7 +110,10 @@ resourcestring
 
 implementation
 
-uses FormMain, ComCtrls, IdStack, {IdException,} IdExceptionCore, Character;
+uses
+  FormMain,
+  Graphics,
+  ComCtrls, IdStack, {IdException,} IdExceptionCore, Character;
 
 function BoolStr(Data: boolean): string;
 begin
@@ -270,6 +278,24 @@ begin
   end;
 end;
 
+procedure TThreadModBus.SyncEventConnect;
+begin
+  frmMain.shapeState.Brush.Color:=clGreen;
+end;
+
+procedure TThreadModBus.SyncEventDissconect;
+begin
+  if AVDetect then
+  begin
+    frmMain.shapeState.Brush.Color:=clMaroon;
+  end else
+  begin
+    if (VilidDissconect) then
+      frmMain.shapeState.Brush.Color:=clWhite else
+      frmMain.shapeState.Brush.Color:=clRed;
+  end;
+end;
+
 procedure TThreadModBus.Send(Addr, Value: Word);
 var itm: TModbusItem;
 begin
@@ -422,9 +448,12 @@ begin
       end;
     end;
 
-    connected:=true;
+    Connected:=true;
+    Synchronize(@SyncEventConnect);
     StatusBarStatus := StatusBarOnline;
     Synchronize(@SyncWriteStatusBar);
+
+    //////////////// main cycle ////////////////
     while (not Terminated) do
     begin
       try
@@ -483,6 +512,7 @@ begin
           TCP_Disconnect(nil);
         on e: EAccessViolation do
         begin
+          AVDetect := true;
           StatusBarMsg := e.Message;
           StatusBarStatus := 'AV!';
           Synchronize(@SyncWriteStatusBar);
@@ -501,7 +531,9 @@ begin
         goto pauseAgain;
       end;
 
-    end; // Thread loop
+    end;
+    //////////////// end main cycle ////////////////
+
     IdModBusClient.OnResponseError:=nil;
     IdModBusClient.OnDisconnected:=nil;
 
@@ -517,6 +549,7 @@ begin
     except
       // skip any disconnect error
     end;
+    Synchronize(@SyncEventDissconect);
 
     if StatusBarStatus = StatusBarOnline then
     begin

@@ -75,6 +75,7 @@ type
     Panel2: TPanel;
     menuMainList: TPopupMenu;
     rgViewStyle: TRadioGroup;
+    shapeState: TShape;
     StatusBar1: TStatusBar;
     TimerInit: TTimer;
     TimerReadMB: TTimer;
@@ -326,6 +327,8 @@ procedure TfrmMain.actDissconectExecute(Sender: TObject);
 begin
   if (threadRead <> nil) then
   begin
+    threadRead.VilidDissconect := true;
+    shapeState.Color:=clYellow;
     threadRead.Terminate;
     // wake up! - time for death
     threadRead.EventPauseAfterRead.SetEvent;
@@ -339,8 +342,13 @@ end;
 
 procedure TfrmMain.actDissconectUpdate(Sender: TObject);
 begin
-  if threadRead = nil then
+  if (threadRead = nil) and (actDissconect.Enabled) then
+  begin
+    if shapeState.Brush.Color = clGreen then
+      // internal error?
+      shapeState.Brush.Color := clMaroon;
     actDissconect.Enabled:=false;
+  end;
 end;
 
 procedure TfrmMain.actExitExecute(Sender: TObject);

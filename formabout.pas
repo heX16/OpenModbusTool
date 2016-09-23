@@ -5,7 +5,7 @@ unit FormAbout;
 interface
 
 uses
-  Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, StdCtrls,
+  Classes, FileUtil, Forms, Controls, Graphics, Dialogs, StdCtrls,
   ExtCtrls;
 
 type
@@ -30,12 +30,15 @@ var
 
 implementation
 
-uses Windows;
+uses
+{$IFDEF MSWINDOWS}
+  Windows,
+{$ENDIF}
+  SysUtils;
 
 {$R *.lfm}
 
 { TfrmAbout }
-
 function GetMyVersion(VerCount: Byte = 4):string;
 type
   TVerInfo=packed record
@@ -68,7 +71,8 @@ end;
 
 procedure TfrmAbout.FormCreate(Sender: TObject);
 begin
-  lbNameAndVer.Caption:='OpenModbusTool' + '   ver.'+GetMyVersion(4);
+  lbNameAndVer.Caption:='OpenModbusTool';
+  lbNameAndVer.Caption:=lbNameAndVer.Caption + '   ver.'+GetMyVersion(4);
   lbAuthor.Caption:='Author: heXor';
 end;
 

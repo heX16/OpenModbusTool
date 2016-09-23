@@ -100,7 +100,10 @@ msgid "4x (word, RW) - Holding Registers"
 msgstr ""
 
 #: tfrmmain.edregaddr.editlabel.caption
-msgid "Reg:"
+#, fuzzy
+#| msgid "Reg:"
+msgctxt "tfrmmain.edregaddr.editlabel.caption"
+msgid "Reg"
 msgstr "Регистр:"
 
 #: tfrmmain.edregaddr.hint
@@ -132,8 +135,11 @@ msgid "MainText"
 msgstr ""
 
 #: tfrmmain.listmain.columns[1].caption
+#, fuzzy
+#| msgid "Reg:"
+msgctxt "tfrmmain.listmain.columns[1].caption"
 msgid "Reg"
-msgstr ""
+msgstr "Регистр:"
 
 #: tfrmmain.listmain.columns[2].caption
 msgid "Value"
