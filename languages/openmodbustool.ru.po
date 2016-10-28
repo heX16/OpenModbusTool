@@ -26,7 +26,23 @@ msgid "Author of localization: -"
 msgstr "Автор перевода: heXor"
 
 #: tfrmbitedit.caption
-msgid "frmBitEdit"
+msgid "Value editor:"
+msgstr ""
+
+#: tfrmbitedit.lbvaluedec16.caption
+msgid "lbValueDec16"
+msgstr ""
+
+#: tfrmbitedit.lbvaluedec32.caption
+msgid "lbValueDec32"
+msgstr ""
+
+#: tfrmbitedit.lbvaluedec8.caption
+msgid "lbValueDec8"
+msgstr ""
+
+#: tfrmbitedit.lbvaluehex32.caption
+msgid "lbValueHex32"
 msgstr ""
 
 #: tfrmmain.actabout.caption
