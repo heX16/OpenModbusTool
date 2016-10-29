@@ -29,20 +29,24 @@ msgstr ""
 msgid "Value editor:"
 msgstr ""
 
+#: tfrmbitedit.lbfloat.caption
+msgid "Float"
+msgstr ""
+
 #: tfrmbitedit.lbvaluedec16.caption
-msgid "lbValueDec16"
+msgid "Dec 16bit"
 msgstr ""
 
 #: tfrmbitedit.lbvaluedec32.caption
-msgid "lbValueDec32"
+msgid "Dec 32bit"
 msgstr ""
 
 #: tfrmbitedit.lbvaluedec8.caption
-msgid "lbValueDec8"
+msgid "Dec 8bit"
 msgstr ""
 
 #: tfrmbitedit.lbvaluehex32.caption
-msgid "lbValueHex32"
+msgid "Value in hex"
 msgstr ""
 
 #: tfrmmain.actabout.caption
@@ -67,6 +71,11 @@ msgstr ""
 
 #: tfrmmain.actdissconect.caption
 msgid "Dissconect"
+msgstr ""
+
+#: tfrmmain.acteditext.caption
+msgctxt "TFRMMAIN.ACTEDITEXT.CAPTION"
+msgid "Edit"
 msgstr ""
 
 #: tfrmmain.actexit.caption

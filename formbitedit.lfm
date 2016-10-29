@@ -1,246 +1,342 @@
 object frmBitEdit: TfrmBitEdit
   Left = 581
-  Height = 301
+  Height = 355
   Top = 391
-  Width = 433
+  Width = 443
   Caption = 'Value editor:'
-  ClientHeight = 301
-  ClientWidth = 433
+  ClientHeight = 355
+  ClientWidth = 443
   LCLVersion = '1.6.0.4'
-  Visible = True
-  object edValueHex32: TEdit
-    Left = 216
-    Height = 23
-    Top = 8
-    Width = 136
-    OnChange = edValueHex32Change
+  object Panel32: TPanel
+    Left = 0
+    Height = 32
+    Top = 32
+    Width = 443
+    Align = alTop
+    BevelOuter = bvNone
+    ClientHeight = 32
+    ClientWidth = 443
     TabOrder = 0
+    object edValueDec32: TEdit
+      Tag = 321
+      Left = 216
+      Height = 23
+      Top = 3
+      Width = 136
+      OnChange = edValueDecAnyChange
+      TabOrder = 0
+    end
+    object lbValueDec32: TLabel
+      Left = 8
+      Height = 23
+      Top = 3
+      Width = 203
+      Alignment = taRightJustify
+      AutoSize = False
+      Caption = 'Dec 32bit'
+      ParentBidiMode = False
+      ParentColor = False
+    end
   end
-  object edValueDec32: TEdit
-    Tag = 321
-    Left = 216
-    Height = 23
-    Top = 40
-    Width = 136
-    OnChange = edValueDecAnyChange
+  object PanelHex32: TPanel
+    Left = 0
+    Height = 32
+    Top = 0
+    Width = 443
+    Align = alTop
+    BevelOuter = bvNone
+    ClientHeight = 32
+    ClientWidth = 443
     TabOrder = 1
+    object edValueHex32: TEdit
+      Left = 216
+      Height = 23
+      Top = 5
+      Width = 136
+      OnChange = edValueHex32Change
+      TabOrder = 0
+    end
+    object lbValueHex32: TLabel
+      Left = 8
+      Height = 23
+      Top = 5
+      Width = 203
+      Alignment = taRightJustify
+      AutoSize = False
+      Caption = 'Value in hex'
+      ParentBidiMode = False
+      ParentColor = False
+    end
   end
-  object edValueDec16_1: TEdit
-    Tag = 161
-    Left = 144
-    Height = 23
-    Top = 72
-    Width = 136
-    OnChange = edValueDecAnyChange
+  object Panel16: TPanel
+    Left = 0
+    Height = 32
+    Top = 64
+    Width = 443
+    Align = alTop
+    BevelOuter = bvNone
+    ClientHeight = 32
+    ClientWidth = 443
     TabOrder = 2
+    object lbValueDec16: TLabel
+      Left = 8
+      Height = 23
+      Top = 6
+      Width = 131
+      Alignment = taRightJustify
+      AutoSize = False
+      Caption = 'Dec 16bit'
+      ParentBidiMode = False
+      ParentColor = False
+    end
+    object edValueDec16_1: TEdit
+      Tag = 161
+      Left = 144
+      Height = 23
+      Top = 6
+      Width = 136
+      OnChange = edValueDecAnyChange
+      TabOrder = 0
+    end
+    object edValueDec16_2: TEdit
+      Tag = 162
+      Left = 288
+      Height = 23
+      Top = 6
+      Width = 136
+      OnChange = edValueDecAnyChange
+      TabOrder = 1
+    end
   end
-  object edValueDec16_2: TEdit
-    Tag = 162
-    Left = 288
-    Height = 23
-    Top = 72
-    Width = 136
-    OnChange = edValueDecAnyChange
+  object Panel8: TPanel
+    Left = 0
+    Height = 32
+    Top = 96
+    Width = 443
+    Align = alTop
+    BevelOuter = bvNone
+    ClientHeight = 32
+    ClientWidth = 443
     TabOrder = 3
+    object edValueDec8_4: TEdit
+      Tag = 84
+      Left = 360
+      Height = 23
+      Top = 5
+      Width = 64
+      OnChange = edValueDecAnyChange
+      TabOrder = 0
+    end
+    object edValueDec8_3: TEdit
+      Tag = 83
+      Left = 288
+      Height = 23
+      Top = 5
+      Width = 64
+      OnChange = edValueDecAnyChange
+      TabOrder = 1
+    end
+    object edValueDec8_2: TEdit
+      Tag = 82
+      Left = 216
+      Height = 23
+      Top = 5
+      Width = 64
+      OnChange = edValueDecAnyChange
+      TabOrder = 2
+    end
+    object edValueDec8_1: TEdit
+      Tag = 81
+      Left = 144
+      Height = 23
+      Top = 5
+      Width = 64
+      OnChange = edValueDecAnyChange
+      TabOrder = 3
+    end
+    object lbValueDec8: TLabel
+      Left = 8
+      Height = 23
+      Top = 5
+      Width = 131
+      Alignment = taRightJustify
+      AutoSize = False
+      Caption = 'Dec 8bit'
+      ParentBidiMode = False
+      ParentColor = False
+    end
   end
-  object edValueDec8_1: TEdit
-    Tag = 81
-    Left = 144
-    Height = 23
-    Top = 104
-    Width = 64
-    OnChange = edValueDecAnyChange
+  object PanelGroup1: TPanel
+    Left = 0
+    Height = 154
+    Top = 128
+    Width = 443
+    Align = alTop
+    BevelOuter = bvNone
+    ClientHeight = 154
+    ClientWidth = 443
     TabOrder = 4
+    object PanelFloat: TPanel
+      Left = 0
+      Height = 155
+      Top = 0
+      Width = 144
+      BevelOuter = bvNone
+      ClientHeight = 155
+      ClientWidth = 144
+      TabOrder = 0
+      object edValueFloat: TEdit
+        Left = 8
+        Height = 23
+        Top = 24
+        Width = 128
+        TabOrder = 0
+      end
+      object lbFloat: TLabel
+        Left = 8
+        Height = 15
+        Top = 8
+        Width = 26
+        Caption = 'Float'
+        ParentColor = False
+      end
+    end
+    object PanelBits: TPanel
+      Left = 144
+      Height = 155
+      Top = 0
+      Width = 286
+      BevelOuter = bvNone
+      ClientHeight = 155
+      ClientWidth = 286
+      TabOrder = 1
+      object chListBit8_4: TCheckListBox
+        Tag = 84
+        Left = 216
+        Height = 146
+        Top = 0
+        Width = 64
+        Items.Strings = (
+          '25'
+          '26'
+          '27'
+          '28'
+          '29'
+          '30'
+          '31'
+          '32'
+        )
+        ItemHeight = 17
+        OnClickCheck = chListBitAnyClickCheck
+        TabOrder = 0
+        Data = {
+          080000000000000000000000
+        }
+      end
+      object chListBit8_3: TCheckListBox
+        Tag = 83
+        Left = 144
+        Height = 146
+        Top = 0
+        Width = 64
+        Items.Strings = (
+          '17'
+          '18'
+          '19'
+          '20'
+          '21'
+          '22'
+          '23'
+          '24'
+        )
+        ItemHeight = 17
+        OnClickCheck = chListBitAnyClickCheck
+        TabOrder = 1
+        Data = {
+          080000000000000000000000
+        }
+      end
+      object chListBit8_2: TCheckListBox
+        Tag = 82
+        Left = 72
+        Height = 146
+        Top = 0
+        Width = 64
+        Items.Strings = (
+          '09'
+          '10'
+          '11'
+          '12'
+          '13'
+          '14'
+          '15'
+          '16'
+        )
+        ItemHeight = 17
+        OnClickCheck = chListBitAnyClickCheck
+        TabOrder = 2
+        Data = {
+          080000000000000000000000
+        }
+      end
+      object chListBit8_1: TCheckListBox
+        Tag = 81
+        Left = 0
+        Height = 146
+        Top = 0
+        Width = 64
+        Items.Strings = (
+          '01'
+          '02'
+          '03'
+          '04'
+          '05'
+          '06'
+          '07'
+          '08'
+        )
+        ItemHeight = 17
+        OnClickCheck = chListBitAnyClickCheck
+        TabOrder = 3
+        Data = {
+          080000000000000000000000
+        }
+      end
+    end
   end
-  object edValueDec8_2: TEdit
-    Tag = 82
-    Left = 216
-    Height = 23
-    Top = 104
-    Width = 64
-    OnChange = edValueDecAnyChange
+  object PanelBtn: TPanel
+    Left = 0
+    Height = 40
+    Top = 315
+    Width = 443
+    Align = alBottom
+    BevelOuter = bvNone
+    ClientHeight = 40
+    ClientWidth = 443
     TabOrder = 5
-  end
-  object edValueDec8_3: TEdit
-    Tag = 83
-    Left = 288
-    Height = 23
-    Top = 104
-    Width = 64
-    OnChange = edValueDecAnyChange
-    TabOrder = 6
-  end
-  object edValueDec8_4: TEdit
-    Tag = 84
-    Left = 360
-    Height = 23
-    Top = 104
-    Width = 64
-    OnChange = edValueDecAnyChange
-    TabOrder = 7
-  end
-  object chListBit8_1: TCheckListBox
-    Tag = 81
-    Left = 144
-    Height = 155
-    Top = 136
-    Width = 64
-    Anchors = [akTop, akLeft, akBottom]
-    Items.Strings = (
-      '01'
-      '02'
-      '03'
-      '04'
-      '05'
-      '06'
-      '07'
-      '08'
-    )
-    ItemHeight = 17
-    OnClickCheck = chListBitAnyClickCheck
-    TabOrder = 8
-    Data = {
-      080000000000000000000000
-    }
-  end
-  object chListBit8_2: TCheckListBox
-    Tag = 82
-    Left = 216
-    Height = 155
-    Top = 136
-    Width = 64
-    Anchors = [akTop, akLeft, akBottom]
-    Items.Strings = (
-      '09'
-      '10'
-      '11'
-      '12'
-      '13'
-      '14'
-      '15'
-      '16'
-    )
-    ItemHeight = 17
-    OnClickCheck = chListBitAnyClickCheck
-    TabOrder = 9
-    Data = {
-      080000000000000000000000
-    }
-  end
-  object chListBit8_3: TCheckListBox
-    Tag = 83
-    Left = 288
-    Height = 155
-    Top = 136
-    Width = 64
-    Anchors = [akTop, akLeft, akBottom]
-    Items.Strings = (
-      '17'
-      '18'
-      '19'
-      '20'
-      '21'
-      '22'
-      '23'
-      '24'
-    )
-    ItemHeight = 17
-    OnClickCheck = chListBitAnyClickCheck
-    TabOrder = 10
-    Data = {
-      080000000000000000000000
-    }
-  end
-  object chListBit8_4: TCheckListBox
-    Tag = 84
-    Left = 360
-    Height = 155
-    Top = 136
-    Width = 64
-    Anchors = [akTop, akLeft, akBottom]
-    Items.Strings = (
-      '25'
-      '26'
-      '27'
-      '28'
-      '29'
-      '30'
-      '31'
-      '32'
-    )
-    ItemHeight = 17
-    OnClickCheck = chListBitAnyClickCheck
-    TabOrder = 11
-    Data = {
-      080000000000000000000000
-    }
-  end
-  object BitBtn1: TBitBtn
-    Left = 8
-    Height = 30
-    Top = 261
-    Width = 131
-    Anchors = [akLeft, akBottom]
-    Default = True
-    DefaultCaption = True
-    Kind = bkOK
-    ModalResult = 1
-    TabOrder = 13
-  end
-  object BitBtn2: TBitBtn
-    Left = 8
-    Height = 30
-    Top = 221
-    Width = 131
-    Anchors = [akLeft, akBottom]
-    Cancel = True
-    DefaultCaption = True
-    Kind = bkCancel
-    ModalResult = 2
-    TabOrder = 12
-  end
-  object lbValueHex32: TLabel
-    Left = 8
-    Height = 23
-    Top = 8
-    Width = 203
-    Alignment = taRightJustify
-    AutoSize = False
-    Caption = 'lbValueHex32'
-    ParentBidiMode = False
-    ParentColor = False
-  end
-  object lbValueDec32: TLabel
-    Left = 8
-    Height = 23
-    Top = 40
-    Width = 203
-    Alignment = taRightJustify
-    AutoSize = False
-    Caption = 'lbValueDec32'
-    ParentBidiMode = False
-    ParentColor = False
-  end
-  object lbValueDec16: TLabel
-    Left = 8
-    Height = 23
-    Top = 72
-    Width = 131
-    Alignment = taRightJustify
-    AutoSize = False
-    Caption = 'lbValueDec16'
-    ParentBidiMode = False
-    ParentColor = False
-  end
-  object lbValueDec8: TLabel
-    Left = 8
-    Height = 23
-    Top = 104
-    Width = 131
-    Alignment = taRightJustify
-    AutoSize = False
-    Caption = 'lbValueDec8'
-    ParentBidiMode = False
-    ParentColor = False
+    object BitBtn1: TBitBtn
+      Left = 5
+      Height = 32
+      Top = 3
+      Width = 131
+      Anchors = [akLeft, akBottom]
+      Default = True
+      DefaultCaption = True
+      Kind = bkOK
+      ModalResult = 1
+      TabOrder = 0
+    end
+    object BitBtn2: TBitBtn
+      Left = 305
+      Height = 32
+      Top = 3
+      Width = 131
+      Anchors = [akRight, akBottom]
+      Cancel = True
+      DefaultCaption = True
+      Kind = bkCancel
+      ModalResult = 2
+      TabOrder = 1
+    end
   end
 end

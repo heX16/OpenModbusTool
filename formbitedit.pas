@@ -13,24 +13,34 @@ type
   { TfrmBitEdit }
 
   TfrmBitEdit = class(TForm)
-    edValueHex32: TEdit;
-    edValueDec32: TEdit;
-    edValueDec16_1: TEdit;
-    edValueDec16_2: TEdit;
-    edValueDec8_1: TEdit;
-    edValueDec8_2: TEdit;
-    edValueDec8_3: TEdit;
-    edValueDec8_4: TEdit;
+    BitBtn1: TBitBtn;
+    BitBtn2: TBitBtn;
     chListBit8_1: TCheckListBox;
     chListBit8_2: TCheckListBox;
     chListBit8_3: TCheckListBox;
     chListBit8_4: TCheckListBox;
-    BitBtn1: TBitBtn;
-    BitBtn2: TBitBtn;
-    lbValueHex32: TLabel;
-    lbValueDec32: TLabel;
+    edValueDec16_1: TEdit;
+    edValueDec16_2: TEdit;
+    edValueDec32: TEdit;
+    edValueDec8_1: TEdit;
+    edValueDec8_2: TEdit;
+    edValueDec8_3: TEdit;
+    edValueDec8_4: TEdit;
+    edValueFloat: TEdit;
+    edValueHex32: TEdit;
+    lbFloat: TLabel;
     lbValueDec16: TLabel;
+    lbValueDec32: TLabel;
     lbValueDec8: TLabel;
+    lbValueHex32: TLabel;
+    PanelBtn: TPanel;
+    PanelGroup1: TPanel;
+    Panel16: TPanel;
+    Panel8: TPanel;
+    Panel32: TPanel;
+    PanelBits: TPanel;
+    PanelFloat: TPanel;
+    PanelHex32: TPanel;
     procedure chListBitAnyClickCheck(Sender: TObject);
     procedure edValueDecAnyChange(Sender: TObject);
     procedure edValueHex32Change(Sender: TObject);
@@ -42,8 +52,9 @@ type
     { public declarations }
     ValueIs32: boolean;
     CurrentValue: DWORD;
+    EditResult: DWORD;
 
-    function GetResult(Is32: boolean; DefaultValue: DWORD): DWORD;
+    function GetResult(Is32: boolean; DefaultValue: DWORD): boolean;
     procedure UpdateValue(Changer: TControl);
     procedure UpdateValueInBitList(Value: Byte; List: TCheckListBox);
     procedure ChangeValue(NewValue: DWORD; ByteBitCount: byte; ByteNum: byte);
@@ -98,19 +109,26 @@ begin
     end;
 end;
 
-function TfrmBitEdit.GetResult(Is32: boolean; DefaultValue: DWORD): DWORD;
+function TfrmBitEdit.GetResult(Is32: boolean; DefaultValue: DWORD): boolean;
 begin
-  result := 0;
+  Result := false;
   ValueIs32 := Is32;
-  edValueDec32.Visible := ValueIs32;
+  PanelFloat.Visible := ValueIs32;
+  Panel32.Visible := ValueIs32;
   edValueDec16_2.Visible := ValueIs32;
   edValueDec8_3.Visible := ValueIs32;
   edValueDec8_4.Visible := ValueIs32;
+  chListBit8_3.Visible:=ValueIs32;
+  chListBit8_4.Visible:=ValueIs32;
+  CurrentValue := DefaultValue;
+  UpdateValue(nil);
 
-  if ShowModal = mrOK then
+  if ShowModal() = mrOK then
   begin
-
-    //todo: ....
+    if Is32 then
+      EditResult := CurrentValue and $FFFFFFFF else
+      EditResult := CurrentValue and $FFFF;
+    Result := true;
   end;
 end;
 
@@ -143,6 +161,10 @@ begin
       UpdateValueInBitList(CurrentValue shr 16 and $FF, chListBit8_3);
     if Changer <> chListBit8_4 then
       UpdateValueInBitList(CurrentValue shr 24 and $FF, chListBit8_4);
+    if Changer <> edValueFloat then
+      edValueFloat.Text:=FloatToStr(PSingle(@CurrentValue)^);
+      //if ValueIs64 then
+      //  edValueFloat.Text:=FloatToStr(PDouble(@CurrentValue)^) else ...;
   finally
     InProcess := false;
   end;

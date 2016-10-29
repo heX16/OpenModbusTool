@@ -38,6 +38,7 @@ type
     actExit: TAction;
     actCopy: TAction;
     actCopyValue: TAction;
+    actEditExt: TAction;
     actSetX: TAction;
     actSet1: TAction;
     actSet0: TAction;
@@ -57,6 +58,7 @@ type
     edRegAddr: TLabeledEdit;
     listMain: TListView;
     ListViewFilterEdit1: TListViewFilterEdit;
+    mnEditExt: TMenuItem;
     mnSetX: TMenuItem;
     menuMainForm: TMainMenu;
     MenuItem1: TMenuItem;
@@ -87,6 +89,7 @@ type
     procedure actCopyValueExecute(Sender: TObject);
     procedure actDissconectExecute(Sender: TObject);
     procedure actDissconectUpdate(Sender: TObject);
+    procedure actEditExtExecute(Sender: TObject);
     procedure actExitExecute(Sender: TObject);
     procedure actPasteExecute(Sender: TObject);
     procedure actSet0Execute(Sender: TObject);
@@ -140,6 +143,7 @@ implementation
 {$R *.lfm}
 
 uses
+  FormBitEdit,
   FormAbout,
   Clipbrd,
   csvreadwrite;
@@ -348,6 +352,15 @@ begin
       // internal error?
       shapeState.Brush.Color := clMaroon;
     actDissconect.Enabled:=false;
+  end;
+end;
+
+procedure TfrmMain.actEditExtExecute(Sender: TObject);
+begin
+  if listMain.ItemIndex <> -1 then
+  begin
+    if frmBitEdit.GetResult(false, StrToIntDef(listMain.Items[listMain.ItemIndex].SubItems[idxColumnValue], 0)) then
+      threadRead.Send(listMain.Items[listMain.ItemIndex].SubItems[idxColumnReg], IntToStr(frmBitEdit.EditResult));
   end;
 end;
 

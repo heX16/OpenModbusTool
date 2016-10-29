@@ -11,7 +11,7 @@
         <UnitName Value="OpenModBusTool"/>
         <EditorIndex Value="-1"/>
         <CursorPos X="13" Y="28"/>
-        <UsageCount Value="163"/>
+        <UsageCount Value="219"/>
       </Unit0>
       <Unit1>
         <Filename Value="formmain.pas"/>
@@ -20,11 +20,13 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="FormMain"/>
-        <TopLine Value="139"/>
-        <CursorPos Y="161"/>
-        <UsageCount Value="163"/>
-        <Bookmarks Count="1">
-          <Item0 X="24" Y="309" ID="3"/>
+        <IsVisibleTab Value="True"/>
+        <TopLine Value="346"/>
+        <CursorPos X="40" Y="362"/>
+        <UsageCount Value="219"/>
+        <Bookmarks Count="2">
+          <Item0 X="24" Y="313" ID="3"/>
+          <Item1 Y="364" ID="1"/>
         </Bookmarks>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
@@ -38,20 +40,19 @@
         <UnitName Value="FormOptions"/>
         <EditorIndex Value="-1"/>
         <CursorPos X="16"/>
-        <UsageCount Value="132"/>
+        <UsageCount Value="200"/>
       </Unit2>
       <Unit3>
         <Filename Value="threadmodbus.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="ThreadModBus"/>
         <EditorIndex Value="-1"/>
-        <TopLine Value="479"/>
-        <CursorPos Y="500"/>
-        <UsageCount Value="132"/>
-        <Bookmarks Count="3">
+        <TopLine Value="76"/>
+        <CursorPos X="19" Y="94"/>
+        <UsageCount Value="200"/>
+        <Bookmarks Count="2">
           <Item0 X="5" Y="564" ID="5"/>
           <Item1 X="3" Y="329" ID="2"/>
-          <Item2 X="38" Y="452" ID="1"/>
         </Bookmarks>
       </Unit3>
       <Unit4>
@@ -64,7 +65,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="26"/>
         <CursorPos X="3" Y="35"/>
-        <UsageCount Value="92"/>
+        <UsageCount Value="160"/>
       </Unit4>
       <Unit5>
         <Filename Value="formbitedit.pas"/>
@@ -73,11 +74,10 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="formBitEdit"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="1"/>
-        <TopLine Value="57"/>
-        <CursorPos Y="84"/>
-        <UsageCount Value="85"/>
+        <TopLine Value="99"/>
+        <CursorPos X="43" Y="123"/>
+        <UsageCount Value="153"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
       </Unit5>
@@ -87,7 +87,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="135"/>
         <CursorPos Y="147"/>
-        <UsageCount Value="76"/>
+        <UsageCount Value="144"/>
       </Unit6>
     </Units>
     <OtherDefines Count="1">

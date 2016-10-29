@@ -324,10 +324,18 @@ object frmMain: TfrmMain
       Caption = 'actSetX'
       OnExecute = actSetXExecute
     end
+    object actEditExt: TAction
+      Caption = 'Edit'
+      OnExecute = actEditExtExecute
+    end
   end
   object menuMainList: TPopupMenu
     left = 160
     top = 176
+    object mnEditExt: TMenuItem
+      Action = actEditExt
+      Default = True
+    end
     object mnCopy: TMenuItem
       Action = actCopy
     end
