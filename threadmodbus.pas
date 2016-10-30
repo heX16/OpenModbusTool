@@ -68,6 +68,7 @@ type
     ErrorPresent: boolean;
     ErrorLastCode: Byte;
     ErrorCount: integer;
+    ReadMBTime: DWord;
 
     // sync vars
     RegType: TRegReadType;
@@ -170,7 +171,8 @@ procedure TThreadModBus.SyncDrawList;
 var i: integer;
     itm: TListItem;
 begin
-  frmMain.listMain.BeginUpdate;
+  //Note: BeginUpdate make splash screen! (strange - in theory BeginUpdate must remove splash...)
+  //frmMain.listMain.BeginUpdate;
   try
     for i:=0 to High(MBWord) do
     begin
@@ -182,7 +184,7 @@ begin
         itm.SubItems.Add('');//val
         itm.SubItems.Add('');//type
         itm.SubItems.Add('');//name
-        //itm.Caption:=row[0]+'=?';//main text
+        //itm.Caption:=IntToStr(i+RegStart)+'=?';//main text
       end;
       // update reg num
       frmMain.listMain.Items[i].SubItems[idxColumnReg] := IntToStr(i+RegStart);
@@ -214,7 +216,7 @@ begin
         frmMain.listMain.Items[i].SubItems[idxColumnValue] := '-';
       end;}
   finally
-    frmMain.listMain.EndUpdate;
+    //frmMain.listMain.EndUpdate;
   end;
 end;
 
@@ -408,6 +410,7 @@ label
   pauseAgain;
 
 begin
+  ReadMBTime := 50;
   CritWriteQueueWork := TCriticalSection.Create();
   WriteQueue := TModbusItemQueue.Create();
 
@@ -523,7 +526,7 @@ begin
       end;
 
       pauseAgain:
-      if (EventPauseAfterRead.WaitFor(1000)=wrSignaled) and (not Terminated) then
+      if (EventPauseAfterRead.WaitFor(ReadMBTime)=wrSignaled) and (not Terminated) then
       begin
         Synchronize(@SyncUpdateVarsOnChange);
         CheckSize;
