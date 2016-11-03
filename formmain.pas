@@ -488,14 +488,15 @@ begin
     AllowEdit:=false else
     begin
       //todo: edit in all format! - (frmBitEdit, etc)
-      if threadRead.RegFormat <> rfDec then
+      if (threadRead.RegFormat <> rfDec) or (listMain.ViewStyle=vsReport) then
       begin
         AllowEdit:=false;
-        ShowMessage('Edit only in "Dectimal" format, sorry');
-        frmMain.cbRegFormat.ItemIndex:=0;
+        if listMain.ItemIndex <> -1 then
+        begin
+          if frmBitEdit.GetResult(false, StrToIntDef(listMain.Items[listMain.ItemIndex].SubItems[idxColumnValue], 0)) then
+            threadRead.Send(listMain.Items[listMain.ItemIndex].SubItems[idxColumnReg], IntToStr(frmBitEdit.EditResult));
+        end;
       end;
-      if listMain.ViewStyle=vsReport then
-        AllowEdit:=false;
     end;
 end;
 

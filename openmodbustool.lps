@@ -20,11 +20,12 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="FormMain"/>
-        <TopLine Value="503"/>
-        <CursorPos X="3" Y="567"/>
+        <TopLine Value="476"/>
+        <CursorPos X="37" Y="496"/>
         <UsageCount Value="219"/>
-        <Bookmarks Count="1">
+        <Bookmarks Count="2">
           <Item0 X="24" Y="313" ID="3"/>
+          <Item1 Y="499" ID="1"/>
         </Bookmarks>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
@@ -44,15 +45,13 @@
         <Filename Value="threadmodbus.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="ThreadModBus"/>
-        <IsVisibleTab Value="True"/>
-        <EditorIndex Value="1"/>
+        <EditorIndex Value="2"/>
         <TopLine Value="167"/>
         <CursorPos X="5" Y="174"/>
         <UsageCount Value="200"/>
-        <Bookmarks Count="3">
+        <Bookmarks Count="2">
           <Item0 X="5" Y="566" ID="5"/>
           <Item1 X="3" Y="330" ID="2"/>
-          <Item2 X="39" Y="528" ID="1"/>
         </Bookmarks>
         <Loaded Value="True"/>
       </Unit3>
@@ -75,10 +74,13 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="formBitEdit"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="99"/>
-        <CursorPos X="43" Y="123"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="1"/>
+        <TopLine Value="114"/>
+        <CursorPos Y="140"/>
         <UsageCount Value="153"/>
+        <Loaded Value="True"/>
+        <LoadedDesigner Value="True"/>
       </Unit5>
       <Unit6>
         <Filename Value="H:\usr\lib\lazarus\1.6\components\delphimodbus\source\IdModbusClient.pas"/>

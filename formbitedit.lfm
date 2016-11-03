@@ -6,6 +6,7 @@ object frmBitEdit: TfrmBitEdit
   Caption = 'Value editor:'
   ClientHeight = 355
   ClientWidth = 443
+  OnShow = FormShow
   LCLVersion = '1.6.0.4'
   object Panel32: TPanel
     Left = 0
@@ -216,6 +217,7 @@ object frmBitEdit: TfrmBitEdit
         Height = 146
         Top = 0
         Width = 64
+        ExtendedSelect = False
         Items.Strings = (
           '25'
           '26'
@@ -239,6 +241,7 @@ object frmBitEdit: TfrmBitEdit
         Height = 146
         Top = 0
         Width = 64
+        ExtendedSelect = False
         Items.Strings = (
           '17'
           '18'
@@ -262,6 +265,7 @@ object frmBitEdit: TfrmBitEdit
         Height = 146
         Top = 0
         Width = 64
+        ExtendedSelect = False
         Items.Strings = (
           '09'
           '10'
@@ -285,6 +289,7 @@ object frmBitEdit: TfrmBitEdit
         Height = 146
         Top = 0
         Width = 64
+        ExtendedSelect = False
         Items.Strings = (
           '01'
           '02'

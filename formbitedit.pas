@@ -44,6 +44,7 @@ type
     procedure chListBitAnyClickCheck(Sender: TObject);
     procedure edValueDecAnyChange(Sender: TObject);
     procedure edValueHex32Change(Sender: TObject);
+    procedure FormShow(Sender: TObject);
   private
     { private declarations }
     // lock other update process
@@ -51,6 +52,7 @@ type
   public
     { public declarations }
     ValueIs32: boolean;
+    FirstShow: boolean;
     CurrentValue: DWORD;
     EditResult: DWORD;
 
@@ -109,10 +111,22 @@ begin
     end;
 end;
 
+procedure TfrmBitEdit.FormShow(Sender: TObject);
+begin
+  if FirstShow then
+  begin
+    FirstShow := false;
+    if ValueIs32 then
+      FocusControl(edValueDec32) else
+      FocusControl(edValueDec16_1);
+  end;
+end;
+
 function TfrmBitEdit.GetResult(Is32: boolean; DefaultValue: DWORD): boolean;
 begin
   Result := false;
   ValueIs32 := Is32;
+  FirstShow := true;
   PanelFloat.Visible := ValueIs32;
   Panel32.Visible := ValueIs32;
   edValueDec16_2.Visible := ValueIs32;
