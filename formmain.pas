@@ -95,6 +95,7 @@ type
     procedure actSet0Execute(Sender: TObject);
     procedure actSet1Execute(Sender: TObject);
     procedure actSetXExecute(Sender: TObject);
+    procedure cbIPKeyPress(Sender: TObject; var Key: char);
     procedure cbRegFormatChange(Sender: TObject);
     procedure cbRegisterTypeChange(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -432,6 +433,12 @@ begin
   SetToXValue := Trim(InputBox(strEnterValue, strEnterValue, ''));
   if SetToXValue <> '' then
     listMainDoOnSelected(@SetToX);
+end;
+
+procedure TfrmMain.cbIPKeyPress(Sender: TObject; var Key: char);
+begin
+  if Key=#13 then
+    actConnect.Execute();
 end;
 
 procedure TfrmMain.cbRegFormatChange(Sender: TObject);

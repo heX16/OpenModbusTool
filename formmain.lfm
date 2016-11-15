@@ -4,7 +4,7 @@ object frmMain: TfrmMain
   Top = 276
   Width = 880
   Caption = 'OpenModbusTool'
-  ClientHeight = 524
+  ClientHeight = 519
   ClientWidth = 880
   Menu = menuMainForm
   OnDestroy = FormDestroy
@@ -14,7 +14,7 @@ object frmMain: TfrmMain
   Visible = True
   object listMain: TListView
     Left = 0
-    Height = 405
+    Height = 394
     Top = 96
     Width = 880
     Align = alClient
@@ -79,8 +79,8 @@ object frmMain: TfrmMain
   end
   object StatusBar1: TStatusBar
     Left = 0
-    Height = 23
-    Top = 501
+    Height = 29
+    Top = 490
     Width = 880
     Panels = <    
       item
@@ -107,7 +107,7 @@ object frmMain: TfrmMain
     TabOrder = 0
     object edRegAddr: TLabeledEdit
       Left = 64
-      Height = 23
+      Height = 28
       Hint = 'Examples: 0 / 1 / 400001 / 1234 / 101234'
       Top = 40
       Width = 56
@@ -116,10 +116,10 @@ object frmMain: TfrmMain
       EditLabel.AnchorSideRight.Control = edRegAddr
       EditLabel.AnchorSideBottom.Control = edRegAddr
       EditLabel.AnchorSideBottom.Side = asrBottom
-      EditLabel.Left = 41
-      EditLabel.Height = 15
+      EditLabel.Left = 35
+      EditLabel.Height = 20
       EditLabel.Top = 44
-      EditLabel.Width = 20
+      EditLabel.Width = 26
       EditLabel.Caption = 'Reg'
       EditLabel.ParentColor = False
       LabelPosition = lpLeft
@@ -146,7 +146,7 @@ object frmMain: TfrmMain
     end
     object edRegCount: TEdit
       Left = 200
-      Height = 23
+      Height = 28
       Hint = 'register count'
       Top = 40
       Width = 56
@@ -156,37 +156,38 @@ object frmMain: TfrmMain
     end
     object lbRegCount: TLabel
       Left = 160
-      Height = 15
+      Height = 20
       Top = 44
-      Width = 34
+      Width = 40
       Alignment = taRightJustify
       Caption = 'count:'
       ParentColor = False
     end
     object lbAddr: TLabel
       Left = 29
-      Height = 15
+      Height = 20
       Top = 10
-      Width = 29
+      Width = 36
       Alignment = taRightJustify
       Caption = 'Addr:'
       ParentColor = False
     end
     object cbIP: TComboBox
       Left = 64
-      Height = 23
+      Height = 28
       Top = 7
       Width = 168
-      ItemHeight = 15
+      ItemHeight = 20
+      OnKeyPress = cbIPKeyPress
       TabOrder = 0
       Text = '127.0.0.1'
     end
     object cbRegisterType: TComboBox
       Left = 264
-      Height = 23
+      Height = 28
       Top = 40
       Width = 176
-      ItemHeight = 15
+      ItemHeight = 20
       ItemIndex = 3
       Items.Strings = (
         '1x (bool, RO) - Discrete Input'
@@ -201,10 +202,10 @@ object frmMain: TfrmMain
     end
     object cbRegFormat: TComboBox
       Left = 448
-      Height = 23
+      Height = 28
       Top = 40
       Width = 128
-      ItemHeight = 15
+      ItemHeight = 20
       ItemIndex = 0
       Items.Strings = (
         'Dectimal (123)'
@@ -233,7 +234,7 @@ object frmMain: TfrmMain
       ChildSizing.ShrinkVertical = crsScaleChilds
       ChildSizing.Layout = cclLeftToRightThenTopToBottom
       ChildSizing.ControlsPerLine = 1
-      ClientHeight = 40
+      ClientHeight = 35
       ClientWidth = 204
       ItemIndex = 1
       Items.Strings = (
