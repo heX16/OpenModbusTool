@@ -6,8 +6,9 @@ unit FormMain;
 IDE: Lazarus 1.6 (FPC 3.0.0)
 
 Dependency:
-  delphimodbus-1.6.3
-  indy-10.2.0.3
+  synapse (Release 40 2012-04-23) - for Serial Port
+  delphimodbus-1.6.3 - for Modbus TCP
+  indy-10.2.0.3 - for delphimodbus
 }
 
 interface

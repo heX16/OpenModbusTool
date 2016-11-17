@@ -58,13 +58,16 @@ type
     StatusBarMsg: string;
     StatusBarStatus: string;
 
+    ModbusRTU: boolean; // RTU-true, TCP-false
     IdModBusClient: TIdModBusClient;
     Connected: boolean;
     VilidDissconect: boolean;
     AVDetect: boolean;
+
     MBWord: array of word;
     MBBool: array of boolean;
     MBReadErr: array of byte;
+
     ErrorPresent: boolean;
     ErrorLastCode: Byte;
     ErrorCount: integer;
@@ -171,8 +174,10 @@ procedure TThreadModBus.SyncDrawList;
 var i: integer;
     itm: TListItem;
 begin
-  //Note: BeginUpdate make splash screen! (strange - in theory BeginUpdate must remove splash...)
+  //Note: BeginUpdate NOT remove 'splash'.
+  //Note: on vsList BeginUpdate make 'splash'! (strange - in theory BeginUpdate must remove 'splash'...)
   //frmMain.listMain.BeginUpdate;
+
   try
     for i:=0 to High(MBWord) do
     begin
@@ -376,16 +381,25 @@ begin
   // change in handler 'ModBusClientErrorEvent'
   ErrorLastCode := 0;
 
-  case RegType of
-    tRegBoolRO:
-      r:=IdModBusClient.ReadInputBits(Addr, Count, TempBoolArr);
-    tRegBoolRW:
-      r:=IdModBusClient.ReadCoils(Addr, Count, TempBoolArr);
-    tRegWordRO:
-      r:=IdModBusClient.ReadInputRegisters(Addr, Count, TempWordArr);
-    tRegWordRW:
-      r:=IdModBusClient.ReadHoldingRegisters(Addr, Count, TempWordArr);
+  if not ModbusRTU then
+  begin
+    // read Modbus TCP
+    case RegType of
+      tRegBoolRO:
+        r:=IdModBusClient.ReadInputBits(Addr, Count, TempBoolArr);
+      tRegBoolRW:
+        r:=IdModBusClient.ReadCoils(Addr, Count, TempBoolArr);
+      tRegWordRO:
+        r:=IdModBusClient.ReadInputRegisters(Addr, Count, TempWordArr);
+      tRegWordRW:
+        r:=IdModBusClient.ReadHoldingRegisters(Addr, Count, TempWordArr);
+    end;
+  end else
+  begin
+    //todo: read Modbus RTU
   end;
+
+  // move readed data to data array
   case RegType of
     tRegBoolRO, tRegBoolRW: begin
       for i2:=0 to Count-1 do
@@ -414,15 +428,6 @@ begin
   CritWriteQueueWork := TCriticalSection.Create();
   WriteQueue := TModbusItemQueue.Create();
 
-  IdModBusClient := TIdModBusClient.Create;
-  IdModBusClient.AutoConnect:=false;
-  IdModBusClient.Host:=frmMain.cbIP.Text;
-  IdModBusClient.UnitID:=1;
-  IdModBusClient.OnDisconnected:=@TCP_Disconnect;
-  IdModBusClient.OnResponseError:=@ModBusClientErrorEvent;
-  IdModBusClient.ConnectTimeout:=2000;
-  IdModBusClient.ReadTimeout:=1000;
-
   Self.OnTerminate:=@frmMain.threadReadTerminating;
   Self.FreeOnTerminate := true;
 
@@ -431,7 +436,17 @@ begin
   SyncUpdateVars;
   CheckSize;
 
-  try
+  if not ModbusRTU then
+  begin
+    // Modbus TCP
+    IdModBusClient := TIdModBusClient.Create;
+    IdModBusClient.AutoConnect:=false;
+    IdModBusClient.Host:=frmMain.cbIP.Text;
+    IdModBusClient.UnitID:=1;
+    IdModBusClient.OnDisconnected:=@TCP_Disconnect;
+    IdModBusClient.OnResponseError:=@ModBusClientErrorEvent;
+    IdModBusClient.ConnectTimeout:=2000;
+    IdModBusClient.ReadTimeout:=1000;
     try
       IdModBusClient.Connect;
     except
@@ -450,7 +465,13 @@ begin
         exit;
       end;
     end;
+  end else
+  begin
+    // Modbus RTU
+    //todo: WIP...
+  end;
 
+  try
     Connected:=true;
     Synchronize(@SyncEventConnect);
     StatusBarStatus := StatusBarOnline;
@@ -473,9 +494,16 @@ begin
             WriteQueue.PopBack();
             CritWriteQueueWork.Leave;
             // write
-            case itm.RegType of
-              tRegBoolRW: IdModBusClient.WriteCoil(itm.Addr, itm.Value <> 0);
-              tRegWordRW: IdModBusClient.WriteRegister(itm.Addr, itm.Value);
+            if not ModbusRTU then
+            begin
+              case itm.RegType of
+                tRegBoolRW: IdModBusClient.WriteCoil(itm.Addr, itm.Value <> 0);
+                tRegWordRW: IdModBusClient.WriteRegister(itm.Addr, itm.Value);
+              end;
+            end else
+            begin
+              //todo: write RTU
+
             end;
           end;
 
@@ -537,18 +565,21 @@ begin
     end;
     //////////////// end main cycle ////////////////
 
-    IdModBusClient.OnResponseError:=nil;
-    IdModBusClient.OnDisconnected:=nil;
 
     try
-      { if IdModBusClient.Connected then
-      "Connected" make infinity loop!
-      IdIOHandlerStack.pas:
-        function TIdIOHandlerStack.Connected: Boolean;
-        begin
-          ReadFromSource(False, 0, False); <-!!!
-      }
-      IdModBusClient.Disconnect;
+      if not ModbusRTU then
+      begin
+        IdModBusClient.OnResponseError:=nil;
+        IdModBusClient.OnDisconnected:=nil;
+        { if IdModBusClient.Connected then
+        "Connected" make infinity loop!
+        IdIOHandlerStack.pas:
+          function TIdIOHandlerStack.Connected: Boolean;
+          begin
+            ReadFromSource(False, 0, False); <-!!!
+        }
+        IdModBusClient.Disconnect;
+      end;
     except
       // skip any disconnect error
     end;
@@ -561,7 +592,7 @@ begin
     end;
 
     Synchronize(@SyncRemoveFromMainProg);
-    FreeAndNil(IdModBusClient);
+    if not ModbusRTU then FreeAndNil(IdModBusClient);
     FreeAndNil(EventPauseAfterRead);
     FreeAndNil(WriteQueue);
     FreeAndNil(CritWriteQueueWork);
