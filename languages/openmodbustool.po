@@ -1,6 +1,10 @@
 msgid ""
 msgstr "Content-Type: text/plain; charset=UTF-8"
 
+#: formmain.errbigtimediscrepancy
+msgid "Big time discrepancy"
+msgstr ""
+
 #: tfrmabout.caption
 msgctxt "TFRMABOUT.CAPTION"
 msgid "About"
@@ -100,7 +104,7 @@ msgid "Set 1"
 msgstr ""
 
 #: tfrmmain.actsetx.caption
-msgid "actSetX"
+msgid "Set X"
 msgstr ""
 
 #: tfrmmain.btnpause.caption
@@ -181,6 +185,11 @@ msgstr ""
 
 #: tfrmmain.menuitem4.caption
 msgid "-"
+msgstr ""
+
+#: tfrmmain.mnedit1.caption
+msgctxt "TFRMMAIN.MNEDIT1.CAPTION"
+msgid "Edit"
 msgstr ""
 
 #: tfrmmain.rgviewstyle.caption

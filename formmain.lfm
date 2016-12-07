@@ -1,7 +1,7 @@
 object frmMain: TfrmMain
-  Left = 351
+  Left = 433
   Height = 544
-  Top = 276
+  Top = 258
   Width = 880
   Caption = 'OpenModbusTool'
   ClientHeight = 519
@@ -304,30 +304,37 @@ object frmMain: TfrmMain
     object actCopy: TAction
       Caption = 'Copy'
       OnExecute = actCopyExecute
+      OnUpdate = actMassActionUpdate
     end
     object actCopyValue: TAction
       Caption = 'Copy value'
       OnExecute = actCopyValueExecute
+      OnUpdate = actMassActionUpdate
     end
     object actPaste: TAction
       Caption = 'Paste'
       OnExecute = actPasteExecute
+      OnUpdate = actMassActionUpdate
     end
     object actSet0: TAction
       Caption = 'Set 0'
       OnExecute = actSet0Execute
+      OnUpdate = actMassActionUpdate
     end
     object actSet1: TAction
       Caption = 'Set 1'
       OnExecute = actSet1Execute
+      OnUpdate = actMassActionUpdate
     end
     object actSetX: TAction
-      Caption = 'actSetX'
+      Caption = 'Set X'
       OnExecute = actSetXExecute
+      OnUpdate = actMassActionUpdate
     end
     object actEditExt: TAction
       Caption = 'Edit'
       OnExecute = actEditExtExecute
+      OnUpdate = actMassActionUpdate
     end
   end
   object menuMainList: TPopupMenu
@@ -381,6 +388,30 @@ object frmMain: TfrmMain
       end
       object MenuItem5: TMenuItem
         Action = actExit
+      end
+    end
+    object mnEdit1: TMenuItem
+      Caption = 'Edit'
+      object MenuItem8: TMenuItem
+        Action = actEditExt
+      end
+      object MenuItem9: TMenuItem
+        Action = actCopy
+      end
+      object MenuItem10: TMenuItem
+        Action = actCopyValue
+      end
+      object MenuItem11: TMenuItem
+        Action = actPaste
+      end
+      object MenuItem12: TMenuItem
+        Action = actSet0
+      end
+      object MenuItem13: TMenuItem
+        Action = actSet1
+      end
+      object MenuItem14: TMenuItem
+        Action = actSetX
       end
     end
     object MenuItem6: TMenuItem

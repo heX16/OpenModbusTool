@@ -59,6 +59,14 @@ type
     edRegAddr: TLabeledEdit;
     listMain: TListView;
     ListViewFilterEdit1: TListViewFilterEdit;
+    MenuItem10: TMenuItem;
+    MenuItem11: TMenuItem;
+    MenuItem12: TMenuItem;
+    MenuItem13: TMenuItem;
+    MenuItem14: TMenuItem;
+    MenuItem8: TMenuItem;
+    MenuItem9: TMenuItem;
+    mnEdit1: TMenuItem;
     mnEditExt: TMenuItem;
     mnSetX: TMenuItem;
     menuMainForm: TMainMenu;
@@ -87,6 +95,7 @@ type
     procedure actConnectExecute(Sender: TObject);
     procedure actConnectUpdate(Sender: TObject);
     procedure actCopyExecute(Sender: TObject);
+    procedure actMassActionUpdate(Sender: TObject);
     procedure actCopyValueExecute(Sender: TObject);
     procedure actDissconectExecute(Sender: TObject);
     procedure actDissconectUpdate(Sender: TObject);
@@ -323,6 +332,11 @@ begin
   listMainDoOnSelected(@DoCopy);
 end;
 
+procedure TfrmMain.actMassActionUpdate(Sender: TObject);
+begin
+  (Sender as TAction).Enabled := listMain.SelCount > 0;
+end;
+
 procedure TfrmMain.actCopyValueExecute(Sender: TObject);
 begin
   Clipboard.AsText:='';
@@ -548,9 +562,9 @@ begin
     begin
       //todo: WIP!
       Halt(666);
-      MessageDlg('Ussage: ModBusList.exe [--ip=Host] [--list=CSVTextFileUTF8]'+#13+
+      MessageDlg('Ussage: OpenModBusTool.exe [--ip=Host]'+#13+
         #13+
-        'Example: ModBusList.exe 192.168.1.10 list.txt'+#13+
+        'Example: OpenModBusTool.exe --ip=192.168.1.10'+#13+
         #13+
         'constructor  [heX]  2016  www.hex.name',
         mtInformation, [mbClose], 0);

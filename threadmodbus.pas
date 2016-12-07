@@ -115,6 +115,7 @@ resourcestring
 implementation
 
 uses
+  //modbuslib,
   FormMain,
   Graphics,
   ComCtrls, IdStack, {IdException,} IdExceptionCore, Character;
