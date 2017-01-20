@@ -3,7 +3,7 @@
   <ProjectSession>
     <PathDelim Value="\"/>
     <Version Value="9"/>
-    <BuildModes Active="wnd_debug"/>
+    <BuildModes Active="wnd_release"/>
     <Units Count="9">
       <Unit0>
         <Filename Value="openmodbustool.lpr"/>
@@ -23,7 +23,7 @@
         <UnitName Value="FormMain"/>
         <IsVisibleTab Value="True"/>
         <TopLine Value="472"/>
-        <CursorPos X="25" Y="483"/>
+        <CursorPos X="30" Y="484"/>
         <UsageCount Value="219"/>
         <Bookmarks Count="2">
           <Item0 X="24" Y="352" ID="3"/>

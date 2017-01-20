@@ -111,7 +111,7 @@ msgstr "Установить Х"
 
 #: tfrmmain.acttestserverenable.caption
 msgid "Test server"
-msgstr ""
+msgstr "Вкл. тестовый сервер"
 
 #: tfrmmain.btnpause.caption
 msgid "btnPause"
