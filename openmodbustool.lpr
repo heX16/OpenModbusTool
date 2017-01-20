@@ -7,8 +7,8 @@ uses
   cthreads,
   {$ENDIF}{$ENDIF}
   Interfaces, // this includes the LCL widgetset
-  Forms, lazcontrols, IdModbusClient, FormMain, formOptions, ThreadModBus,
-  FormAbout, formBitEdit,
+  Forms, lazcontrols, IdModbusClient, delphimodbuslazarus, FormMain,
+  formOptions, ThreadModBus, FormAbout, formBitEdit,
   { you can add units after this }
   modbuslib,
   DefaultTranslator // - forced translation

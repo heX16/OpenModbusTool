@@ -8,7 +8,7 @@ uses
   Dialogs,
   Classes, SysUtils,
   syncobjs, gdeque,
-  IdModbusClient, ModbusTypes;
+  IdModbusClient, IdGlobal, ModbusTypes;
 
 type
   {
@@ -442,6 +442,8 @@ begin
     // Modbus TCP
     IdModBusClient := TIdModBusClient.Create;
     IdModBusClient.AutoConnect:=false;
+    if (Pos('[', frmMain.cbIP.Text) <> 0) or (Pos('::', frmMain.cbIP.Text) <> 0) then
+      IdModBusClient.IPVersion:=Id_IPv6;
     IdModBusClient.Host:=frmMain.cbIP.Text;
     IdModBusClient.UnitID:=1;
     IdModBusClient.OnDisconnected:=@TCP_Disconnect;

@@ -107,6 +107,10 @@ msgstr ""
 msgid "Set X"
 msgstr ""
 
+#: tfrmmain.acttestserverenable.caption
+msgid "Test server"
+msgstr ""
+
 #: tfrmmain.btnpause.caption
 msgid "btnPause"
 msgstr ""
@@ -183,7 +187,13 @@ msgctxt "TFRMMAIN.MENUITEM1.CAPTION"
 msgid "Connect"
 msgstr ""
 
+#: tfrmmain.menuitem15.caption
+msgctxt "TFRMMAIN.MENUITEM15.CAPTION"
+msgid "-"
+msgstr ""
+
 #: tfrmmain.menuitem4.caption
+msgctxt "tfrmmain.menuitem4.caption"
 msgid "-"
 msgstr ""
 

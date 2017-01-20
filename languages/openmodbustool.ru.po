@@ -109,6 +109,10 @@ msgstr "Установить 0"
 msgid "Set X"
 msgstr "Установить Х"
 
+#: tfrmmain.acttestserverenable.caption
+msgid "Test server"
+msgstr ""
+
 #: tfrmmain.btnpause.caption
 msgid "btnPause"
 msgstr ""
@@ -190,7 +194,13 @@ msgctxt "tfrmmain.menuitem1.caption"
 msgid "Connect"
 msgstr "Соединиться"
 
+#: tfrmmain.menuitem15.caption
+msgctxt "tfrmmain.menuitem15.caption"
+msgid "-"
+msgstr ""
+
 #: tfrmmain.menuitem4.caption
+msgctxt "tfrmmain.menuitem4.caption"
 msgid "-"
 msgstr ""
 

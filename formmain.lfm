@@ -336,6 +336,10 @@ object frmMain: TfrmMain
       OnExecute = actEditExtExecute
       OnUpdate = actMassActionUpdate
     end
+    object actTestServerEnable: TAction
+      Caption = 'Test server'
+      OnExecute = actTestServerEnableExecute
+    end
   end
   object menuMainList: TPopupMenu
     left = 160
@@ -383,6 +387,13 @@ object frmMain: TfrmMain
       object MenuItem7: TMenuItem
         Action = actOptions
       end
+      object MenuItem15: TMenuItem
+        Caption = '-'
+      end
+      object mnStartServer: TMenuItem
+        Action = actTestServerEnable
+        OnClick = mnStartServerClick
+      end
       object MenuItem4: TMenuItem
         Caption = '-'
       end
@@ -417,5 +428,28 @@ object frmMain: TfrmMain
     object MenuItem6: TMenuItem
       Action = actAbout
     end
+  end
+  object IdModBusServerTest: TIdModBusServer
+    Bindings = <    
+      item
+        IP = '0.0.0.0'
+        Port = 502
+      end    
+      item
+        IP = '::'
+        IPVersion = Id_IPv6
+        Port = 502
+      end>
+    OnConnect = IdModBusServerTestConnect
+    OnDisconnect = IdModBusServerTestDisconnect
+    OnInvalidFunction = IdModBusServerTestInvalidFunction
+    OnReadCoils = IdModBusServerTestReadCoils
+    OnReadHoldingRegisters = IdModBusServerTestReadHoldingRegisters
+    OnReadInputBits = IdModBusServerTestReadInputBits
+    OnReadInputRegisters = IdModBusServerTestReadInputRegisters
+    OnWriteCoils = IdModBusServerTestWriteCoils
+    OnWriteRegisters = IdModBusServerTestWriteRegisters
+    left = 352
+    top = 240
   end
 end

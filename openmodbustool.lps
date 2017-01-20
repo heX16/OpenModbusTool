@@ -3,13 +3,13 @@
   <ProjectSession>
     <PathDelim Value="\"/>
     <Version Value="9"/>
-    <BuildModes Active="wnd_release"/>
+    <BuildModes Active="wnd_debug"/>
     <Units Count="9">
       <Unit0>
         <Filename Value="openmodbustool.lpr"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="OpenModBusTool"/>
-        <EditorIndex Value="2"/>
+        <EditorIndex Value="6"/>
         <CursorPos Y="14"/>
         <UsageCount Value="219"/>
         <Loaded Value="True"/>
@@ -21,12 +21,13 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="FormMain"/>
-        <TopLine Value="329"/>
-        <CursorPos X="16" Y="337"/>
+        <IsVisibleTab Value="True"/>
+        <TopLine Value="472"/>
+        <CursorPos X="25" Y="483"/>
         <UsageCount Value="219"/>
         <Bookmarks Count="2">
-          <Item0 X="24" Y="324" ID="3"/>
-          <Item1 Y="521" ID="1"/>
+          <Item0 X="24" Y="352" ID="3"/>
+          <Item1 Y="555" ID="1"/>
         </Bookmarks>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
@@ -38,8 +39,7 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="FormOptions"/>
-        <IsVisibleTab Value="True"/>
-        <EditorIndex Value="1"/>
+        <EditorIndex Value="4"/>
         <CursorPos X="16"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
@@ -49,12 +49,12 @@
         <Filename Value="threadmodbus.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="ThreadModBus"/>
-        <EditorIndex Value="4"/>
-        <TopLine Value="97"/>
-        <CursorPos X="5" Y="118"/>
+        <EditorIndex Value="3"/>
+        <TopLine Value="429"/>
+        <CursorPos X="5" Y="438"/>
         <UsageCount Value="200"/>
         <Bookmarks Count="2">
-          <Item0 X="5" Y="598" ID="5"/>
+          <Item0 X="5" Y="600" ID="5"/>
           <Item1 X="3" Y="336" ID="2"/>
         </Bookmarks>
         <Loaded Value="True"/>
@@ -66,10 +66,11 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="FormAbout"/>
-        <EditorIndex Value="-1"/>
+        <EditorIndex Value="5"/>
         <TopLine Value="26"/>
         <CursorPos X="3" Y="35"/>
-        <UsageCount Value="167"/>
+        <UsageCount Value="168"/>
+        <Loaded Value="True"/>
       </Unit4>
       <Unit5>
         <Filename Value="formbitedit.pas"/>
@@ -78,10 +79,10 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="formBitEdit"/>
-        <EditorIndex Value="3"/>
+        <EditorIndex Value="7"/>
         <TopLine Value="120"/>
         <CursorPos Y="140"/>
-        <UsageCount Value="160"/>
+        <UsageCount Value="161"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
       </Unit5>
@@ -91,21 +92,21 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="135"/>
         <CursorPos Y="147"/>
-        <UsageCount Value="151"/>
+        <UsageCount Value="152"/>
       </Unit6>
       <Unit7>
-        <Filename Value="modbuslib.pas"/>
-        <EditorIndex Value="5"/>
-        <TopLine Value="79"/>
-        <CursorPos X="17" Y="173"/>
+        <Filename Value="D:\Programs\lazarus\components\indylaz\IdStack.pas"/>
+        <EditorIndex Value="2"/>
+        <TopLine Value="627"/>
+        <CursorPos Y="644"/>
         <UsageCount Value="10"/>
         <Loaded Value="True"/>
       </Unit7>
       <Unit8>
-        <Filename Value="D:\Programs\lazarus\components\delphimodbus\source\ModbusUtils.pas"/>
-        <EditorIndex Value="6"/>
-        <TopLine Value="178"/>
-        <CursorPos X="51" Y="197"/>
+        <Filename Value="D:\Programs\lazarus\components\indylaz\IdCustomTCPServer.pas"/>
+        <EditorIndex Value="1"/>
+        <TopLine Value="874"/>
+        <CursorPos Y="898"/>
         <UsageCount Value="10"/>
         <Loaded Value="True"/>
       </Unit8>

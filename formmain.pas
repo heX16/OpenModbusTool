@@ -16,11 +16,10 @@ interface
 uses
   //DefaultTranslator, // - forced translation
   //LCLTranslator,
-  Classes, SysUtils, FileUtil, ListViewFilterEdit,
-  Forms, Controls, Graphics, Dialogs, ExtCtrls, ComCtrls,
-  IdComponent, IdTCPClient, StdCtrls,
-  ActnList, Menus, IniPropStorage,
-  ThreadModBus;
+  Classes, SysUtils, FileUtil, ListViewFilterEdit, Forms, Controls, Graphics,
+  Dialogs, ExtCtrls, ComCtrls, IdComponent, IdTCPClient, StdCtrls, ActnList,
+  Menus, IniPropStorage, ThreadModBus, IdModBusServer, ModbusTypes,
+  IdModBusClient, IdContext, IdCustomTCPServer;
 
 {
 0x (bit, RW) - Discrete Output Coils
@@ -40,6 +39,7 @@ type
     actCopy: TAction;
     actCopyValue: TAction;
     actEditExt: TAction;
+    actTestServerEnable: TAction;
     actSetX: TAction;
     actSet1: TAction;
     actSet0: TAction;
@@ -53,6 +53,7 @@ type
     cbRegisterType: TComboBox;
     cbRegFormat: TComboBox;
     edRegCount: TEdit;
+    IdModBusServerTest: TIdModBusServer;
     IniPropStorage1: TIniPropStorage;
     lbRegCount: TLabel;
     lbAddr: TLabel;
@@ -64,6 +65,8 @@ type
     MenuItem12: TMenuItem;
     MenuItem13: TMenuItem;
     MenuItem14: TMenuItem;
+    MenuItem15: TMenuItem;
+    mnStartServer: TMenuItem;
     MenuItem8: TMenuItem;
     MenuItem9: TMenuItem;
     mnEdit1: TMenuItem;
@@ -105,14 +108,39 @@ type
     procedure actSet0Execute(Sender: TObject);
     procedure actSet1Execute(Sender: TObject);
     procedure actSetXExecute(Sender: TObject);
+    procedure actTestServerEnableExecute(Sender: TObject);
     procedure cbIPKeyPress(Sender: TObject; var Key: char);
     procedure cbRegFormatChange(Sender: TObject);
     procedure cbRegisterTypeChange(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
+    procedure IdModBusServerTestConnect(AContext: TIdContext);
+    procedure IdModBusServerTestDisconnect(AContext: TIdContext);
+    procedure IdModBusServerTestInvalidFunction(const Sender: TIdContext;
+      const FunctionCode: TModBusFunction;
+      const RequestBuffer: TModBusRequestBuffer);
+    procedure IdModBusServerTestReadCoils(const Sender: TIdContext; const RegNr,
+      Count: Integer; var Data: TModCoilData;
+      const RequestBuffer: TModBusRequestBuffer; var ErrorCode: Byte);
+    procedure IdModBusServerTestReadHoldingRegisters(const Sender: TIdContext;
+      const RegNr, Count: Integer; var Data: TModRegisterData;
+      const RequestBuffer: TModBusRequestBuffer; var ErrorCode: Byte);
+    procedure IdModBusServerTestReadInputBits(const Sender: TIdContext;
+      const RegNr, Count: Integer; var Data: TModCoilData;
+      const RequestBuffer: TModBusRequestBuffer; var ErrorCode: Byte);
+    procedure IdModBusServerTestReadInputRegisters(const Sender: TIdContext;
+      const RegNr, Count: Integer; var Data: TModRegisterData;
+      const RequestBuffer: TModBusRequestBuffer; var ErrorCode: Byte);
+    procedure IdModBusServerTestWriteCoils(const Sender: TIdContext; const RegNr,
+      Count: Integer; const Data: TModCoilData;
+      const RequestBuffer: TModBusRequestBuffer; var ErrorCode: Byte);
+    procedure IdModBusServerTestWriteRegisters(const Sender: TIdContext;
+      const RegNr, Count: Integer; const Data: TModRegisterData;
+      const RequestBuffer: TModBusRequestBuffer; var ErrorCode: Byte);
     procedure listMainEdited(Sender: TObject; Item: TListItem;
       var AValue: string);
     procedure listMainEditing(Sender: TObject; Item: TListItem;
       var AllowEdit: Boolean);
+    procedure mnStartServerClick(Sender: TObject);
     procedure rgViewStyleClick(Sender: TObject);
     procedure TimerInitTimer(Sender: TObject);
     procedure treeMainDblClick(Sender: TObject);
@@ -450,6 +478,12 @@ begin
     listMainDoOnSelected(@SetToX);
 end;
 
+procedure TfrmMain.actTestServerEnableExecute(Sender: TObject);
+begin
+  actTestServerEnable.Checked:=not actTestServerEnable.Checked;
+  IdModBusServerTest.Active:=actTestServerEnable.Checked;
+end;
+
 procedure TfrmMain.cbIPKeyPress(Sender: TObject; var Key: char);
 begin
   if Key=#13 then
@@ -520,6 +554,11 @@ begin
         end;
       end;
     end;
+end;
+
+procedure TfrmMain.mnStartServerClick(Sender: TObject);
+begin
+  IdModBusServerTest.Active:=true;
 end;
 
 procedure TfrmMain.rgViewStyleClick(Sender: TObject);
@@ -596,6 +635,79 @@ begin
   {Note: this operation thread-safe:
     this action placed in main thread - other access to this pointer is imposible.
   }
+end;
+
+
+
+
+//////////////// SERVER (TEST!) //////////////////////
+
+procedure TfrmMain.IdModBusServerTestConnect(AContext: TIdContext);
+begin
+  //
+end;
+
+procedure TfrmMain.IdModBusServerTestDisconnect(AContext: TIdContext);
+begin
+  //
+end;
+
+procedure TfrmMain.IdModBusServerTestInvalidFunction(const Sender: TIdContext;
+  const FunctionCode: TModBusFunction; const RequestBuffer: TModBusRequestBuffer
+  );
+begin
+  //
+end;
+
+procedure TfrmMain.IdModBusServerTestReadCoils(const Sender: TIdContext;
+  const RegNr, Count: Integer; var Data: TModCoilData;
+  const RequestBuffer: TModBusRequestBuffer; var ErrorCode: Byte);
+var i: integer;
+begin
+  for i:=0 to Count-1 do
+    Data[i]:=false;
+end;
+
+procedure TfrmMain.IdModBusServerTestReadInputBits(const Sender: TIdContext;
+  const RegNr, Count: Integer; var Data: TModCoilData;
+  const RequestBuffer: TModBusRequestBuffer; var ErrorCode: Byte);
+var i: integer;
+begin
+  for i:=0 to Count-1 do
+    Data[i]:=false;
+end;
+
+procedure TfrmMain.IdModBusServerTestReadHoldingRegisters(
+  const Sender: TIdContext; const RegNr, Count: Integer;
+  var Data: TModRegisterData; const RequestBuffer: TModBusRequestBuffer;
+  var ErrorCode: Byte);
+var i: integer;
+begin
+  for i:=0 to Count-1 do
+    Data[i]:=i;
+end;
+
+procedure TfrmMain.IdModBusServerTestReadInputRegisters(const Sender: TIdContext;
+  const RegNr, Count: Integer; var Data: TModRegisterData;
+  const RequestBuffer: TModBusRequestBuffer; var ErrorCode: Byte);
+var i: integer;
+begin
+  for i:=0 to Count-1 do
+    Data[i]:=i;
+end;
+
+procedure TfrmMain.IdModBusServerTestWriteCoils(const Sender: TIdContext;
+  const RegNr, Count: Integer; const Data: TModCoilData;
+  const RequestBuffer: TModBusRequestBuffer; var ErrorCode: Byte);
+begin
+  ErrorCode:=1;
+end;
+
+procedure TfrmMain.IdModBusServerTestWriteRegisters(const Sender: TIdContext;
+  const RegNr, Count: Integer; const Data: TModRegisterData;
+  const RequestBuffer: TModBusRequestBuffer; var ErrorCode: Byte);
+begin
+  ErrorCode:=1;
 end;
 
 end.
