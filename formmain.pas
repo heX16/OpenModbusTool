@@ -182,6 +182,7 @@ implementation
 {$R *.lfm}
 
 uses
+  modbuslib,//<-TEMP!
   FormBitEdit,
   FormAbout,
   Clipbrd,

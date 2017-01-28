@@ -6,8 +6,7 @@ Feature: ModbusTCP master, ModbusTCP slave test server, IPv6 support, read and w
 
 Download last version: https://bitbucket.org/heXor/openmodbustool/downloads
 
+Screenshots and documentation: https://bitbucket.org/heXor/openmodbustool/wiki/Home
+
 Main reposytory source code: https://bitbucket.org/heXor/OpenModbusTool
-
-Screenshots and documentation: https://github.com/heX16/OpenModbusTool/wiki
-
 

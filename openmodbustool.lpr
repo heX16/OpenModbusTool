@@ -10,7 +10,7 @@ uses
   Forms, lazcontrols, IdModbusClient, delphimodbuslazarus, FormMain,
   formOptions, ThreadModBus, FormAbout, formBitEdit,
   { you can add units after this }
-  modbuslib,
+  //modbuslib,//todo: WIP!
   DefaultTranslator // - forced translation
   ;
 

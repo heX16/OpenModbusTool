@@ -14,7 +14,7 @@ object frmMain: TfrmMain
   Visible = True
   object listMain: TListView
     Left = 0
-    Height = 394
+    Height = 395
     Top = 96
     Width = 880
     Align = alClient
@@ -79,8 +79,8 @@ object frmMain: TfrmMain
   end
   object StatusBar1: TStatusBar
     Left = 0
-    Height = 29
-    Top = 490
+    Height = 28
+    Top = 491
     Width = 880
     Panels = <    
       item

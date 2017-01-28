@@ -3,14 +3,14 @@
   <ProjectSession>
     <PathDelim Value="\"/>
     <Version Value="9"/>
-    <BuildModes Active="wnd_release"/>
+    <BuildModes Active="wnd_debug"/>
     <Units Count="9">
       <Unit0>
         <Filename Value="openmodbustool.lpr"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="OpenModBusTool"/>
-        <EditorIndex Value="6"/>
-        <CursorPos Y="14"/>
+        <EditorIndex Value="4"/>
+        <CursorPos X="23" Y="13"/>
         <UsageCount Value="219"/>
         <Loaded Value="True"/>
       </Unit0>
@@ -21,13 +21,11 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="FormMain"/>
-        <IsVisibleTab Value="True"/>
-        <TopLine Value="472"/>
-        <CursorPos X="30" Y="484"/>
+        <TopLine Value="173"/>
+        <CursorPos X="3" Y="185"/>
         <UsageCount Value="219"/>
-        <Bookmarks Count="2">
-          <Item0 X="24" Y="352" ID="3"/>
-          <Item1 Y="555" ID="1"/>
+        <Bookmarks Count="1">
+          <Item0 X="24" Y="353" ID="3"/>
         </Bookmarks>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
@@ -39,7 +37,7 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="FormOptions"/>
-        <EditorIndex Value="4"/>
+        <EditorIndex Value="2"/>
         <CursorPos X="16"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
@@ -49,13 +47,13 @@
         <Filename Value="threadmodbus.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="ThreadModBus"/>
-        <EditorIndex Value="3"/>
-        <TopLine Value="429"/>
-        <CursorPos X="5" Y="438"/>
+        <EditorIndex Value="1"/>
+        <TopLine Value="98"/>
+        <CursorPos Y="118"/>
         <UsageCount Value="200"/>
         <Bookmarks Count="2">
-          <Item0 X="5" Y="600" ID="5"/>
-          <Item1 X="3" Y="336" ID="2"/>
+          <Item0 X="5" Y="599" ID="5"/>
+          <Item1 X="3" Y="335" ID="2"/>
         </Bookmarks>
         <Loaded Value="True"/>
       </Unit3>
@@ -66,10 +64,10 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="FormAbout"/>
-        <EditorIndex Value="5"/>
+        <EditorIndex Value="3"/>
         <TopLine Value="26"/>
         <CursorPos X="3" Y="35"/>
-        <UsageCount Value="168"/>
+        <UsageCount Value="196"/>
         <Loaded Value="True"/>
       </Unit4>
       <Unit5>
@@ -82,7 +80,7 @@
         <EditorIndex Value="7"/>
         <TopLine Value="120"/>
         <CursorPos Y="140"/>
-        <UsageCount Value="161"/>
+        <UsageCount Value="189"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
       </Unit5>
@@ -92,22 +90,26 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="135"/>
         <CursorPos Y="147"/>
-        <UsageCount Value="152"/>
+        <UsageCount Value="180"/>
       </Unit6>
       <Unit7>
-        <Filename Value="D:\Programs\lazarus\components\indylaz\IdStack.pas"/>
-        <EditorIndex Value="2"/>
-        <TopLine Value="627"/>
-        <CursorPos Y="644"/>
-        <UsageCount Value="10"/>
+        <Filename Value="modbuslib.pas"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="5"/>
+        <CursorPos X="12" Y="35"/>
+        <FoldState Value=" T6lP0Y*"/>
+        <UsageCount Value="22"/>
+        <Bookmarks Count="1">
+          <Item0 X="3" Y="282" ID="1"/>
+        </Bookmarks>
         <Loaded Value="True"/>
       </Unit7>
       <Unit8>
-        <Filename Value="D:\Programs\lazarus\components\indylaz\IdCustomTCPServer.pas"/>
-        <EditorIndex Value="1"/>
-        <TopLine Value="874"/>
-        <CursorPos Y="898"/>
-        <UsageCount Value="10"/>
+        <Filename Value="D:\Programs\lazarus\components\delphimodbus\source\ModbusUtils.pas"/>
+        <EditorIndex Value="6"/>
+        <TopLine Value="174"/>
+        <CursorPos X="5" Y="214"/>
+        <UsageCount Value="21"/>
         <Loaded Value="True"/>
       </Unit8>
     </Units>
