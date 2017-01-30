@@ -1,5 +1,7 @@
 unit modbuslib;
 
+//SPEC: Use specification v1.1b. http://www.modbus.org/docs/Modbus_Application_Protocol_V1_1b.pdf
+
 interface
 
 // Define constants for the ModBus functions
@@ -58,13 +60,14 @@ type
   // Requests: ////////////////
 
   // Func: 01, 02, 03, 04
-  TModBusSendFuncRead = packed record
+  //SPEC: PDU - Protocol Data Unit (see "4.1" in specification v1.1b)
+  TModBusReqPDU_Read = packed record
     Count: Word; // The total number of coils/registers requested
     CRC: Word;
   end;
 
   // Func: 05, 06
-  TModBusSendFuncSingleWrite = packed record
+  TModBusReqPDU_SingleWrite = packed record
     // Write Single Coil (FC=05): The status to write ( FF00 = ON,  0000 = OFF )
     // Write Single Reg. (FC=06): The value to write
     Value: Word;
@@ -72,7 +75,7 @@ type
   end;
 
   // Func: 15 (0x0F), 16 (0x10)
-  TModBusSendFuncMultipleWrite = packed record
+  TModBusReqPDU_MultipleWrite = packed record
     CountReg: Word;
     CountByte: Byte;
     case byte of
@@ -81,22 +84,21 @@ type
     //at last: CRC: Word;
   end;
 
-  TModBusSendBuffer = packed record
-    //Header: TModBusHeaderTCP; // TCP "Payload"
+  TModBusReqPDU = packed record
     UnitID: Byte; // The Slave Address
     FunctionCode: TModBusFunction; // The Function Code
     RegAddress: Word; // The Data Address of the coil/register
     // Payload:
     case byte of
-    0: (Read: TModBusSendFuncRead);
-    1: (SingleWrite: TModBusSendFuncSingleWrite);
-    2: (MultipleWrite: TModBusSendFuncMultipleWrite);
+    0: (Read: TModBusReqPDU_Read);
+    1: (SingleWrite: TModBusReqPDU_SingleWrite);
+    2: (MultipleWrite: TModBusReqPDU_MultipleWrite);
   end;
 
   // Responses: ////////////////
 
   // Func: 01, 02, 03, 04
-  TModBusRecvFuncRead = packed record
+  TModBusRspPDU_Read = packed record
     CountByte: Byte; // The number of data bytes to follow
     case byte of
     0: (ValuesByte: TModBusData);
@@ -105,7 +107,7 @@ type
   end;
 
   // Func: 05, 06
-  TModBusRecvFuncSingleWrite = packed record
+  TModBusRspPDU_SingleWrite = packed record
     RegAddress: Word; // The Data Address of the coil/register
     // Write Single Coil (FC=05): The status to write ( FF00 = ON,  0000 = OFF )
     // Write Single Reg. (FC=06): The value to write
@@ -114,24 +116,40 @@ type
   end;
 
   // Func: 15 (0x0F), 16 (0x10)
-  TModBusRecvFuncMultipleWrite = packed record
+  TModBusRspPDU_MultipleWrite = packed record
     RegAddress: Word; // The Data Address of the coil/register
     WriteCount: Word; // The number of coils/registers to written
     CRC: Word;
   end;
 
-  TModBusRecvBuffer = packed record
+  // Exception code
+  //SPEC: MODBUS Exception Code Defined in table "MODBUS Exception Codes" (see section 7).
+  TModBusRspPDU_MultipleWrite = packed record
+    ExcCode: Word; //
+    CRC: Word;
+  end;
+
+  // Response PDU
+  TModBusRspPDU = packed record
     //Header: TModBusHeaderTCP; // TCP addon
     UnitID: Byte; // The Slave Address
     FunctionCode: TModBusFunction; // The Function Response Code
     // Payload:
     case byte of
-    0: (Read: TModBusRecvFuncRead);
-    1: (SingleWrite: TModBusRecvFuncSingleWrite);
-    2: (MultipleWrite: TModBusRecvFuncMultipleWrite);
+    0: (Read: TModBusRspPDU_Read);
+    1: (SingleWrite: TModBusRspPDU_SingleWrite);
+    2: (MultipleWrite: TModBusRspPDU_MultipleWrite);
   end;
 
+(*
+TCP:
+TModBusHeaderTCP
+TModBusSendBuffer
 
+RTU:
+TModBusHeaderTCP
+CRC
+*)
 
 
 
@@ -143,7 +161,7 @@ type
 
   // object for build modbus packet
   TModbusBuilder = object
-    s: TModBusSendBuffer;
+    s: TModBusReqPDU;
     FBaseRegister: shortint;
     FLastTransactionID: word;
     RawBuffer: array of byte;
@@ -168,7 +186,7 @@ type
   { TModbusParser }
 
   TModbusParser = object
-    r: TModBusRecvBuffer;
+    r: TModBusRspPDU;
     function GetFunc(): Byte;
     function GetErrorCode(): Byte;
 
@@ -190,8 +208,7 @@ end;
 
 function Swap16(DataToSwap: Word): Word;
 begin
-  //todo: optimize!
-  Result := (DataToSwap div 256) + ((DataToSwap mod 256)*256);
+  Result := ((DataToSwap shr 8) and $00FF) or ((DataToSwap shl 8) and $FF00);
 end;
 
 function CalcCRC16(Buffer: PByteArray; Len: Word): Word;
@@ -273,6 +290,7 @@ begin
   for i:=0 to Count-1 do
     RegisterData[i] := GetBit(r.Read.ValuesByte[i div 8], i mod 8);
 
+  //todo: CRC! WIP!
   // get crc from packet
   CRCpacket := r.Read.ValuesByte[r.Read.CountByte + 1] shl 8;
   CRCpacket := CRCpacket or r.Read.ValuesByte[r.Read.CountByte + 2];
@@ -303,6 +321,8 @@ begin
   // compare crc
   Result := CRC = CRCpacket;
 end;
+
+////////////////////////////////////////////////////////////////////////////////
 
 function TModbusBuilder.TCPGetNewTransactionID: word;
 begin
@@ -336,31 +356,31 @@ procedure TModbusBuilder.ReadRegistersCommon(UnitID: byte; Func: byte;
   RegNo: Word; Count: Word);
 begin
   s.FunctionCode:=Func;
-  s.RegAddress:=RegNo;
+  s.RegAddress:=NtoBE(RegNo);
   s.UnitID:=UnitID;
-  s.Read.Count:=Count;
-  s.Read.CRC:=CalcCRC16(@s, 6);
+  s.Read.Count:=NtoBE(Count);
+  s.Read.CRC:=NtoBE(CalcCRC16(@s, 6));
 end;
 
 procedure TModbusBuilder.WriteCoil(UnitID: byte; RegNo: Word; Value: Boolean);
 begin
   s.FunctionCode:=mbfWriteCoil;
-  s.RegAddress:=RegNo;
+  s.RegAddress:=NtoBE(RegNo);
   s.UnitID:=UnitID;
   if Value=true then
-    s.SingleWrite.Value:=$FF00 else
-    s.SingleWrite.Value:=$0000;
-  s.SingleWrite.CRC:=CalcCRC16(@s, 6);
+    s.SingleWrite.Value:=NtoBE($FF00) else //todo: remove NtoBE???
+    s.SingleWrite.Value:=NtoBE($0000);
+  s.SingleWrite.CRC:=NtoBE(CalcCRC16(@s, 6));
 end;
 
 procedure TModbusBuilder.WriteHoldingRegister(UnitID: byte; RegNo: Word;
   Value: Word);
 begin
   s.FunctionCode:=mbfWriteReg;
-  s.RegAddress:=RegNo;
+  s.RegAddress:=NtoBE(RegNo);
   s.UnitID:=UnitID;
-  s.SingleWrite.Value:=Value;
-  s.SingleWrite.CRC:=CalcCRC16(@s, 6);
+  s.SingleWrite.Value:=NtoBE(Value);
+  s.SingleWrite.CRC:=NtoBE(CalcCRC16(@s, 6));
 end;
 
 procedure TModbusBuilder.WriteCoils(UnitID: byte; RegNo: Word; Count: Word;
@@ -370,9 +390,9 @@ var
   CRC: word;
 begin
   s.FunctionCode:=mbfWriteCoils;
-  s.RegAddress:=RegNo;
+  s.RegAddress:=NtoBE(RegNo);
   s.UnitID:=UnitID;
-  s.MultipleWrite.CountReg:=Count;
+  s.MultipleWrite.CountReg:=NtoBE(Count);
   s.MultipleWrite.CountByte:=Count div 8; // The number of data bytes to follow (Coils <count> / 8 bits per byte)
   for i:=0 to Count-1 do
     PutBit(s.MultipleWrite.ValuesByte[i div 8], i mod 8, RegisterData[i]);
@@ -388,12 +408,12 @@ var
   CRC: word;
 begin
   s.FunctionCode:=mbfWriteRegs;
-  s.RegAddress:=RegNo;
+  s.RegAddress:=NtoBE(RegNo);
   s.UnitID:=UnitID;
-  s.MultipleWrite.CountReg:=Count;
+  s.MultipleWrite.CountReg:=NtoBE(Count);
   s.MultipleWrite.CountByte:=Count * 2; // The number of data bytes to follow (registers <count> x 2 bytes each)
   for i:=0 to Count-1 do
-    s.MultipleWrite.ValuesWord[i] := RegisterData[i];
+    s.MultipleWrite.ValuesWord[i] := NtoBE(RegisterData[i]);
   CRC := CalcCRC16(@s, s.MultipleWrite.CountByte + 7);
   s.MultipleWrite.ValuesByte[s.MultipleWrite.CountByte + 1] := Hi(CRC);
   s.MultipleWrite.ValuesByte[s.MultipleWrite.CountByte + 2] := Lo(CRC);
