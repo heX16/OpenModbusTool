@@ -37,7 +37,9 @@ const
   mbTCPPort = 502;
   mbMaxRegLen = 125;
   mbMaxCoils = 2000;
-  mbMaxDataLen = (mbMaxRegLen * 2) + 2; // (add 2 byte for CRC)
+  mbMaxDataLen = mbMaxRegLen * 2;
+  mbMaxPDULen = 253;
+  mbMaxRTUADULen = mbMaxPDULen + 1 + 2; // add "Server address" (1 byte) + CRC (2 bytes)
 
 type
   TByteArray = array [0..65535] of byte;
@@ -84,15 +86,20 @@ type
     //at last: CRC: Word;
   end;
 
-  TModBusReqPDU = packed record
-    UnitID: Byte; // The Slave Address
-    FunctionCode: TModBusFunction; // The Function Code
-    RegAddress: Word; // The Data Address of the coil/register
-    // Payload:
+  //SPEC: ADU - application data unit (see "4.1" in specification v1.1b)
+  TModBusReqADU = packed record
     case byte of
-    0: (Read: TModBusReqPDU_Read);
-    1: (SingleWrite: TModBusReqPDU_SingleWrite);
-    2: (MultipleWrite: TModBusReqPDU_MultipleWrite);
+    0: (RawBytes: array [0..mbMaxRTUADULen] of byte);
+    1: (
+       UnitID: Byte; // The Slave Address
+       FunctionCode: TModBusFunction; // The Function Code
+       RegAddress: Word; // The Data Address of the coil/register
+       // Payload:
+       case byte of
+       0: (Read: TModBusReqPDU_Read);
+       1: (SingleWrite: TModBusReqPDU_SingleWrite);
+       2: (MultipleWrite: TModBusReqPDU_MultipleWrite);
+       );
   end;
 
   // Responses: ////////////////
@@ -124,7 +131,7 @@ type
 
   // Exception code
   //SPEC: MODBUS Exception Code Defined in table "MODBUS Exception Codes" (see section 7).
-  TModBusRspPDU_MultipleWrite = packed record
+  TModBusRspPDU_Exception = packed record
     ExcCode: Word; //
     CRC: Word;
   end;
@@ -160,12 +167,17 @@ CRC
 
 
   // object for build modbus packet
+
+  { TModbusBuilder }
+
   TModbusBuilder = object
-    s: TModBusReqPDU;
+    s: TModBusReqADU;
     FBaseRegister: shortint;
     FLastTransactionID: word;
     RawBuffer: array of byte;
     function TCPGetNewTransactionID: word;
+
+    procedure AttachCRC(Len: Byte);
 
     procedure ReadRegistersCommon(UnitID: byte; Func: byte; RegNo: Word; Count: Word);
 
@@ -189,6 +201,8 @@ CRC
     r: TModBusRspPDU;
     function GetFunc(): Byte;
     function GetErrorCode(): Byte;
+    function GetCRC(): Word;
+    function CheckCRC(): boolean;
 
     function ReadCoils(var UnitID: byte; var Count: Word; var RegisterData: array of Boolean): boolean;
     function ReadRegisters(var UnitID: byte; var Count: Word; var RegisterData: array of Word): boolean;
@@ -277,6 +291,16 @@ begin
   //todo: WIP!!!!
 end;
 
+function TModbusParser.GetCRC: Word;
+begin
+
+end;
+
+function TModbusParser.CheckCRC: boolean;
+begin
+
+end;
+
 function TModbusParser.ReadCoils(var UnitID: byte; var Count: Word;
   var RegisterData: array of Boolean): boolean;
 var
@@ -329,6 +353,14 @@ begin
   //todo: push/pop { $OverflowChecks-}
   Inc(FLastTransactionID);
   Result := FLastTransactionID;
+end;
+
+procedure TModbusBuilder.AttachCRC(Len: Byte);
+var CRC: Word;
+begin
+  CRC:=CalcCRC16(@s.RawBytes[0], Len);
+  s.RawBytes[Len + 1] := Hi(CRC);
+  s.RawBytes[Len + 2] := Lo(CRC);
 end;
 
 procedure TModbusBuilder.ReadCoils(UnitID: byte; RegNo: Word; Count: Word);
