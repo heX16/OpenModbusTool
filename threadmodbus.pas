@@ -115,6 +115,8 @@ resourcestring
 implementation
 
 uses
+  RegExpr,
+  StrUtils,
   FormMain,
   Graphics,
   ComCtrls, IdStack, {IdException,} IdExceptionCore, Character;
@@ -419,6 +421,7 @@ procedure TThreadModBus.Execute;
 var
   i, RegCountMax, Count, Max: integer;
   itm: TModbusItem;
+  ip: string;
 
 label
   pauseAgain;
@@ -441,9 +444,16 @@ begin
     // Modbus TCP
     IdModBusClient := TIdModBusClient.Create;
     IdModBusClient.AutoConnect:=false;
-    if (Pos('[', frmMain.cbIP.Text) <> 0) or (Pos('::', frmMain.cbIP.Text) <> 0) then
+    ip := Trim(frmMain.cbIP.Text);
+    if (Pos('[', ip) <> 0) or (Pos('::', ip) <> 0) then
       IdModBusClient.IPVersion:=Id_IPv6;
-    IdModBusClient.Host:=frmMain.cbIP.Text;
+    if ExecRegExpr('.*[^:][:][0-9]{1,5}', ip) then
+    begin
+      // port definition detected
+      IdModBusClient.Port := StrToInt(Copy(ip, RPos(':', ip)+1, 5));
+      ip := Copy(ip, 1, RPos(':', ip)-1);
+    end;
+    IdModBusClient.Host:=ip;
     IdModBusClient.UnitID:=1;
     IdModBusClient.OnDisconnected:=@TCP_Disconnect;
     IdModBusClient.OnResponseError:=@ModBusClientErrorEvent;
