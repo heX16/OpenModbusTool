@@ -1,33 +1,34 @@
 object frmMain: TfrmMain
-  Left = 433
-  Height = 544
-  Top = 258
-  Width = 880
+  Left = 95
+  Height = 680
+  Top = 252
+  Width = 923
   Caption = 'OpenModbusTool'
-  ClientHeight = 519
-  ClientWidth = 880
+  ClientHeight = 656
+  ClientWidth = 923
+  DesignTimePPI = 120
   Menu = menuMainForm
   OnDestroy = FormDestroy
   Position = poScreenCenter
   SessionProperties = 'cbIP.Text;edRegAddr.Text;edRegCount.Text;rgViewStyle.ItemIndex;cbIP.Items'
-  LCLVersion = '1.6.0.4'
+  LCLVersion = '1.9.0.0'
   Visible = True
   object listMain: TListView
     Left = 0
-    Height = 395
-    Top = 96
-    Width = 880
+    Height = 512
+    Top = 120
+    Width = 923
     Align = alClient
     Columns = <    
       item
         Caption = 'MainText'
         Visible = False
-        Width = 150
+        Width = 188
       end    
       item
         Alignment = taRightJustify
         Caption = 'Reg'
-        MinWidth = 30
+        MinWidth = 38
         Width = 10
       end    
       item
@@ -37,15 +38,17 @@ object frmMain: TfrmMain
       item
         Caption = 'Type'
         Visible = False
+        Width = 62
       end    
       item
         Caption = 'Name'
-        MinWidth = 50
+        MinWidth = 62
         Visible = False
-        Width = 622
+        Width = 778
       end>
     GridLines = True
     MultiSelect = True
+    ParentFont = False
     PopupMenu = menuMainList
     RowSelect = True
     TabOrder = 2
@@ -54,24 +57,26 @@ object frmMain: TfrmMain
   end
   object Panel1: TPanel
     Left = 0
-    Height = 28
-    Top = 68
-    Width = 880
+    Height = 35
+    Top = 85
+    Width = 923
     Align = alTop
     BorderWidth = 2
-    ClientHeight = 28
-    ClientWidth = 880
+    ClientHeight = 35
+    ClientWidth = 923
+    ParentFont = False
     TabOrder = 1
     Visible = False
     object ListViewFilterEdit1: TListViewFilterEdit
       Left = 3
-      Height = 22
+      Height = 29
       Top = 3
-      Width = 874
-      ButtonWidth = 23
+      Width = 917
+      ButtonWidth = 29
       NumGlyphs = 1
       Align = alClient
       MaxLength = 0
+      ParentFont = False
       TabOrder = 0
       FilteredListview = listMain
       ByAllFields = True
@@ -79,115 +84,125 @@ object frmMain: TfrmMain
   end
   object StatusBar1: TStatusBar
     Left = 0
-    Height = 28
-    Top = 491
-    Width = 880
+    Height = 24
+    Top = 632
+    Width = 923
     Panels = <    
       item
         Alignment = taCenter
         Text = 'offline'
-        Width = 70
+        Width = 88
       end    
       item
-        Width = 200
+        Width = 250
       end    
       item
-        Width = 50
+        Width = 62
       end>
+    ParentFont = False
     SimplePanel = False
   end
   object Panel2: TPanel
     Left = 0
-    Height = 68
+    Height = 85
     Top = 0
-    Width = 880
+    Width = 923
     Align = alTop
-    ClientHeight = 68
-    ClientWidth = 880
+    ClientHeight = 85
+    ClientWidth = 923
+    ParentFont = False
     TabOrder = 0
     object edRegAddr: TLabeledEdit
-      Left = 64
-      Height = 28
+      Left = 80
+      Height = 25
       Hint = 'Examples: 0 / 1 / 400001 / 1234 / 101234'
-      Top = 40
-      Width = 56
+      Top = 50
+      Width = 70
       EditLabel.AnchorSideTop.Control = edRegAddr
       EditLabel.AnchorSideTop.Side = asrCenter
       EditLabel.AnchorSideRight.Control = edRegAddr
       EditLabel.AnchorSideBottom.Control = edRegAddr
       EditLabel.AnchorSideBottom.Side = asrBottom
-      EditLabel.Left = 35
-      EditLabel.Height = 20
-      EditLabel.Top = 44
-      EditLabel.Width = 26
+      EditLabel.Left = 52
+      EditLabel.Height = 17
+      EditLabel.Top = 54
+      EditLabel.Width = 24
       EditLabel.Caption = 'Reg'
       EditLabel.ParentColor = False
+      EditLabel.ParentFont = False
       LabelPosition = lpLeft
+      ParentFont = False
       ParentShowHint = False
       ShowHint = True
       TabOrder = 3
       Text = '1'
     end
     object btnConnect: TButton
-      Left = 264
-      Height = 33
-      Top = 5
-      Width = 112
+      Left = 330
+      Height = 41
+      Top = 6
+      Width = 140
       Action = actConnect
+      ParentFont = False
       TabOrder = 1
     end
     object btnDissconect: TButton
-      Left = 379
-      Height = 33
-      Top = 5
-      Width = 112
+      Left = 474
+      Height = 41
+      Top = 6
+      Width = 140
       Action = actDissconect
+      ParentFont = False
       TabOrder = 2
     end
     object edRegCount: TEdit
-      Left = 200
-      Height = 28
+      Left = 250
+      Height = 25
       Hint = 'register count'
-      Top = 40
-      Width = 56
+      Top = 50
+      Width = 70
+      ParentFont = False
       ParentShowHint = False
       TabOrder = 4
       Text = '125'
     end
     object lbRegCount: TLabel
-      Left = 160
-      Height = 20
-      Top = 44
-      Width = 40
+      Left = 200
+      Height = 17
+      Top = 55
+      Width = 41
       Alignment = taRightJustify
       Caption = 'count:'
       ParentColor = False
+      ParentFont = False
     end
     object lbAddr: TLabel
-      Left = 29
-      Height = 20
-      Top = 10
-      Width = 36
+      Left = 36
+      Height = 17
+      Top = 12
+      Width = 34
       Alignment = taRightJustify
       Caption = 'Addr:'
       ParentColor = False
+      ParentFont = False
     end
     object cbIP: TComboBox
-      Left = 64
-      Height = 28
-      Top = 7
-      Width = 168
-      ItemHeight = 20
+      Left = 80
+      Height = 25
+      Top = 9
+      Width = 210
+      ItemHeight = 17
       OnKeyPress = cbIPKeyPress
+      ParentFont = False
       TabOrder = 0
       Text = '127.0.0.1'
     end
     object cbRegisterType: TComboBox
-      Left = 264
-      Height = 28
-      Top = 40
-      Width = 176
-      ItemHeight = 20
+      Left = 330
+      Height = 25
+      Top = 50
+      Width = 220
+      ItemHeight = 17
       ItemIndex = 3
       Items.Strings = (
         '1x (bool, RO) - Discrete Input'
@@ -196,16 +211,17 @@ object frmMain: TfrmMain
         '4x (word, RW) - Holding Registers'
       )
       OnChange = cbRegisterTypeChange
+      ParentFont = False
       Style = csDropDownList
       TabOrder = 5
       Text = '4x (word, RW) - Holding Registers'
     end
     object cbRegFormat: TComboBox
-      Left = 448
-      Height = 28
-      Top = 40
-      Width = 128
-      ItemHeight = 20
+      Left = 560
+      Height = 25
+      Top = 50
+      Width = 160
+      ItemHeight = 17
       ItemIndex = 0
       Items.Strings = (
         'Dectimal (123)'
@@ -216,15 +232,16 @@ object frmMain: TfrmMain
         'Double Float (8 byte)'
       )
       OnChange = cbRegFormatChange
+      ParentFont = False
       Style = csDropDownList
       TabOrder = 6
       Text = 'Dectimal (123)'
     end
     object rgViewStyle: TRadioGroup
-      Left = 584
-      Height = 60
-      Top = 3
-      Width = 208
+      Left = 730
+      Height = 75
+      Top = 4
+      Width = 188
       AutoFill = True
       Caption = 'View style'
       ChildSizing.LeftRightSpacing = 6
@@ -234,51 +251,53 @@ object frmMain: TfrmMain
       ChildSizing.ShrinkVertical = crsScaleChilds
       ChildSizing.Layout = cclLeftToRightThenTopToBottom
       ChildSizing.ControlsPerLine = 1
-      ClientHeight = 35
-      ClientWidth = 204
+      ClientHeight = 53
+      ClientWidth = 184
       ItemIndex = 1
       Items.Strings = (
         'Table'
         'Short list'
       )
       OnClick = rgViewStyleClick
+      ParentFont = False
       TabOrder = 7
     end
     object btnPause: TToggleBox
-      Left = 493
-      Height = 33
-      Top = 5
-      Width = 83
+      Left = 616
+      Height = 41
+      Top = 6
+      Width = 104
       Caption = 'btnPause'
+      ParentFont = False
       TabOrder = 8
       Visible = False
     end
     object shapeState: TShape
-      Left = 237
-      Height = 19
-      Top = 10
-      Width = 19
+      Left = 296
+      Height = 24
+      Top = 12
+      Width = 24
       Shape = stCircle
     end
   end
   object TimerReadMB: TTimer
-    left = 48
-    top = 248
+    Left = 60
+    Top = 310
   end
   object ApplicationProperties1: TApplicationProperties
     CaptureExceptions = False
-    left = 48
-    top = 320
+    Left = 60
+    Top = 400
   end
   object TimerInit: TTimer
     Interval = 10
     OnTimer = TimerInitTimer
-    left = 160
-    top = 320
+    Left = 200
+    Top = 400
   end
   object ActionList1: TActionList
-    left = 160
-    top = 248
+    Left = 200
+    Top = 310
     object actDissconect: TAction
       Caption = 'Dissconect'
       Enabled = False
@@ -342,8 +361,8 @@ object frmMain: TfrmMain
     end
   end
   object menuMainList: TPopupMenu
-    left = 160
-    top = 176
+    Left = 200
+    Top = 220
     object mnEditExt: TMenuItem
       Action = actEditExt
       Default = True
@@ -370,12 +389,12 @@ object frmMain: TfrmMain
   object IniPropStorage1: TIniPropStorage
     StoredValues = <>
     IniFileName = 'openmodbustool.ini'
-    left = 48
-    top = 392
+    Left = 60
+    Top = 490
   end
   object menuMainForm: TMainMenu
-    left = 48
-    top = 176
+    Left = 60
+    Top = 220
     object MenuItem1: TMenuItem
       Caption = 'Connect'
       object MenuItem2: TMenuItem
@@ -449,7 +468,7 @@ object frmMain: TfrmMain
     OnReadInputRegisters = IdModBusServerTestReadInputRegisters
     OnWriteCoils = IdModBusServerTestWriteCoils
     OnWriteRegisters = IdModBusServerTestWriteRegisters
-    left = 352
-    top = 240
+    Left = 440
+    Top = 300
   end
 end
