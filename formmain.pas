@@ -7,7 +7,7 @@ IDE: Lazarus 1.6 (FPC 3.0.0)
 
 Dependency:
   synapse (Release 40 2012-04-23) - for Serial Port
-  delphimodbus-1.6.3 - for Modbus TCP
+  delphimodbus-1.6.7 - for Modbus TCP -> https://github.com/coassoftwaresystems/delphi-modbus
   indy-10.2.0.3 - for delphimodbus
 }
 

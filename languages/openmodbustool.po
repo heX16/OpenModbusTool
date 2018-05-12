@@ -1,58 +1,6 @@
 msgid ""
 msgstr "Content-Type: text/plain; charset=UTF-8"
 
-#: formmain.errbigtimediscrepancy
-msgid "Big time discrepancy"
-msgstr ""
-
-#: tfrmabout.caption
-msgctxt "TFRMABOUT.CAPTION"
-msgid "About"
-msgstr ""
-
-#: tfrmabout.lbabouttext.caption
-msgctxt "TFRMABOUT.LBABOUTTEXT.CAPTION"
-msgid "This is free, crossplatform, multilanguages and opensource Modbus-TCP client."
-msgstr ""
-
-#: tfrmabout.lbrepurl.editlabel.caption
-msgctxt "TFRMABOUT.LBREPURL.EDITLABEL.CAPTION"
-msgid "Source code reposytory:"
-msgstr ""
-
-#: tfrmabout.lbrepurl.text
-msgctxt "TFRMABOUT.LBREPURL.TEXT"
-msgid "https://bitbucket.org/heXor/OpenModbusTool"
-msgstr ""
-
-#: tfrmabout.lbtranslateauthor.caption
-msgid "Author of localization: -"
-msgstr ""
-
-#: tfrmbitedit.caption
-msgid "Value editor:"
-msgstr ""
-
-#: tfrmbitedit.lbfloat.caption
-msgid "Float"
-msgstr ""
-
-#: tfrmbitedit.lbvaluedec16.caption
-msgid "Dec 16bit"
-msgstr ""
-
-#: tfrmbitedit.lbvaluedec32.caption
-msgid "Dec 32bit"
-msgstr ""
-
-#: tfrmbitedit.lbvaluedec8.caption
-msgid "Dec 8bit"
-msgstr ""
-
-#: tfrmbitedit.lbvaluehex32.caption
-msgid "Value in hex"
-msgstr ""
-
 #: tfrmmain.actabout.caption
 msgctxt "tfrmmain.actabout.caption"
 msgid "About"
@@ -185,16 +133,6 @@ msgstr ""
 #: tfrmmain.menuitem1.caption
 msgctxt "TFRMMAIN.MENUITEM1.CAPTION"
 msgid "Connect"
-msgstr ""
-
-#: tfrmmain.menuitem15.caption
-msgctxt "TFRMMAIN.MENUITEM15.CAPTION"
-msgid "-"
-msgstr ""
-
-#: tfrmmain.menuitem4.caption
-msgctxt "tfrmmain.menuitem4.caption"
-msgid "-"
 msgstr ""
 
 #: tfrmmain.mnedit1.caption
