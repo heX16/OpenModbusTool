@@ -6,13 +6,15 @@ object frmOptions: TfrmOptions
   Caption = 'frmOptions'
   ClientHeight = 240
   ClientWidth = 320
-  LCLVersion = '1.6.0.4'
+  DesignTimePPI = 120
+  SessionProperties = 'chBaseRegister.Checked'
+  LCLVersion = '1.8.0.6'
   object cbReloadRegTime: TComboBox
     Left = 8
-    Height = 23
+    Height = 25
     Top = 28
     Width = 72
-    ItemHeight = 15
+    ItemHeight = 17
     ItemIndex = 2
     Items.Strings = (
       '0.1'
@@ -28,17 +30,17 @@ object frmOptions: TfrmOptions
   end
   object lbReloadRegTime: TLabel
     Left = 8
-    Height = 15
+    Height = 17
     Top = 8
-    Width = 83
+    Width = 95
     Caption = 'Reload reg time'
     ParentColor = False
   end
   object cbReadUseFunc05: TCheckBox
     Left = 8
-    Height = 19
+    Height = 21
     Top = 61
-    Width = 119
+    Width = 143
     Caption = 'Read use "func 05"'
     OnChange = cbReadUseFunc05Change
     TabOrder = 1
@@ -68,7 +70,7 @@ object frmOptions: TfrmOptions
   end
   object edUnitID: TLabeledEdit
     Left = 8
-    Height = 23
+    Height = 25
     Top = 104
     Width = 80
     EditLabel.AnchorSideLeft.Control = edUnitID
@@ -76,13 +78,32 @@ object frmOptions: TfrmOptions
     EditLabel.AnchorSideRight.Side = asrBottom
     EditLabel.AnchorSideBottom.Control = edUnitID
     EditLabel.Left = 8
-    EditLabel.Height = 15
-    EditLabel.Top = 86
+    EditLabel.Height = 17
+    EditLabel.Top = 84
     EditLabel.Width = 80
     EditLabel.Caption = 'Master unit ID'
     EditLabel.ParentColor = False
     TabOrder = 4
     Text = '255'
     Visible = False
+  end
+  object chBaseRegisterIs1: TCheckBox
+    Left = 8
+    Height = 21
+    Hint = 'This is a classic problem for modbus.'#13#10'"Base Register", "base at 1", "First Register"'#13#10'Checked - 1.'#13#10'Unchecked - 0.'
+    Top = 142
+    Width = 80
+    Caption = 'base at 1'
+    Checked = True
+    ParentShowHint = False
+    ShowHint = True
+    State = cbChecked
+    TabOrder = 5
+  end
+  object IniPropStorage1: TIniPropStorage
+    StoredValues = <>
+    IniFileName = 'openmodbustool.ini'
+    left = 256
+    top = 16
   end
 end

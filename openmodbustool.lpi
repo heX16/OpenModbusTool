@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CONFIG>
   <ProjectOptions>
-    <Version Value="11"/>
+    <Version Value="10"/>
     <PathDelim Value="\"/>
     <General>
       <Flags>
@@ -23,9 +23,9 @@
       <UseVersionInfo Value="True"/>
       <AutoIncrementBuild Value="True"/>
       <MajorVersionNr Value="1"/>
-      <MinorVersionNr Value="9"/>
-      <BuildNr Value="65"/>
-      <StringTable Comments="constructor heX (www.hex.name)"/>
+      <MinorVersionNr Value="10"/>
+      <BuildNr Value="68"/>
+      <StringTable Comments="constructor heX (www.hex.name)" ProductVersion="1.9.0.65"/>
     </VersionInfo>
     <BuildModes Count="4">
       <Item1 Name="wnd_debug" Default="True"/>
@@ -142,18 +142,10 @@
     </PublishOptions>
     <RunParams>
       <local>
+        <FormatVersion Value="1"/>
         <CommandLineParams Value="192.168.200.10 list.csv"/>
         <WorkingDirectory Value=".\"/>
       </local>
-      <FormatVersion Value="2"/>
-      <Modes Count="1">
-        <Mode0 Name="default">
-          <local>
-            <CommandLineParams Value="192.168.200.10 list.csv"/>
-            <WorkingDirectory Value=".\"/>
-          </local>
-        </Mode0>
-      </Modes>
     </RunParams>
     <RequiredPackages Count="3">
       <Item1>
@@ -166,7 +158,7 @@
         <PackageName Value="LCL"/>
       </Item3>
     </RequiredPackages>
-    <Units Count="7">
+    <Units Count="6">
       <Unit0>
         <Filename Value="openmodbustool.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -209,10 +201,6 @@
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="formBitEdit"/>
       </Unit5>
-      <Unit6>
-        <Filename Value="H:\usr\lib\lazarus\1.6\components\delphimodbus\source\IdModbusClient.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit6>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

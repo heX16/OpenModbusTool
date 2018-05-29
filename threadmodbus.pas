@@ -118,6 +118,7 @@ uses
   RegExpr,
   StrUtils,
   FormMain,
+  FormOptions,
   Graphics,
   ComCtrls, IdStack, {IdException,} IdExceptionCore, Character;
 
@@ -436,8 +437,8 @@ begin
 
   EventPauseAfterRead := TEventObject.Create(nil, false, false, '');
 
-  SyncUpdateVars;
-  CheckSize;
+  SyncUpdateVars();
+  CheckSize();
 
   if not ModbusRTU then
   begin
@@ -459,6 +460,10 @@ begin
     IdModBusClient.OnResponseError:=@ModBusClientErrorEvent;
     IdModBusClient.ConnectTimeout:=2000;
     IdModBusClient.ReadTimeout:=1000;
+    if frmOptions.chBaseRegisterIs1.Checked then
+      IdModBusClient.BaseRegister:=1 else
+      IdModBusClient.BaseRegister:=0;
+
     try
       IdModBusClient.Connect;
     except

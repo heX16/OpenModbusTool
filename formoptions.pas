@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, StdCtrls,
-  Buttons, ExtCtrls;
+  Buttons, ExtCtrls, IniPropStorage;
 
 type
 
@@ -17,7 +17,9 @@ type
     BitBtn2: TBitBtn;
     cbReloadRegTime: TComboBox;
     cbReadUseFunc05: TCheckBox;
+    chBaseRegisterIs1: TCheckBox;
     edUnitID: TLabeledEdit;
+    IniPropStorage1: TIniPropStorage;
     lbReloadRegTime: TLabel;
     procedure cbReadUseFunc05Change(Sender: TObject);
   private
