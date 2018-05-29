@@ -104,6 +104,7 @@ type
     procedure actDissconectUpdate(Sender: TObject);
     procedure actEditExtExecute(Sender: TObject);
     procedure actExitExecute(Sender: TObject);
+    procedure actOptionsExecute(Sender: TObject);
     procedure actPasteExecute(Sender: TObject);
     procedure actSet0Execute(Sender: TObject);
     procedure actSet1Execute(Sender: TObject);
@@ -182,6 +183,7 @@ implementation
 {$R *.lfm}
 
 uses
+  FormOptions,
   modbuslib,//<-TEMP!
   FormBitEdit,
   FormAbout,
@@ -412,6 +414,11 @@ end;
 procedure TfrmMain.actExitExecute(Sender: TObject);
 begin
   Application.Terminate;
+end;
+
+procedure TfrmMain.actOptionsExecute(Sender: TObject);
+begin
+  frmOptions.ShowModal();
 end;
 
 procedure TfrmMain.actPasteExecute(Sender: TObject);

@@ -182,6 +182,8 @@ begin
   //frmMain.listMain.BeginUpdate;
 
   try
+    if frmMain.listMain.ViewStyle = vsList then
+      frmMain.listMain.BeginUpdate();
     for i:=0 to High(MBWord) do
     begin
       // add items
@@ -210,6 +212,8 @@ begin
 
       frmMain.listMain.Items[i].Caption := frmMain.listMain.Items[i].SubItems[idxColumnReg] + '=' + frmMain.listMain.Items[i].SubItems[idxColumnValue];
     end;
+    if frmMain.listMain.ViewStyle = vsList then
+      frmMain.listMain.EndUpdate();
 
     // remove items
     if frmMain.listMain.Items.Count-1 > High(MBWord) then

@@ -19,7 +19,7 @@ type
     cbReadUseFunc05: TCheckBox;
     chBaseRegisterIs1: TCheckBox;
     edUnitID: TLabeledEdit;
-    IniPropStorage1: TIniPropStorage;
+    IniPropStorage2: TIniPropStorage;
     lbReloadRegTime: TLabel;
     procedure cbReadUseFunc05Change(Sender: TObject);
   private

@@ -28,7 +28,7 @@ msgstr "Отключиться"
 #: tfrmmain.acteditext.caption
 msgctxt "tfrmmain.acteditext.caption"
 msgid "Edit"
-msgstr ""
+msgstr "Выход"
 
 #: tfrmmain.actexit.caption
 msgid "Exit"
@@ -76,7 +76,7 @@ msgstr ""
 
 #: tfrmmain.cbregformat.text
 msgid "Dectimal (123)"
-msgstr ""
+msgstr "Числовой (123)"
 
 #: tfrmmain.cbregistertype.text
 msgid "4x (word, RW) - Holding Registers"
@@ -173,7 +173,7 @@ msgstr ""
 #: tfrmoptions.chbaseregisteris1.caption
 msgctxt "tfrmoptions.chbaseregisteris1.caption"
 msgid "base at 1"
-msgstr ""
+msgstr "Базовый регистр (base register) равен 1"
 
 #: tfrmoptions.chbaseregisteris1.hint
 msgctxt "tfrmoptions.chbaseregisteris1.hint"
@@ -194,11 +194,11 @@ msgstr ""
 
 #: tfrmoptions.lbreloadregtime.caption
 msgid "Reload reg time"
-msgstr ""
+msgstr "Частота обновления времени"
 
 #: threadmodbus.statusbardisconnect
 msgid "disconnect"
-msgstr ""
+msgstr "Отключится"
 
 #: threadmodbus.statusbarerror
 msgid "ERROR"
