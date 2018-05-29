@@ -90,6 +90,7 @@ msgid "Examples: 0 / 1 / 400001 / 1234 / 101234"
 msgstr ""
 
 #: tfrmmain.edregaddr.text
+msgctxt "tfrmmain.edregaddr.text"
 msgid "1"
 msgstr ""
 
@@ -147,6 +148,45 @@ msgstr ""
 #: tfrmmain.statusbar1.panels[0].text
 msgctxt "tfrmmain.statusbar1.panels[0].text"
 msgid "offline"
+msgstr ""
+
+#: tfrmoptions.caption
+msgid "frmOptions"
+msgstr ""
+
+#: tfrmoptions.cbreadusefunc05.caption
+msgid "Read use \"func 05\""
+msgstr ""
+
+#: tfrmoptions.cbreloadregtime.text
+msgctxt "tfrmoptions.cbreloadregtime.text"
+msgid "1"
+msgstr ""
+
+#: tfrmoptions.chbaseregisteris1.caption
+msgctxt "tfrmoptions.chbaseregisteris1.caption"
+msgid "base at 1"
+msgstr ""
+
+#: tfrmoptions.chbaseregisteris1.hint
+msgctxt "tfrmoptions.chbaseregisteris1.hint"
+msgid ""
+"This is a classic problem for modbus.\n"
+"\"Base Register\", \"base at 1\", \"First Register\"\n"
+"Checked - 1.\n"
+"Unchecked - 0.\n"
+msgstr ""
+
+#: tfrmoptions.edunitid.editlabel.caption
+msgid "Master unit ID"
+msgstr ""
+
+#: tfrmoptions.edunitid.text
+msgid "255"
+msgstr ""
+
+#: tfrmoptions.lbreloadregtime.caption
+msgid "Reload reg time"
 msgstr ""
 
 #: threadmodbus.statusbardisconnect
