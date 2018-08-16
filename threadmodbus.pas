@@ -46,41 +46,66 @@ type
 
   TThreadModBus = class(TThread)
   protected
-    // thread code (NO access to forms)
+    // Main code. thread code (NO access to forms!)
     procedure Execute; override;
+    // Read modbus registers. (run from thread)
     procedure ReadMB(RegType: TRegReadType; Addr, ArrOffs: word; Count: word);
-    procedure CheckSize;
+    // Check buffer size, if needed then resize
+    procedure CheckSize();
+    // callback from "IdModBusClient" for error process errors.
     procedure ModBusClientErrorEvent(const FunctionCode: Byte;
       const ErrorCode: Byte; const ResponseBuffer: TModBusResponseBuffer);
+    // callback from "IdModBusClient" for process disconnect.
     procedure TCP_Disconnect(Sender: TObject);
 
   public
+    // status bar message. using in SyncWriteStatusBar.
     StatusBarMsg: string;
+    // status bar message. using in SyncWriteStatusBar.
     StatusBarStatus: string;
 
-    ModbusRTU: boolean; // RTU-true, TCP-false
+    // RTU-true, TCP-false
+    ModbusRTU: boolean;
+    // ModbusTCP client
     IdModBusClient: TIdModBusClient;
+    // flag - connected?
     Connected: boolean;
-    VilidDissconect: boolean;
+    // flag - is dissconect by user command?
+    ValidDissconect: boolean;
+    // flag - "access violation" exception detected
     AVDetect: boolean;
 
+    // array for "Holding" register
     MBWord: array of word;
+    // array for "Coil" register
     MBBool: array of boolean;
+    // array for "Error" status. using in EventPauseAfterRead.
     MBReadErr: array of byte;
 
+    // flag - last read have error? write in ModBusClientErrorEvent.
     ErrorPresent: boolean;
+    // error code for flag ErrorPresent.
     ErrorLastCode: Byte;
+    // global error code.
     ErrorCount: integer;
+    // ??? WIP!
     ReadMBTime: DWord;
 
-    // sync vars
+    // sync vars.
     RegType: TRegReadType;
+    // sync vars.
     RegStart: integer;
+    // sync vars.
     SetNewSize: integer;
+    // sync vars.
     RegFormat: TRegShowFormat;
+
+    // when user write date, is data wait queue here. sync vars!
     WriteQueue: TModbusItemQueue;
 
+    // ??? wait reading. using MBReadErr.
     EventPauseAfterRead: TEventObject;
+    // Critical Section for safety write to 'WriteQueue'
     CritWriteQueueWork: TCriticalSection;
 
     //constructor Create(CreateSuspended : boolean);
@@ -261,7 +286,7 @@ begin
     frmMain.threadRead := nil; // just drop pointer!   (FreeOnTerminate=true, give error - very strange...)
 end;
 
-procedure TThreadModBus.CheckSize;
+procedure TThreadModBus.CheckSize();
 begin
   if SetNewSize <> Length(MBWord) then
   begin
@@ -304,7 +329,7 @@ begin
     frmMain.shapeState.Brush.Color:=clMaroon;
   end else
   begin
-    if (VilidDissconect) then
+    if (ValidDissconect) then
       frmMain.shapeState.Brush.Color:=clWhite else
       frmMain.shapeState.Brush.Color:=clRed;
   end;
@@ -578,7 +603,7 @@ begin
       if (EventPauseAfterRead.WaitFor(ReadMBTime)=wrSignaled) and (not Terminated) then
       begin
         Synchronize(@SyncUpdateVarsOnChange);
-        CheckSize;
+        CheckSize();
         Synchronize(@SyncDrawList);
         goto pauseAgain;
       end;

@@ -378,7 +378,7 @@ procedure TfrmMain.actDissconectExecute(Sender: TObject);
 begin
   if (threadRead <> nil) then
   begin
-    threadRead.VilidDissconect := true;
+    threadRead.ValidDissconect := true;
     shapeState.Color:=clYellow;
     threadRead.Terminate;
     // wake up! - time for death
