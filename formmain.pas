@@ -18,8 +18,8 @@ uses
   //LCLTranslator,
   Classes, SysUtils, FileUtil, ListViewFilterEdit, Forms, Controls, Graphics,
   Dialogs, ExtCtrls, ComCtrls, IdComponent, IdTCPClient, StdCtrls, ActnList,
-  Menus, IniPropStorage, ThreadModBus, IdModBusServer, ModbusTypes,
-  IdModBusClient, IdContext, IdCustomTCPServer;
+  Menus, IniPropStorage, Grids, ThreadModBus, IdModBusServer, ModbusTypes,
+  IdModBusClient, IdContext, IdCustomTCPServer, VirtualTrees;
 
 {
 0x (bit, RW) - Discrete Output Coils
@@ -52,13 +52,13 @@ type
     cbIP: TComboBox;
     cbRegisterType: TComboBox;
     cbRegFormat: TComboBox;
+    DrawGrid1: TDrawGrid;
     edRegCount: TEdit;
     IdModBusServerTest: TIdModBusServer;
     IniPropStorage1: TIniPropStorage;
     lbRegCount: TLabel;
     lbAddr: TLabel;
     edRegAddr: TLabeledEdit;
-    listMain: TListView;
     ListViewFilterEdit1: TListViewFilterEdit;
     MenuItem10: TMenuItem;
     MenuItem11: TMenuItem;
@@ -94,6 +94,7 @@ type
     TimerInit: TTimer;
     TimerReadMB: TTimer;
     btnPause: TToggleBox;
+    VirtualStringTree1: TVirtualStringTree;
     procedure actAboutExecute(Sender: TObject);
     procedure actConnectExecute(Sender: TObject);
     procedure actConnectUpdate(Sender: TObject);

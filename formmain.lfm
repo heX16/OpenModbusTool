@@ -13,48 +13,6 @@ object frmMain: TfrmMain
   SessionProperties = 'cbIP.Text;edRegAddr.Text;edRegCount.Text;rgViewStyle.ItemIndex;cbIP.Items'
   LCLVersion = '1.8.0.6'
   Visible = True
-  object listMain: TListView
-    Left = 0
-    Height = 512
-    Top = 120
-    Width = 923
-    Align = alClient
-    Columns = <    
-      item
-        Caption = 'MainText'
-        Visible = False
-        Width = 188
-      end    
-      item
-        Alignment = taRightJustify
-        Caption = 'Reg'
-        MinWidth = 38
-        Width = 10
-      end    
-      item
-        Caption = 'Value'
-        Width = 10
-      end    
-      item
-        Caption = 'Type'
-        Visible = False
-        Width = 62
-      end    
-      item
-        Caption = 'Name'
-        MinWidth = 62
-        Visible = False
-        Width = 778
-      end>
-    GridLines = True
-    MultiSelect = True
-    ParentFont = False
-    PopupMenu = menuMainList
-    RowSelect = True
-    TabOrder = 2
-    OnEdited = listMainEdited
-    OnEditing = listMainEditing
-  end
   object Panel1: TPanel
     Left = 0
     Height = 35
@@ -78,7 +36,6 @@ object frmMain: TfrmMain
       MaxLength = 0
       ParentFont = False
       TabOrder = 0
-      FilteredListview = listMain
       ByAllFields = True
     end
   end
@@ -253,7 +210,7 @@ object frmMain: TfrmMain
       ChildSizing.ControlsPerLine = 1
       ClientHeight = 53
       ClientWidth = 184
-      ItemIndex = 1
+      ItemIndex = 0
       Items.Strings = (
         'Table'
         'Short list'
@@ -279,6 +236,30 @@ object frmMain: TfrmMain
       Width = 24
       Shape = stCircle
     end
+  end
+  object VirtualStringTree1: TVirtualStringTree
+    Left = 0
+    Height = 512
+    Top = 120
+    Width = 923
+    Align = alClient
+    DefaultText = 'Node'
+    Header.AutoSizeIndex = 0
+    Header.Columns = <>
+    Header.MainColumn = -1
+    TabOrder = 3
+  end
+  object DrawGrid1: TDrawGrid
+    Left = 0
+    Height = 512
+    Top = 120
+    Width = 923
+    Align = alClient
+    ExtendedSelect = False
+    FixedCols = 0
+    FixedRows = 0
+    RowCount = 1
+    TabOrder = 4
   end
   object TimerReadMB: TTimer
     left = 60
