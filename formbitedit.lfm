@@ -9,7 +9,6 @@ object frmBitEdit: TfrmBitEdit
   DesignTimePPI = 120
   OnShow = FormShow
   LCLVersion = '1.8.0.6'
-  Visible = True
   object Panel32: TPanel
     Left = 0
     Height = 32

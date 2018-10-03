@@ -56,7 +56,7 @@ msgstr "Отключиться"
 #: tfrmmain.acteditext.caption
 msgctxt "tfrmmain.acteditext.caption"
 msgid "Edit"
-msgstr "Выход"
+msgstr "Редактор"
 
 #: tfrmmain.actexit.caption
 msgid "Exit"
@@ -80,7 +80,6 @@ msgid "Set 1"
 msgstr "Установить 0"
 
 #: tfrmmain.actsetx.caption
-#, fuzzy
 #| msgid "actSetX"
 msgid "Set X"
 msgstr "Установить Х"
@@ -91,7 +90,7 @@ msgstr "Вкл. тестовый сервер"
 
 #: tfrmmain.btnpause.caption
 msgid "btnPause"
-msgstr ""
+msgstr "Пауза"
 
 #: tfrmmain.caption
 msgctxt "tfrmmain.caption"
@@ -111,7 +110,6 @@ msgid "4x (word, RW) - Holding Registers"
 msgstr ""
 
 #: tfrmmain.edregaddr.editlabel.caption
-#, fuzzy
 #| msgid "Reg:"
 msgctxt "tfrmmain.edregaddr.editlabel.caption"
 msgid "Reg"
@@ -143,33 +141,31 @@ msgid "count:"
 msgstr "Кол-во:"
 
 #: tfrmmain.menuitem1.caption
-#, fuzzy
 #| msgid "Connect"
 msgctxt "tfrmmain.menuitem1.caption"
 msgid "Client"
-msgstr "Соединиться"
+msgstr "Клиент"
 
 #: tfrmmain.menuitem16.caption
 msgid "Server"
-msgstr ""
+msgstr "Сервер"
 
 #: tfrmmain.mnedit1.caption
-#, fuzzy
 msgctxt "tfrmmain.mnedit1.caption"
 msgid "Edit"
-msgstr "Выход"
+msgstr "Редактор"
 
 #: tfrmmain.mnsrvaddsmallrandom.caption
 msgid "Add small random"
-msgstr ""
+msgstr "Добавить небольшие отклонения"
 
 #: tfrmmain.mnsrvstart.caption
 msgid "Enable local server"
-msgstr ""
+msgstr "Вкл. локальный сервер"
 
 #: tfrmmain.mnsrvtestread.caption
 msgid "Test mode - read only"
-msgstr ""
+msgstr "Тестовый режим - только чтение"
 
 #: tfrmmain.rgviewstyle.caption
 msgid "View style"
@@ -182,23 +178,23 @@ msgstr ""
 
 #: tfrmmain.virtualstringtree1.header.columns[0].text
 msgid "Register"
-msgstr ""
+msgstr "Регистр"
 
 #: tfrmmain.virtualstringtree1.header.columns[1].text
 msgid "Value"
-msgstr ""
+msgstr "Значение"
 
 #: tfrmmain.virtualstringtree1.header.columns[2].text
 msgid "Reg.num"
-msgstr ""
+msgstr "Рег.номер"
 
 #: tfrmmain.virtualstringtree1.header.columns[3].text
 msgid "Type"
-msgstr ""
+msgstr "Тип"
 
 #: tfrmoptions.caption
 msgid "frmOptions"
-msgstr ""
+msgstr "Опции"
 
 #: tfrmoptions.cbreadusefunc05.caption
 msgid "Read use \"func 05\""

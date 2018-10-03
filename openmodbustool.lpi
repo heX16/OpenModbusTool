@@ -23,7 +23,7 @@
       <UseVersionInfo Value="True"/>
       <AutoIncrementBuild Value="True"/>
       <MajorVersionNr Value="2"/>
-      <BuildNr Value="74"/>
+      <BuildNr Value="79"/>
       <StringTable Comments="constructor heX (www.hex.name)" ProductVersion="1.9.0.65"/>
     </VersionInfo>
     <BuildModes Count="5">
@@ -68,6 +68,7 @@
             <UnitOutputDirectory Value="$Env(tmp)\tmp\Lazarus"/>
           </SearchPaths>
           <CodeGeneration>
+            <SmartLinkUnit Value="True"/>
             <Checks>
               <RangeChecks Value="True"/>
             </Checks>
@@ -76,12 +77,14 @@
             <Optimizations>
               <OptimizationLevel Value="3"/>
             </Optimizations>
+            <SmallerCode Value="True"/>
           </CodeGeneration>
           <Linking>
             <Debugging>
               <GenerateDebugInfo Value="False"/>
               <StripSymbols Value="True"/>
             </Debugging>
+            <LinkSmart Value="True"/>
             <Options>
               <Win32>
                 <GraphicApplication Value="True"/>
