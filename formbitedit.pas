@@ -9,6 +9,15 @@ uses
   CheckLst, Buttons, ExtCtrls;
 
 type
+  TBitEditFormats = (
+    edfWide1byte,
+    edfWide2byte,
+    edfWide4byte,
+    edfBits,
+    edfFloat32bit,
+    edf32Bit,
+    edf16Bit,
+    edf8Bit);
 
   { TfrmBitEdit }
 
@@ -32,14 +41,15 @@ type
     lbValueDec16: TLabel;
     lbValueDec32: TLabel;
     lbValueDec8: TLabel;
+    lbValueDec9: TLabel;
     lbValueHex32: TLabel;
+    PanelFloat: TPanel;
     PanelBtn: TPanel;
     PanelGroup1: TPanel;
     Panel16: TPanel;
     Panel8: TPanel;
     Panel32: TPanel;
     PanelBits: TPanel;
-    PanelFloat: TPanel;
     PanelHex32: TPanel;
     procedure chListBitAnyClickCheck(Sender: TObject);
     procedure edValueDecAnyChange(Sender: TObject);

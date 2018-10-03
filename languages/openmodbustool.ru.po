@@ -1,6 +1,34 @@
 ﻿msgid ""
 msgstr "Content-Type: text/plain; charset=UTF-8"
 
+#: tfrmbitedit.caption
+msgid "Value editor:"
+msgstr ""
+
+#: tfrmbitedit.lbfloat.caption
+msgid "Float"
+msgstr ""
+
+#: tfrmbitedit.lbvaluedec16.caption
+msgid "Dec 16bit"
+msgstr ""
+
+#: tfrmbitedit.lbvaluedec32.caption
+msgid "Dec 32bit"
+msgstr ""
+
+#: tfrmbitedit.lbvaluedec8.caption
+msgid "Dec 8bit"
+msgstr ""
+
+#: tfrmbitedit.lbvaluedec9.caption
+msgid "Bin"
+msgstr ""
+
+#: tfrmbitedit.lbvaluehex32.caption
+msgid "Value in hex"
+msgstr ""
+
 #: tfrmmain.actabout.caption
 msgctxt "tfrmmain.actabout.caption"
 msgid "About"
@@ -114,38 +142,33 @@ msgstr "Адрес:"
 msgid "count:"
 msgstr "Кол-во:"
 
-#: tfrmmain.listmain.columns[0].caption
-msgid "MainText"
-msgstr ""
-
-#: tfrmmain.listmain.columns[1].caption
-#, fuzzy
-#| msgid "Reg:"
-msgctxt "tfrmmain.listmain.columns[1].caption"
-msgid "Reg"
-msgstr "Регистр:"
-
-#: tfrmmain.listmain.columns[2].caption
-msgid "Value"
-msgstr ""
-
-#: tfrmmain.listmain.columns[3].caption
-msgid "Type"
-msgstr ""
-
-#: tfrmmain.listmain.columns[4].caption
-msgid "Name"
-msgstr ""
-
 #: tfrmmain.menuitem1.caption
 #, fuzzy
+#| msgid "Connect"
 msgctxt "tfrmmain.menuitem1.caption"
-msgid "Connect"
+msgid "Client"
 msgstr "Соединиться"
 
+#: tfrmmain.menuitem16.caption
+msgid "Server"
+msgstr ""
+
 #: tfrmmain.mnedit1.caption
+#, fuzzy
 msgctxt "tfrmmain.mnedit1.caption"
 msgid "Edit"
+msgstr "Выход"
+
+#: tfrmmain.mnsrvaddsmallrandom.caption
+msgid "Add small random"
+msgstr ""
+
+#: tfrmmain.mnsrvstart.caption
+msgid "Enable local server"
+msgstr ""
+
+#: tfrmmain.mnsrvtestread.caption
+msgid "Test mode - read only"
 msgstr ""
 
 #: tfrmmain.rgviewstyle.caption
@@ -155,6 +178,22 @@ msgstr "Отображение:"
 #: tfrmmain.statusbar1.panels[0].text
 msgctxt "tfrmmain.statusbar1.panels[0].text"
 msgid "offline"
+msgstr ""
+
+#: tfrmmain.virtualstringtree1.header.columns[0].text
+msgid "Register"
+msgstr ""
+
+#: tfrmmain.virtualstringtree1.header.columns[1].text
+msgid "Value"
+msgstr ""
+
+#: tfrmmain.virtualstringtree1.header.columns[2].text
+msgid "Reg.num"
+msgstr ""
+
+#: tfrmmain.virtualstringtree1.header.columns[3].text
+msgid "Type"
 msgstr ""
 
 #: tfrmoptions.caption

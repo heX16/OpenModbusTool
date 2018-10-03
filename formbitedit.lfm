@@ -1,36 +1,38 @@
 object frmBitEdit: TfrmBitEdit
   Left = 581
-  Height = 355
+  Height = 435
   Top = 391
-  Width = 443
+  Width = 441
   Caption = 'Value editor:'
-  ClientHeight = 355
-  ClientWidth = 443
+  ClientHeight = 435
+  ClientWidth = 441
+  DesignTimePPI = 120
   OnShow = FormShow
-  LCLVersion = '1.6.0.4'
+  LCLVersion = '1.8.0.6'
+  Visible = True
   object Panel32: TPanel
     Left = 0
     Height = 32
     Top = 32
-    Width = 443
+    Width = 441
     Align = alTop
     BevelOuter = bvNone
     ClientHeight = 32
-    ClientWidth = 443
+    ClientWidth = 441
     TabOrder = 0
     object edValueDec32: TEdit
       Tag = 321
-      Left = 216
-      Height = 23
-      Top = 3
-      Width = 136
+      Left = 144
+      Height = 25
+      Top = 0
+      Width = 280
       OnChange = edValueDecAnyChange
       TabOrder = 0
     end
     object lbValueDec32: TLabel
-      Left = 8
+      Left = -64
       Height = 23
-      Top = 3
+      Top = 0
       Width = 203
       Alignment = taRightJustify
       AutoSize = False
@@ -43,22 +45,22 @@ object frmBitEdit: TfrmBitEdit
     Left = 0
     Height = 32
     Top = 0
-    Width = 443
+    Width = 441
     Align = alTop
     BevelOuter = bvNone
     ClientHeight = 32
-    ClientWidth = 443
+    ClientWidth = 441
     TabOrder = 1
     object edValueHex32: TEdit
-      Left = 216
-      Height = 23
+      Left = 144
+      Height = 25
       Top = 5
-      Width = 136
+      Width = 280
       OnChange = edValueHex32Change
       TabOrder = 0
     end
     object lbValueHex32: TLabel
-      Left = 8
+      Left = -64
       Height = 23
       Top = 5
       Width = 203
@@ -73,11 +75,11 @@ object frmBitEdit: TfrmBitEdit
     Left = 0
     Height = 32
     Top = 64
-    Width = 443
+    Width = 441
     Align = alTop
     BevelOuter = bvNone
     ClientHeight = 32
-    ClientWidth = 443
+    ClientWidth = 441
     TabOrder = 2
     object lbValueDec16: TLabel
       Left = 8
@@ -93,7 +95,7 @@ object frmBitEdit: TfrmBitEdit
     object edValueDec16_1: TEdit
       Tag = 161
       Left = 144
-      Height = 23
+      Height = 25
       Top = 6
       Width = 136
       OnChange = edValueDecAnyChange
@@ -102,7 +104,7 @@ object frmBitEdit: TfrmBitEdit
     object edValueDec16_2: TEdit
       Tag = 162
       Left = 288
-      Height = 23
+      Height = 25
       Top = 6
       Width = 136
       OnChange = edValueDecAnyChange
@@ -113,16 +115,16 @@ object frmBitEdit: TfrmBitEdit
     Left = 0
     Height = 32
     Top = 96
-    Width = 443
+    Width = 441
     Align = alTop
     BevelOuter = bvNone
     ClientHeight = 32
-    ClientWidth = 443
+    ClientWidth = 441
     TabOrder = 3
     object edValueDec8_4: TEdit
       Tag = 84
       Left = 360
-      Height = 23
+      Height = 25
       Top = 5
       Width = 64
       OnChange = edValueDecAnyChange
@@ -131,7 +133,7 @@ object frmBitEdit: TfrmBitEdit
     object edValueDec8_3: TEdit
       Tag = 83
       Left = 288
-      Height = 23
+      Height = 25
       Top = 5
       Width = 64
       OnChange = edValueDecAnyChange
@@ -140,7 +142,7 @@ object frmBitEdit: TfrmBitEdit
     object edValueDec8_2: TEdit
       Tag = 82
       Left = 216
-      Height = 23
+      Height = 25
       Top = 5
       Width = 64
       OnChange = edValueDecAnyChange
@@ -149,7 +151,7 @@ object frmBitEdit: TfrmBitEdit
     object edValueDec8_1: TEdit
       Tag = 81
       Left = 144
-      Height = 23
+      Height = 25
       Top = 5
       Width = 64
       OnChange = edValueDecAnyChange
@@ -169,52 +171,27 @@ object frmBitEdit: TfrmBitEdit
   end
   object PanelGroup1: TPanel
     Left = 0
-    Height = 154
+    Height = 200
     Top = 128
-    Width = 443
+    Width = 441
     Align = alTop
     BevelOuter = bvNone
-    ClientHeight = 154
-    ClientWidth = 443
+    ClientHeight = 200
+    ClientWidth = 441
     TabOrder = 4
-    object PanelFloat: TPanel
-      Left = 0
-      Height = 155
-      Top = 0
-      Width = 144
-      BevelOuter = bvNone
-      ClientHeight = 155
-      ClientWidth = 144
-      TabOrder = 0
-      object edValueFloat: TEdit
-        Left = 8
-        Height = 23
-        Top = 24
-        Width = 128
-        TabOrder = 0
-      end
-      object lbFloat: TLabel
-        Left = 8
-        Height = 15
-        Top = 8
-        Width = 26
-        Caption = 'Float'
-        ParentColor = False
-      end
-    end
     object PanelBits: TPanel
       Left = 144
-      Height = 155
+      Height = 200
       Top = 0
       Width = 286
       BevelOuter = bvNone
-      ClientHeight = 155
+      ClientHeight = 200
       ClientWidth = 286
-      TabOrder = 1
+      TabOrder = 0
       object chListBit8_4: TCheckListBox
         Tag = 84
         Left = 216
-        Height = 146
+        Height = 200
         Top = 0
         Width = 64
         ExtendedSelect = False
@@ -228,7 +205,7 @@ object frmBitEdit: TfrmBitEdit
           '31'
           '32'
         )
-        ItemHeight = 17
+        ItemHeight = 19
         OnClickCheck = chListBitAnyClickCheck
         TabOrder = 0
         Data = {
@@ -238,7 +215,7 @@ object frmBitEdit: TfrmBitEdit
       object chListBit8_3: TCheckListBox
         Tag = 83
         Left = 144
-        Height = 146
+        Height = 200
         Top = 0
         Width = 64
         ExtendedSelect = False
@@ -252,7 +229,7 @@ object frmBitEdit: TfrmBitEdit
           '23'
           '24'
         )
-        ItemHeight = 17
+        ItemHeight = 19
         OnClickCheck = chListBitAnyClickCheck
         TabOrder = 1
         Data = {
@@ -262,7 +239,7 @@ object frmBitEdit: TfrmBitEdit
       object chListBit8_2: TCheckListBox
         Tag = 82
         Left = 72
-        Height = 146
+        Height = 200
         Top = 0
         Width = 64
         ExtendedSelect = False
@@ -276,7 +253,7 @@ object frmBitEdit: TfrmBitEdit
           '15'
           '16'
         )
-        ItemHeight = 17
+        ItemHeight = 19
         OnClickCheck = chListBitAnyClickCheck
         TabOrder = 2
         Data = {
@@ -286,7 +263,7 @@ object frmBitEdit: TfrmBitEdit
       object chListBit8_1: TCheckListBox
         Tag = 81
         Left = 0
-        Height = 146
+        Height = 200
         Top = 0
         Width = 64
         ExtendedSelect = False
@@ -300,7 +277,7 @@ object frmBitEdit: TfrmBitEdit
           '07'
           '08'
         )
-        ItemHeight = 17
+        ItemHeight = 19
         OnClickCheck = chListBitAnyClickCheck
         TabOrder = 3
         Data = {
@@ -308,16 +285,27 @@ object frmBitEdit: TfrmBitEdit
         }
       end
     end
+    object lbValueDec9: TLabel
+      Left = 8
+      Height = 23
+      Top = 5
+      Width = 131
+      Alignment = taRightJustify
+      AutoSize = False
+      Caption = 'Bin'
+      ParentBidiMode = False
+      ParentColor = False
+    end
   end
   object PanelBtn: TPanel
     Left = 0
     Height = 40
-    Top = 315
-    Width = 443
+    Top = 395
+    Width = 441
     Align = alBottom
     BevelOuter = bvNone
     ClientHeight = 40
-    ClientWidth = 443
+    ClientWidth = 441
     TabOrder = 5
     object BitBtn1: TBitBtn
       Left = 5
@@ -332,7 +320,7 @@ object frmBitEdit: TfrmBitEdit
       TabOrder = 0
     end
     object BitBtn2: TBitBtn
-      Left = 305
+      Left = 303
       Height = 32
       Top = 3
       Width = 131
@@ -342,6 +330,33 @@ object frmBitEdit: TfrmBitEdit
       Kind = bkCancel
       ModalResult = 2
       TabOrder = 1
+    end
+  end
+  object PanelFloat: TPanel
+    Left = 0
+    Height = 32
+    Top = 328
+    Width = 441
+    Align = alTop
+    BevelOuter = bvNone
+    ClientHeight = 32
+    ClientWidth = 441
+    TabOrder = 6
+    object edValueFloat: TEdit
+      Left = 144
+      Height = 25
+      Top = 5
+      Width = 280
+      TabOrder = 0
+    end
+    object lbFloat: TLabel
+      Left = 110
+      Height = 17
+      Top = 8
+      Width = 29
+      Alignment = taRightJustify
+      Caption = 'Float'
+      ParentColor = False
     end
   end
 end

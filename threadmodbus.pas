@@ -8,18 +8,20 @@ uses
   Dialogs,
   Classes, SysUtils,
   syncobjs, gdeque,
+  SuperViewZone,
   IdModbusClient, IdGlobal, ModbusTypes;
 
 type
   {
     Dectimal (123)
+    Dectimal sign (-123)
     Hex (F0A5)
     Bin (0000 0000 0000 0001)
     Boolean (0-gray, 1-green)
     Float (0.123 - 4 byte)
     Double Float (0.123 - 8 byte)
   }
-  TRegShowFormat = (rfDec=0, rfHex=1, rfBin, tfBool, tfFloat, tfDouble);
+  TRegShowFormat = (rfDec=0, rfHex=1, rfDecSign=2, rfBin, tfBool, tfFloat, tfDouble);
 
   {
   1x (bit, RO) - Discrete Input
@@ -46,6 +48,8 @@ type
 
   TThreadModBus = class(TThread)
   protected
+    Presenter: TSuperViewPresenter;
+
     // Main code. thread code (NO access to forms!)
     procedure Execute; override;
     // Read modbus registers. (run from thread)
@@ -58,6 +62,7 @@ type
     // callback from "IdModBusClient" for process disconnect.
     procedure TCP_Disconnect(Sender: TObject);
 
+    procedure SendDataToView();
   public
     // status bar message. using in SyncWriteStatusBar.
     StatusBarMsg: string;
@@ -108,7 +113,7 @@ type
     // Critical Section for safety write to 'WriteQueue'
     CritWriteQueueWork: TCriticalSection;
 
-    //constructor Create(CreateSuspended : boolean);
+    constructor Create(CreateSuspended : boolean; SetPresenter: TSuperViewPresenter);
 
     // SYNC ZONE:
     // (thread safe zone - can access to forms)
@@ -198,60 +203,69 @@ end;
 
 { TThreadModBus }
 
-procedure TThreadModBus.SyncDrawList;
-var i: integer;
-    itm: TListItem;
+procedure TThreadModBus.SendDataToView();
+var
+  i: integer;
+  MainText: WideString;
+  reg: integer;
+  val: string;
+  name: WideString;
 begin
-  //Note: BeginUpdate NOT remove 'splash'.
-  //Note: on vsList BeginUpdate make 'splash'! (strange - in theory BeginUpdate must remove 'splash'...)
-  //frmMain.listMain.BeginUpdate;
-
   try
-    if frmMain.listMain.ViewStyle = vsList then
-      frmMain.listMain.BeginUpdate();
-    for i:=0 to High(MBWord) do
+    for i:=Low(MBWord) to High(MBWord) do
     begin
-      // add items
-      if i > frmMain.listMain.Items.Count-1 then
-      begin
-        itm := frmMain.listMain.Items.Add;
-        itm.SubItems.Add('');//reg
-        itm.SubItems.Add('');//val
-        itm.SubItems.Add('');//type
-        itm.SubItems.Add('');//name
-        //itm.Caption:=IntToStr(i+RegStart)+'=?';//main text
+      case RegType of
+        tRegWordRO, tRegWordRW:
+          val := RegToString(i, MBWord, RegFormat);
+        tRegBoolRO, tRegBoolRW:
+          val := BoolStr(MBBool[i]);
+      else
+        val := 'ERROR!!!';
       end;
+      Presenter.ThreadAddEvent(IntToStr(i+RegStart), val, eventAdd);
+    end;
+  finally
+  end;
+end;
+
+procedure TThreadModBus.SyncDrawList;
+var
+  i: integer;
+  itm: TListItem;
+begin
+  try
+    for i:=Low(MBWord) to High(MBWord) do
+    begin
+      {column:
+        Caption - main text
+        0-reg
+        1-val
+        2-type
+        3-name}
+
       // update reg num
-      frmMain.listMain.Items[i].SubItems[idxColumnReg] := IntToStr(i+RegStart);
+      {frmMain.listMain.Items[i].SubItems[idxColumnReg] := IntToStr(i+RegStart);
       // update value
       if MBReadErr[i] <> 0 then
-        frmMain.listMain.Items[i].SubItems[idxColumnValue] := 'Err'+IntToStr(MBReadErr[i]) else
+        frmMain.listMain.Items[i].SubItems[ciColumnValue] := 'Err'+IntToStr(MBReadErr[i]) else
         begin
           case RegType of
             tRegWordRO, tRegWordRW:
-              frmMain.listMain.Items[i].SubItems[idxColumnValue] := RegToString(i, MBWord, RegFormat);
+              frmMain.listMain.Items[i].SubItems[ciColumnValue] := RegToString(i, MBWord, RegFormat);
             tRegBoolRO, tRegBoolRW:
-              frmMain.listMain.Items[i].SubItems[idxColumnValue] := BoolStr(MBBool[i]);
+              frmMain.listMain.Items[i].SubItems[ciColumnValue] := BoolStr(MBBool[i]);
           end;
         end;
 
-      frmMain.listMain.Items[i].Caption := frmMain.listMain.Items[i].SubItems[idxColumnReg] + '=' + frmMain.listMain.Items[i].SubItems[idxColumnValue];
+      frmMain.listMain.Items[i].Caption := frmMain.listMain.Items[i].SubItems[idxColumnReg] + '=' + frmMain.listMain.Items[i].SubItems[ciColumnValue];
+      }
     end;
-    if frmMain.listMain.ViewStyle = vsList then
-      frmMain.listMain.EndUpdate();
 
     // remove items
-    if frmMain.listMain.Items.Count-1 > High(MBWord) then
-      for i:=frmMain.listMain.Items.Count-1 downto High(MBWord)+1 do
-         frmMain.listMain.Items.Delete(i);
-
-    // update captions in out items
     {if frmMain.listMain.Items.Count-1 > High(MBWord) then
-      for i := High(MBWord)+1 to frmMain.listMain.Items.Count-1 do
-      begin
-        frmMain.listMain.Items[i].Caption := IntToStr(i+RegStart) + '=' + '-';
-        frmMain.listMain.Items[i].SubItems[idxColumnValue] := '-';
-      end;}
+      for i:=frmMain.listMain.Items.Count-1 downto High(MBWord)+1 do
+         frmMain.listMain.Items.Delete(i);}
+
   finally
     //frmMain.listMain.EndUpdate;
   end;
@@ -259,11 +273,11 @@ end;
 
 procedure TThreadModBus.SyncWriteStatusBar;
 begin
-  frmMain.StatusBar1.Panels[idxStatusBarStatus].Text := StatusBarStatus;
+  frmMain.StatusBar1.Panels[ciStatusBarStatus].Text := StatusBarStatus;
   if ErrorCount=0 then
-    frmMain.StatusBar1.Panels[idxStatusBarErrorCount].Text := '' else
-    frmMain.StatusBar1.Panels[idxStatusBarErrorCount].Text := StatusBarErrorCount + ' = ' + IntToStr(ErrorCount);
-  frmMain.StatusBar1.Panels[idxStatusBarMainText].Text := StatusBarMsg;
+    frmMain.StatusBar1.Panels[ciStatusBarErrorCount].Text := '' else
+    frmMain.StatusBar1.Panels[ciStatusBarErrorCount].Text := StatusBarErrorCount + ' = ' + IntToStr(ErrorCount);
+  frmMain.StatusBar1.Panels[ciStatusBarMainText].Text := StatusBarMsg;
 end;
 
 procedure TThreadModBus.SyncUpdateVars;
@@ -272,6 +286,8 @@ begin
   UpdateRegAddr();
   if not frmMain.cbRegFormat.DroppedDown then
     RegFormat:=TRegShowFormat(frmMain.cbRegFormat.ItemIndex);
+  if SetNewSize<>Length(MBWord) then
+    Presenter.SetItemRange(RegStart, RegStart+SetNewSize-1);
 end;
 
 procedure TThreadModBus.SyncUpdateVarsOnChange;
@@ -315,6 +331,13 @@ begin
     StatusBarStatus := StatusBarDisconnect;
     Synchronize(@SyncWriteStatusBar);
   end;
+end;
+
+constructor TThreadModBus.Create(CreateSuspended: boolean;
+  SetPresenter: TSuperViewPresenter);
+begin
+  inherited Create(CreateSuspended);
+  Presenter:=SetPresenter;
 end;
 
 procedure TThreadModBus.SyncEventConnect;
@@ -567,7 +590,8 @@ begin
             ReadMB(RegType, RegStart + i, i, Count);
           end;
 
-          Synchronize(@SyncDrawList);
+          SendDataToView();
+          //Synchronize(@SyncDrawList);
 
           if (ErrorPresent) and (ErrorLastCode <> 0) then
               StatusBarMsg := 'MB error = ' + IntToStr(ErrorLastCode);
@@ -579,7 +603,7 @@ begin
         //reg:=StrToIntDef(frmMain.listMain.Items[i].SubItems[idxColumnReg], -1);
         //ok := frmMain.IdModBusClient1.ReadHoldingRegister(reg, 2, MBWord);//float
         //Move(MBQWord[0], fl, 4);
-        //frmMain.listMain.Items[i].SubItems[idxColumnValue] := FloatToStrF(fl, ffFixed, 0, 3);
+        //frmMain.listMain.Items[i].SubItems[ciColumnValue] := FloatToStrF(fl, ffFixed, 0, 3);
         //...
 
         Synchronize(@SyncUpdateVars);

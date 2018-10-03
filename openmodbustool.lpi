@@ -22,9 +22,8 @@
     <VersionInfo>
       <UseVersionInfo Value="True"/>
       <AutoIncrementBuild Value="True"/>
-      <MajorVersionNr Value="1"/>
-      <MinorVersionNr Value="10"/>
-      <BuildNr Value="70"/>
+      <MajorVersionNr Value="2"/>
+      <BuildNr Value="74"/>
       <StringTable Comments="constructor heX (www.hex.name)" ProductVersion="1.9.0.65"/>
     </VersionInfo>
     <BuildModes Count="5">
@@ -236,12 +235,22 @@
       </Checks>
     </CodeGeneration>
     <Linking>
+      <Debugging>
+        <UseHeaptrc Value="True"/>
+        <TrashVariables Value="True"/>
+        <UseExternalDbgSyms Value="True"/>
+      </Debugging>
       <Options>
         <Win32>
           <GraphicApplication Value="True"/>
         </Win32>
       </Options>
     </Linking>
+    <Other>
+      <OtherDefines Count="1">
+        <Define0 Value="UseCThreads"/>
+      </OtherDefines>
+    </Other>
   </CompilerOptions>
   <Debugging>
     <Exceptions Count="4">

@@ -1,13 +1,14 @@
 object frmMain: TfrmMain
-  Left = 340
+  Left = 405
   Height = 680
-  Top = 161
+  Top = 158
   Width = 923
   Caption = 'OpenModbusTool'
   ClientHeight = 656
   ClientWidth = 923
   DesignTimePPI = 120
   Menu = menuMainForm
+  OnCreate = FormCreate
   OnDestroy = FormDestroy
   Position = poScreenCenter
   SessionProperties = 'cbIP.Text;edRegAddr.Text;edRegCount.Text;rgViewStyle.ItemIndex;cbIP.Items'
@@ -237,18 +238,6 @@ object frmMain: TfrmMain
       Shape = stCircle
     end
   end
-  object VirtualStringTree1: TVirtualStringTree
-    Left = 0
-    Height = 512
-    Top = 120
-    Width = 923
-    Align = alClient
-    DefaultText = 'Node'
-    Header.AutoSizeIndex = 0
-    Header.Columns = <>
-    Header.MainColumn = -1
-    TabOrder = 3
-  end
   object DrawGrid1: TDrawGrid
     Left = 0
     Height = 512
@@ -258,8 +247,52 @@ object frmMain: TfrmMain
     ExtendedSelect = False
     FixedCols = 0
     FixedRows = 0
+    Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goDrawFocusSelected, goEditing, goSmoothScroll]
+    PopupMenu = menuMainList
     RowCount = 1
     TabOrder = 4
+  end
+  object VirtualStringTree1: TVirtualStringTree
+    Left = 0
+    Height = 512
+    Top = 120
+    Width = 923
+    Align = alClient
+    DefaultText = 'Node'
+    Header.AutoSizeIndex = 0
+    Header.Columns = <    
+      item
+        Position = 0
+        Text = 'Register'
+        Width = 200
+      end    
+      item
+        Position = 1
+        Text = 'Value'
+        Width = 100
+      end    
+      item
+        Options = [coAllowClick, coDraggable, coEnabled, coParentBidiMode, coParentColor, coResizable, coShowDropMark, coAllowFocus, coEditable]
+        Position = 2
+        Text = 'Reg.num'
+        Width = 100
+      end    
+      item
+        Options = [coAllowClick, coDraggable, coEnabled, coParentBidiMode, coParentColor, coResizable, coShowDropMark, coAllowFocus, coEditable]
+        Position = 3
+        Text = 'Type'
+        Width = 100
+      end>
+    Header.MainColumn = 1
+    Header.Options = [hoColumnResize, hoDrag, hoShowSortGlyphs, hoVisible]
+    PopupMenu = menuMainList
+    TabOrder = 3
+    TreeOptions.MiscOptions = [toAcceptOLEDrop, toEditable, toFullRepaintOnResize, toInitOnSave, toToggleOnDblClick, toWheelPanning, toEditOnClick]
+    TreeOptions.PaintOptions = [toShowButtons, toShowDropmark, toShowHorzGridLines, toShowRoot, toShowVertGridLines, toThemeAware, toUseBlendedImages]
+    TreeOptions.SelectionOptions = [toFullRowSelect]
+    OnEditing = VirtualStringTree1Editing
+    OnKeyUp = VirtualStringTree1KeyUp
+    OnNewText = VirtualStringTree1NewText
   end
   object TimerReadMB: TTimer
     left = 60
@@ -378,7 +411,7 @@ object frmMain: TfrmMain
     left = 60
     top = 220
     object MenuItem1: TMenuItem
-      Caption = 'Connect'
+      Caption = 'Client'
       object MenuItem2: TMenuItem
         Action = actConnect
       end
@@ -388,18 +421,30 @@ object frmMain: TfrmMain
       object MenuItem7: TMenuItem
         Action = actOptions
       end
-      object MenuItem15: TMenuItem
-        Caption = '-'
-      end
-      object mnStartServer: TMenuItem
-        Action = actTestServerEnable
-        OnClick = mnStartServerClick
-      end
       object MenuItem4: TMenuItem
         Caption = '-'
       end
       object MenuItem5: TMenuItem
         Action = actExit
+      end
+    end
+    object MenuItem16: TMenuItem
+      Caption = 'Server'
+      object mnSrvStart: TMenuItem
+        Action = actTestServerEnable
+        Caption = 'Enable local server'
+      end
+      object MenuItem19: TMenuItem
+        Caption = '-'
+      end
+      object mnSrvTestRead: TMenuItem
+        Caption = 'Test mode - read only'
+        Checked = True
+        Enabled = False
+      end
+      object mnSrvAddSmallRandom: TMenuItem
+        Caption = 'Add small random'
+        Checked = True
       end
     end
     object mnEdit1: TMenuItem
@@ -415,6 +460,9 @@ object frmMain: TfrmMain
       end
       object MenuItem11: TMenuItem
         Action = actPaste
+      end
+      object MenuItem15: TMenuItem
+        Caption = '-'
       end
       object MenuItem12: TMenuItem
         Action = actSet0
@@ -452,5 +500,11 @@ object frmMain: TfrmMain
     OnWriteRegisters = IdModBusServerTestWriteRegisters
     left = 440
     top = 300
+  end
+  object TimerUpdateData: TTimer
+    Enabled = False
+    Interval = 100
+    left = 200
+    top = 490
   end
 end

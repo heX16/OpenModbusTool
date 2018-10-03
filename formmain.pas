@@ -16,10 +16,14 @@ interface
 uses
   //DefaultTranslator, // - forced translation
   //LCLTranslator,
+  LCLType,
+  VTUtils,
+  variants,
   Classes, SysUtils, FileUtil, ListViewFilterEdit, Forms, Controls, Graphics,
   Dialogs, ExtCtrls, ComCtrls, IdComponent, IdTCPClient, StdCtrls, ActnList,
   Menus, IniPropStorage, Grids, ThreadModBus, IdModBusServer, ModbusTypes,
-  IdModBusClient, IdContext, IdCustomTCPServer, VirtualTrees;
+  IdModBusClient, IdContext, IdCustomTCPServer, VirtualTrees,
+  SuperViewZone, SuperViewZoneConfig;
 
 {
 0x (bit, RW) - Discrete Output Coils
@@ -66,7 +70,11 @@ type
     MenuItem13: TMenuItem;
     MenuItem14: TMenuItem;
     MenuItem15: TMenuItem;
-    mnStartServer: TMenuItem;
+    MenuItem16: TMenuItem;
+    mnSrvTestRead: TMenuItem;
+    mnSrvAddSmallRandom: TMenuItem;
+    MenuItem19: TMenuItem;
+    mnSrvStart: TMenuItem;
     MenuItem8: TMenuItem;
     MenuItem9: TMenuItem;
     mnEdit1: TMenuItem;
@@ -91,6 +99,7 @@ type
     rgViewStyle: TRadioGroup;
     shapeState: TShape;
     StatusBar1: TStatusBar;
+    TimerUpdateData: TTimer;
     TimerInit: TTimer;
     TimerReadMB: TTimer;
     btnPause: TToggleBox;
@@ -114,6 +123,7 @@ type
     procedure cbIPKeyPress(Sender: TObject; var Key: char);
     procedure cbRegFormatChange(Sender: TObject);
     procedure cbRegisterTypeChange(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure IdModBusServerTestConnect(AContext: TIdContext);
     procedure IdModBusServerTestDisconnect(AContext: TIdContext);
@@ -138,43 +148,41 @@ type
     procedure IdModBusServerTestWriteRegisters(const Sender: TIdContext;
       const RegNr, Count: Integer; const Data: TModRegisterData;
       const RequestBuffer: TModBusRequestBuffer; var ErrorCode: Byte);
-    procedure listMainEdited(Sender: TObject; Item: TListItem;
-      var AValue: string);
-    procedure listMainEditing(Sender: TObject; Item: TListItem;
-      var AllowEdit: Boolean);
-    procedure mnStartServerClick(Sender: TObject);
+    procedure mnStartServer1Click(Sender: TObject);
     procedure rgViewStyleClick(Sender: TObject);
     procedure TimerInitTimer(Sender: TObject);
     procedure treeMainDblClick(Sender: TObject);
     procedure threadReadTerminating(Sender: TObject);
+    procedure VirtualStringTree1Editing(Sender: TBaseVirtualTree;
+      Node: PVirtualNode; Column: TColumnIndex; var Allowed: Boolean);
+    procedure VirtualStringTree1KeyUp(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
+    procedure VirtualStringTree1NewText(Sender: TBaseVirtualTree;
+      Node: PVirtualNode; Column: TColumnIndex; const NewText: String);
   private
     { private declarations }
   public
+    Presenter: TSuperViewPresenter;
     { public declarations }
     threadRead: TThreadModBus;
     SetToXValue: string;
     function LoadListRegs(Filename: String): boolean;
-    procedure listMainDoOnSelected(Proc: TLVDataEvent);
-    procedure DoCopy(Sender: TObject; Item: TListItem);
-    procedure CopyValue(Sender: TObject; Item: TListItem);
-    procedure SetTo0(Sender: TObject; Item: TListItem);
-    procedure SetTo1(Sender: TObject; Item: TListItem);
-    procedure SetToX(Sender: TObject; Item: TListItem);
+    procedure listMainDoOnSelected(Proc: TSuperViewEnumItemsProc);
   end;
 
 var
   frmMain: TfrmMain;
 
 const
-  // index
-  idxColumnMainText = 0;
-  idxColumnReg = 0;
-  idxColumnValue = 1;
-  idxColumnType = 2;
-  idxColumnName = 3;
-  idxStatusBarStatus = 0;
-  idxStatusBarErrorCount = 1;
-  idxStatusBarMainText = 2;
+  // index column in tree
+  ciColumnReg = 0;
+  ciColumnValue = 1;
+  ciColumnRegNum = 2;
+  ciColumnRegType = 4;
+
+  ciStatusBarStatus = 0;
+  ciStatusBarErrorCount = 1;
+  ciStatusBarMainText = 2;
 
 function GetBit(Value: QWord; Index: byte): boolean;
 function NormalizeConfigFileName(name: string): string;
@@ -190,6 +198,45 @@ uses
   FormAbout,
   Clipbrd,
   csvreadwrite;
+
+{
+procedure DoCopy(Sender: TSuperViewPresenter; Item: TSuperViewItem; out Delete: boolean; out Stop: boolean; UserData: pointer);
+procedure CopyValue(Sender: TSuperViewPresenter; Item: TSuperViewItem; out Delete: boolean; out Stop: boolean; UserData: pointer);
+procedure SetTo0(Sender: TSuperViewPresenter; Item: TSuperViewItem; out Delete: boolean; out Stop: boolean; UserData: pointer);
+procedure SetTo1(Sender: TSuperViewPresenter; Item: TSuperViewItem; out Delete: boolean; out Stop: boolean; UserData: pointer);
+procedure SetToX(Sender: TSuperViewPresenter; Item: TSuperViewItem; out Delete: boolean; out Stop: boolean; UserData: pointer);
+}
+
+procedure DoCopy(Sender: TSuperViewPresenter; Item: TSuperViewItem;
+  out Delete: boolean; out Stop: boolean; UserData: pointer);
+begin
+  Clipboard.AsText := Clipboard.AsText + #13 + Item.Name + '=' + Item.Info;
+end;
+
+procedure CopyValue(Sender: TSuperViewPresenter; Item: TSuperViewItem;
+  out Delete: boolean; out Stop: boolean; UserData: pointer);
+begin
+  Clipboard.AsText := Clipboard.AsText + #13 + Item.Info;
+end;
+
+procedure SetTo0(Sender: TSuperViewPresenter; Item: TSuperViewItem;
+  out Delete: boolean; out Stop: boolean; UserData: pointer);
+begin
+  frmMain.threadRead.Send(Item.Name, '0');
+end;
+
+procedure SetTo1(Sender: TSuperViewPresenter; Item: TSuperViewItem;
+  out Delete: boolean; out Stop: boolean; UserData: pointer);
+begin
+  frmMain.threadRead.Send(Item.Name, '1');
+end;
+
+procedure SetToX(Sender: TSuperViewPresenter; Item: TSuperViewItem;
+  out Delete: boolean; out Stop: boolean; UserData: pointer);
+begin
+  frmMain.threadRead.Send(Item.Name, frmMain.SetToXValue);
+end;
+
 
 { TfrmMain }
 
@@ -232,13 +279,25 @@ var
   procedure ParsePrevRow;
   var i:TListItem;
   begin
+    //todo: LoadListRegs
+    (*
+    column:
+      Caption - main text
+      0-reg
+      1-val
+      2-type
+      3-name
+
+    Presenter.ThreadAddEvent( ... );
     i:=frmMain.listMain.Items.Add;
-    i.SubItems.Add(row[0]);
-    i.SubItems.Add('???');
-    i.SubItems.Add(row[1]);
-    i.SubItems.Add(row[2]);
+    i.SubItems.Add(row[0]);//main text
+    i.SubItems.Add('???'); //reg
+    i.SubItems.Add(row[1]);//value
+    i.SubItems.Add(row[2]);//type
+                           //name
     //i.Caption:=i.SubItems.Text;
     i.Caption:=row[0]+'=?';
+    *)
   end;
 
 begin
@@ -273,49 +332,19 @@ begin
     end;
     ParsePrevRow;
 
+    //todo: LoadListRegs
     // fix bug (Laz 1.6): after load filter not update data - need reconect control
-    frmMain.ListViewFilterEdit1.FilteredListview:=nil;
-    frmMain.ListViewFilterEdit1.FilteredListview:=frmMain.listMain;
+    //frmMain.ListViewFilterEdit1.FilteredListview:=nil;
+    //frmMain.ListViewFilterEdit1.FilteredListview:=frmMain.listMain;
   finally
     FreeAndNil(Parser);
     FreeAndNil(FileStream);
   end;
 end;
 
-procedure TfrmMain.listMainDoOnSelected(Proc: TLVDataEvent);
-var i: integer;
+procedure TfrmMain.listMainDoOnSelected(Proc: TSuperViewEnumItemsProc);
 begin
-  for i:=0 to listMain.Items.Count-1 do
-    if listMain.Items[i].Selected then
-      Proc(nil, listMain.Items[i]);
-end;
-
-procedure TfrmMain.DoCopy(Sender: TObject; Item: TListItem);
-begin
-  Clipboard.AsText := Clipboard.AsText + #13 + Item.SubItems[idxColumnReg] + '=' + Item.SubItems[idxColumnValue];
-end;
-
-procedure TfrmMain.CopyValue(Sender: TObject; Item: TListItem);
-begin
-  Clipboard.AsText := Clipboard.AsText + #13 + Item.SubItems[idxColumnValue];
-end;
-
-procedure TfrmMain.SetTo0(Sender: TObject; Item: TListItem);
-begin
-  if threadRead <> nil then
-    threadRead.Send(Item.SubItems[idxColumnReg], '0');
-end;
-
-procedure TfrmMain.SetTo1(Sender: TObject; Item: TListItem);
-begin
-  if threadRead <> nil then
-    threadRead.Send(Item.SubItems[idxColumnReg], '1');
-end;
-
-procedure TfrmMain.SetToX(Sender: TObject; Item: TListItem);
-begin
-  if threadRead <> nil then
-    threadRead.Send(Item.SubItems[idxColumnReg], SetToXValue);
+  Presenter.EnumSelected(Proc, nil);
 end;
 
 procedure TfrmMain.actConnectExecute(Sender: TObject);
@@ -324,7 +353,7 @@ begin
   ip := Trim(cbIP.Text);
   if ip <> '' then
   begin
-    threadRead := TThreadModBus.Create(false);
+    threadRead := TThreadModBus.Create(false, Presenter);
     actDissconect.Enabled:=true;
   end else
     cbIP.SetFocus;
@@ -366,7 +395,7 @@ end;
 
 procedure TfrmMain.actMassActionUpdate(Sender: TObject);
 begin
-  (Sender as TAction).Enabled := listMain.SelCount > 0;
+  (Sender as TAction).Enabled := Presenter.Count() > 0;
 end;
 
 procedure TfrmMain.actCopyValueExecute(Sender: TObject);
@@ -405,10 +434,11 @@ end;
 
 procedure TfrmMain.actEditExtExecute(Sender: TObject);
 begin
-  if listMain.ItemIndex <> -1 then
+  if Presenter.SelectedPresent() then
   begin
-    if frmBitEdit.GetResult(false, StrToIntDef(listMain.Items[listMain.ItemIndex].SubItems[idxColumnValue], 0)) then
-      threadRead.Send(listMain.Items[listMain.ItemIndex].SubItems[idxColumnReg], IntToStr(frmBitEdit.EditResult));
+    //todo: add support float (32bit)
+    if frmBitEdit.GetResult(false, Presenter.SelectedItem().Info) then
+      threadRead.Send(Presenter.SelectedItem().Name, IntToStr(frmBitEdit.EditResult));
   end;
 end;
 
@@ -422,49 +452,46 @@ begin
   frmOptions.ShowModal();
 end;
 
+type TUserDataStruct1 = record
+    thread: TThreadModBus;
+    strs: TStringList;
+    StrIndex: integer;
+  end;
+  PUserDataStruct1=^TUserDataStruct1;
+
+procedure DoPasteValues(Sender: TSuperViewPresenter; Item: TSuperViewItem;
+  out Delete: boolean; out Stop: boolean; userdata: pointer);
+var v: integer;
+  data: PUserDataStruct1 absolute userdata;
+begin
+  // one value to many regs
+  if data^.strs.Count=1 then
+    data^.thread.Send(Item.Name, data^.strs[0]) else
+    if (data^.strs.Count>1) and (data^.StrIndex<data^.strs.Count) then begin
+      // many value to many regs
+      v:=StrToIntDef(data^.strs[data^.StrIndex], 100000);
+      if (v>=0) and (v<65536) then
+        data^.thread.Send(StrToInt(Item.Name), v);
+      inc(data^.StrIndex);
+    end;
+end;
+
 procedure TfrmMain.actPasteExecute(Sender: TObject);
 var
-  i, c, v: integer;
   strs: TStringList;
+  data: TUserDataStruct1;
 begin
-  if threadRead <> nil then
+  if (threadRead <> nil) then
     try
-      c := 0;
       strs := TStringList.Create;
       strs.Text := Clipboard.AsText;
-      if listMain.SelCount = 1 then
-      begin
-        // one value to one reg
-        if strs.Count=1 then
-          threadRead.Send(listMain.Selected.SubItems[idxColumnReg], strs[0]);
-        //ToDo: many value to many regs linear, start from selected item
-        {if strs.Count>1 then
-          for i:=0 to listMain.Items.Count-1 do
-            if listMain.Items[i].Selected then
-            begin
-              //todo: WIP!
-              threadRead.Send(listMain.Items[i].SubItems[idxColumnReg], strs[c]);
-              c := c + 1;
-            end;}
-      end;
 
-      if listMain.SelCount > 1 then
-      begin
-        // one value to many regs
-        if strs.Count=1 then
-          for i:=0 to listMain.Items.Count-1 do
-            if listMain.Items[i].Selected then
-              threadRead.Send(listMain.Items[i].SubItems[idxColumnReg], strs[0]);
-        // many value to many regs
-        if strs.Count>1 then
-          for i:=0 to listMain.Items.Count-1 do
-            if listMain.Items[i].Selected then
-            begin
-              if c > strs.Count-1 then break;
-              threadRead.Send(listMain.Items[i].SubItems[idxColumnReg], strs[c]);
-              c := c + 1;
-            end;
-      end;
+      data.thread:=threadRead;
+      data.strs:=strs;
+      data.StrIndex:=0;
+
+      if Presenter.SelectedPresent() then
+        Presenter.EnumSelected(@DoPasteValues, @data);
     finally
       strs.Free;
     end;
@@ -508,64 +535,30 @@ end;
 
 procedure TfrmMain.cbRegisterTypeChange(Sender: TObject);
 begin
-  if listMain.ViewStyle=vsList then
-    if threadRead <> nil then
-      case threadRead.RegType of
-        tRegBoolRO, tRegBoolRW:
-          listMain.Column[idxColumnMainText].Width:=50;
-        tRegWordRO, tRegWordRW:
-          listMain.Column[idxColumnMainText].Width:=150;
-      end;
+  //todo: OLD?
+  if threadRead <> nil then
+    case threadRead.RegType of
+      tRegBoolRO, tRegBoolRW:
+        ;//VirtualStringTree1.Header.Columns[idxColumnMainText].Width:=50;
+      tRegWordRO, tRegWordRW:
+        ;//VirtualStringTree1.Header.Columns[idxColumnMainText].Width:=150;
+    end;
+end;
+
+procedure TfrmMain.FormCreate(Sender: TObject);
+begin
+  Presenter := TSuperViewPresenter.Create();
 end;
 
 procedure TfrmMain.FormDestroy(Sender: TObject);
 begin
+  IdModBusServerTest.Active:=false;
   if threadRead <> nil then
     actDissconect.Execute;
+  FreeAndNil(Presenter);
 end;
 
-procedure TfrmMain.listMainEdited(Sender: TObject; Item: TListItem;
-  var AValue: string);
-var itm: TModbusItem;
-begin
-  if threadRead<> nil then
-  begin
-    if StrToIntDef(Item.SubItems[idxColumnReg], 65536) < 65536 then
-    begin
-      itm.Addr:=StrToInt(Item.SubItems[idxColumnReg]);
-      if StrToIntDef(AValue, 65536) < 65536 then
-      begin
-        itm.Value:=StrToInt(AValue);
-        itm.RegType:=threadRead.RegType;
-        threadRead.CritWriteQueueWork.Enter;
-        threadRead.WriteQueue.PushFront(itm);
-        threadRead.CritWriteQueueWork.Leave;
-      end;
-    end else
-      StatusBar1.Panels[idxStatusBarMainText].Text:='Invalid value';
-  end;
-end;
-
-procedure TfrmMain.listMainEditing(Sender: TObject; Item: TListItem;
-  var AllowEdit: Boolean);
-begin
-  if threadRead = nil then
-    AllowEdit:=false else
-    begin
-      //todo: edit in all format! - (frmBitEdit, etc)
-      if (threadRead.RegFormat <> rfDec) or (listMain.ViewStyle=vsReport) then
-      begin
-        AllowEdit:=false;
-        if listMain.ItemIndex <> -1 then
-        begin
-          if frmBitEdit.GetResult(false, StrToIntDef(listMain.Items[listMain.ItemIndex].SubItems[idxColumnValue], 0)) then
-            threadRead.Send(listMain.Items[listMain.ItemIndex].SubItems[idxColumnReg], IntToStr(frmBitEdit.EditResult));
-        end;
-      end;
-    end;
-end;
-
-procedure TfrmMain.mnStartServerClick(Sender: TObject);
+procedure TfrmMain.mnStartServer1Click(Sender: TObject);
 begin
   IdModBusServerTest.Active:=true;
 end;
@@ -573,24 +566,8 @@ end;
 procedure TfrmMain.rgViewStyleClick(Sender: TObject);
 begin
   case rgViewStyle.ItemIndex of
-  0: begin
-    listMain.ViewStyle:=vsReport;
-    listMain.Column[idxColumnMainText].Width:=0;
-    //todo: bug (wnd): Columns.Width applies only on start application. after start this code not work - i dont known why.
-    listMain.Column[idxColumnType+1  ].Width:=0;
-    listMain.Column[idxColumnReg+1   ].Width:=100;
-    listMain.Column[idxColumnValue+1 ].Width:=150;
-    listMain.Column[idxColumnName+1  ].Width:=0;
-  end;
-  1: begin
-    listMain.ViewStyle:=vsList;
-    case TRegReadType(cbRegisterType.ItemIndex) of
-      tRegBoolRO, tRegBoolRW:
-        listMain.Column[idxColumnMainText].Width:=50;
-      tRegWordRO, tRegWordRW:
-        listMain.Column[idxColumnMainText].Width:=150;
-    end;
-  end;
+  0: Presenter.SetViewMode(ViewModeCompactGrid);
+  1: Presenter.SetViewMode(ViewModeTree);
   end;
 end;
 
@@ -600,15 +577,19 @@ begin
   if frmMain.Visible then
   begin
     TimerInit.Enabled:=false;
+    Presenter.Setup(VirtualStringTree1, DrawGrid1, TimerUpdateData);
+    Presenter.ThreadEventsMaxCount := 65536;
+
     Application.ProcessMessages;
     // update
     rgViewStyleClick(nil);
 
     //SetDefaultLang('ru', '', true); // manual localization
 
-    {if Application.ParamCount < 1 then
+    {
+    //todo: add param support
+    if Application.ParamCount < 1 then
     begin
-      //todo: WIP!
       Halt(666);
       MessageDlg('Ussage: OpenModBusTool.exe [--ip=Host]'+#13+
         #13+
@@ -646,6 +627,51 @@ begin
   }
 end;
 
+procedure TfrmMain.VirtualStringTree1NewText(Sender: TBaseVirtualTree;
+  Node: PVirtualNode; Column: TColumnIndex; const NewText: String);
+var
+  itm: TModbusItem;
+  item: TSuperViewItem;
+  v: integer;
+begin
+  if (threadRead<> nil) and GetObjValid(Sender, Node) then
+  begin
+    item := GetObj(Sender, Node) as TSuperViewItem;
+
+    v := StrToIntDef(NewText, 100000);
+    if (v > 0) and (v < 65536) then
+    begin
+      itm.Addr:=StrToInt(Item.Name);
+      itm.Value:=v;
+      itm.RegType:=threadRead.RegType;
+      threadRead.CritWriteQueueWork.Enter;
+      threadRead.WriteQueue.PushFront(itm);
+      threadRead.CritWriteQueueWork.Leave;
+    end else
+      StatusBar1.Panels[ciStatusBarMainText].Text:='Invalid value';
+  end;
+end;
+
+procedure TfrmMain.VirtualStringTree1Editing(Sender: TBaseVirtualTree;
+  Node: PVirtualNode; Column: TColumnIndex; var Allowed: Boolean);
+begin
+  if threadRead = nil then
+    Allowed:=false else
+    begin
+      Allowed:=true;
+    end;
+end;
+
+procedure TfrmMain.VirtualStringTree1KeyUp(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+begin
+  if Key = VK_F2 then begin
+    //todo: F2 edit support
+    //if frmBitEdit.GetResult(false, StrToIntDef(listMain.Items[listMain.ItemIndex].SubItems[ciColumnValue], 0)) then
+    //  threadRead.Send(listMain.Items[listMain.ItemIndex].SubItems[idxColumnReg], IntToStr(frmBitEdit.EditResult));
+  end;
+end;
+
 
 
 
@@ -674,7 +700,10 @@ procedure TfrmMain.IdModBusServerTestReadCoils(const Sender: TIdContext;
 var i: integer;
 begin
   for i:=0 to Count-1 do
-    Data[i]:=false;
+    if (RegNr+i mod 2 = 1) or (mnSrvAddSmallRandom.Checked and (Random(10)=0)) then
+      Data[i]:=true
+    else
+      Data[i]:=false;
 end;
 
 procedure TfrmMain.IdModBusServerTestReadInputBits(const Sender: TIdContext;
@@ -683,7 +712,10 @@ procedure TfrmMain.IdModBusServerTestReadInputBits(const Sender: TIdContext;
 var i: integer;
 begin
   for i:=0 to Count-1 do
-    Data[i]:=false;
+    if (RegNr+i mod 2 = 1) or (mnSrvAddSmallRandom.Checked and (Random(10)=0)) then
+      Data[i]:=true
+    else
+      Data[i]:=false;
 end;
 
 procedure TfrmMain.IdModBusServerTestReadHoldingRegisters(
@@ -692,8 +724,11 @@ procedure TfrmMain.IdModBusServerTestReadHoldingRegisters(
   var ErrorCode: Byte);
 var i: integer;
 begin
-  for i:=0 to Count-1 do
-    Data[i]:=i;
+  for i:=0 to Count-1 do begin
+    Data[i]:=RegNr+i;
+    if mnSrvAddSmallRandom.Checked then
+      Data[i]:=Data[i]+random(2);
+  end;
 end;
 
 procedure TfrmMain.IdModBusServerTestReadInputRegisters(const Sender: TIdContext;
@@ -701,8 +736,11 @@ procedure TfrmMain.IdModBusServerTestReadInputRegisters(const Sender: TIdContext
   const RequestBuffer: TModBusRequestBuffer; var ErrorCode: Byte);
 var i: integer;
 begin
-  for i:=0 to Count-1 do
-    Data[i]:=i;
+  for i:=0 to Count-1 do begin
+    Data[i]:=RegNr+i+random(1);
+    if mnSrvAddSmallRandom.Checked then
+      Data[i]:=Data[i]+random(2);
+  end;
 end;
 
 procedure TfrmMain.IdModBusServerTestWriteCoils(const Sender: TIdContext;

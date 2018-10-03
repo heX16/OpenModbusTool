@@ -59,7 +59,7 @@ type
   //TTreeSuperView = specialize TTree<TSuperViewItem>;
   //TTreeSuperViewItem = specialize TTreeNode<TSuperViewItem>;
 
-  { TViewPresenter }
+  { TSuperViewPresenter }
   TViewPresenterViewMode = (ViewModeTree, ViewModeCompactGrid);
 
   TPresenterCounter = record
@@ -69,7 +69,10 @@ type
     DequeSize: integer;
   end;
 
-  TSuperViewEnumItemsProc = procedure (Item: TSuperViewItem; out Delete: boolean; out Stop: boolean);
+  TSuperViewPresenter = class;
+
+  TSuperViewEnumItemsProc = procedure (Sender: TSuperViewPresenter; Item: TSuperViewItem; out Delete: boolean; out Stop: boolean; UserData: pointer);
+  TSuperViewEnumItemsProcClass = procedure (Item: TSuperViewItem; out Delete: boolean; out Stop: boolean; UserData: pointer) of object;
 
   {
   Все методы вызываются и работают в Main Thread.
@@ -77,10 +80,17 @@ type
   вызываются из параллельного треда.
 
   }
-  TViewPresenter = class
+  TSuperViewPresenter = class
   private
     // map of all paths - contein all items and all path slice
     Items: TMapSuperView;
+
+    //todo: map of all items for thread 'add/del' optimization
+    // ThreadCacheEnabled: boolean;
+    // ThreadCacheNeedClear: boolean;
+    // ? ThreadCacheNeedSync: boolean; ?
+    // ThreadItemsCacheLock: TCriticalSection;
+    // ThreadItemsCache: TMapSuperView;
 
     // Double Buffer
     ThreadListAddLock: TCriticalSection;
@@ -138,7 +148,7 @@ type
 
     GridWidth: integer;
     UpdateSpeed: integer; // interval of update from thread new info
-    ThreadEventWaitListMaxLen: integer;
+    ThreadEventsMaxCount: integer;
 
     PathSplit: WideString;
 
@@ -149,6 +159,8 @@ type
 
     function GridXYToIndex(x, y: integer): integer;
     function GridIndexToXY(index: integer): TPoint;
+
+    function GridItemByIndex(index: integer): TSuperViewItem;
 
     procedure Setup(AViewTree: TVirtualStringTree; AViewGrid: TCustomDrawGrid;
       ATimer: TTimer);
@@ -177,11 +189,18 @@ type
       Clear: boolean); overload;
     procedure SetItemRange(RangeBegin, RangeEnd: integer); overload;
 
-    procedure EnumSelected(Proc: TSuperViewEnumItemsProc);
+    procedure EnumSelected(Proc: TSuperViewEnumItemsProc; UserData: pointer);
+
+    function SelectedPresent(): boolean;
+
+    function SelectedItem(): TSuperViewItem;
 
     procedure Clear();
 
     function GetCounters(): TPresenterCounter;
+
+    //todo: procedure SortItemsByName ...
+    //todo: procedure SortItemsByProc ...
 
     // call from 'external' thread
     procedure ThreadAddEvent(Path: TSuperViewPath; Info: TSuperViewInfo;
@@ -240,7 +259,7 @@ begin
   Node := nil;
 end;
 
-procedure TViewPresenter.SwapBufferBeetwenThread();
+procedure TSuperViewPresenter.SwapBufferBeetwenThread();
 var
   ThreadListAddItems1: TVectorSuperViewEvent;
 begin
@@ -261,7 +280,7 @@ begin
   end;
 end;
 
-procedure TViewPresenter.MainThreadProcessBuffer();
+procedure TSuperViewPresenter.MainThreadProcessBuffer();
 var
   j: integer;
   i: TSuperViewEvent;
@@ -297,7 +316,7 @@ begin
   end;
 end;
 
-procedure TViewPresenter.EventTimerProcessBuffer(Sender: TObject);
+procedure TSuperViewPresenter.EventTimerProcessBuffer(Sender: TObject);
 begin
   if (not TransferInProcess) then
   begin
@@ -309,14 +328,14 @@ begin
   end;
 end;
 
-procedure TViewPresenter.DoEnableTimer();
+procedure TSuperViewPresenter.DoEnableTimer();
 begin
   DropEnableTimer := False;//thread safe
   TimerEnabled := True;//thread safe
   TimerSync.Enabled := True;
 end;
 
-procedure TViewPresenter.EventGridDrawCell(Sender: TObject;
+procedure TSuperViewPresenter.EventGridDrawCell(Sender: TObject;
   aCol, aRow: integer; aRect: TRect; aState: TGridDrawState);
 var
   c, n: integer;
@@ -331,13 +350,13 @@ begin
   end;
 end;
 
-procedure TViewPresenter.EventGridResize(Sender: TObject);
+procedure TSuperViewPresenter.EventGridResize(Sender: TObject);
 begin
   GridResizeAndCompact();
   GridRecalc();
 end;
 
-procedure TViewPresenter.GridRepaintCell(Index: integer);
+procedure TSuperViewPresenter.GridRepaintCell(Index: integer);
 var
   aCol, aRow, c: integer;
   d: TDrawGridHack;
@@ -372,7 +391,7 @@ begin
   end;
 end;
 
-procedure TViewPresenter.EventVirtualTreeGetText(Sender: TBaseVirtualTree;
+procedure TSuperViewPresenter.EventVirtualTreeGetText(Sender: TBaseVirtualTree;
   Node: PVirtualNode; Column: TColumnIndex; TextType: TVSTTextType;
   var CellText: string);
 begin
@@ -382,7 +401,7 @@ begin
     CellText := 'ERROR!!!';
 end;
 
-procedure TViewPresenter.DeleteItem(Item: TSuperViewItem);
+procedure TSuperViewPresenter.DeleteItem(Item: TSuperViewItem);
 begin
   Assert(Item <> nil, 'DeleteItem item=nil');
   if (ViewGrid <> nil) then
@@ -405,11 +424,11 @@ begin
   Item.Free;
 end;
 
-constructor TViewPresenter.Create();
+constructor TSuperViewPresenter.Create();
 begin
   inherited;
   UpdateSpeed := 100;
-  ThreadEventWaitListMaxLen := 1023;
+  ThreadEventsMaxCount := 1023;
   PathSplit := '\';
   GridWidth := 100;
   GridArray := TVectorSuperViewItems.Create;
@@ -422,7 +441,7 @@ begin
   CountersLock := TCriticalSection.Create;
 end;
 
-destructor TViewPresenter.Destroy();
+destructor TSuperViewPresenter.Destroy();
 var
   //i: TSuperViewItem;
   itr: TMapSuperView.TIterator;
@@ -447,18 +466,29 @@ begin
   inherited Destroy();
 end;
 
-function TViewPresenter.GridXYToIndex(x, y: integer): integer;
+function TSuperViewPresenter.GridXYToIndex(x, y: integer): integer;
 begin
   Result := (y * ViewGrid.ColCount) + x;
 end;
 
-function TViewPresenter.GridIndexToXY(index: integer): TPoint;
+function TSuperViewPresenter.GridIndexToXY(index: integer): TPoint;
 begin
   Result.X := Index mod ViewGrid.ColCount;
   Result.Y := Index div ViewGrid.ColCount;
 end;
 
-procedure TViewPresenter.Setup(AViewTree: TVirtualStringTree;
+function TSuperViewPresenter.GridItemByIndex(index: integer): TSuperViewItem;
+begin
+  if (index > 0) and (index < GridArray.Size()) then
+  begin
+    if GridArray.Items[index] <> nil then
+      Result := GridArray.Items[index] as TSuperViewItem else
+      Result := nil;
+  end;
+  //
+end;
+
+procedure TSuperViewPresenter.Setup(AViewTree: TVirtualStringTree;
   AViewGrid: TCustomDrawGrid; ATimer: TTimer);
 begin
   if Assigned(AViewGrid) then
@@ -479,7 +509,7 @@ begin
   TimerSync.OnTimer := @EventTimerProcessBuffer;
 end;
 
-procedure TViewPresenter.SetViewMode(NewViewMode: TViewPresenterViewMode);
+procedure TSuperViewPresenter.SetViewMode(NewViewMode: TViewPresenterViewMode);
 begin
   if NewViewMode <> ViewMode then
   begin
@@ -503,7 +533,7 @@ begin
   end;
 end;
 
-procedure TViewPresenter.GridRecalc();
+procedure TSuperViewPresenter.GridRecalc();
 var
   i: integer;
 begin
@@ -520,7 +550,7 @@ begin
   end;
 end;
 
-procedure TViewPresenter.GridResizeAndCompact();
+procedure TSuperViewPresenter.GridResizeAndCompact();
 var
   NewArray: TVectorSuperViewItems;
   itemTest: TSuperViewItem;
@@ -570,12 +600,12 @@ begin
   end;
 end;
 
-function TViewPresenter.Count(): integer;
+function TSuperViewPresenter.Count(): integer;
 begin
   Result := Items.size;
 end;
 
-procedure TViewPresenter.DrawCell(aCol, aRow: integer; aRect: TRect;
+procedure TSuperViewPresenter.DrawCell(aCol, aRow: integer; aRect: TRect;
   aState: TGridDrawState; Node: TSuperViewItem);
 var
   d: TDrawGridHack;
@@ -587,7 +617,7 @@ begin
   end;
 end;
 
-function TViewPresenter.GetText(Node: TSuperViewItem; Col: integer): UTF8String;
+function TSuperViewPresenter.GetText(Node: TSuperViewItem; Col: integer): UTF8String;
 begin
   if Node = nil then
     Result := '-'
@@ -618,7 +648,7 @@ begin
   end;
 end;
 
-function TViewPresenter.GetTextCompactMode(Node: TSuperViewItem): UTF8String;
+function TSuperViewPresenter.GetTextCompactMode(Node: TSuperViewItem): UTF8String;
 begin
   if Node = nil then
     Result := '-'
@@ -636,7 +666,7 @@ begin
   end;
 end;
 
-procedure TViewPresenter.SetItemRange(RangeBegin, RangeEnd: integer;
+procedure TSuperViewPresenter.SetItemRange(RangeBegin, RangeEnd: integer;
   DelaultValue: variant; Clear: boolean);
 var
   i: integer;
@@ -655,12 +685,12 @@ begin
   ViewTree.EndUpdate;
 end;
 
-procedure TViewPresenter.SetItemRange(RangeBegin, RangeEnd: integer);
+procedure TSuperViewPresenter.SetItemRange(RangeBegin, RangeEnd: integer);
 begin
   SetItemRange(RangeBegin, RangeEnd, Null, True);
 end;
 
-procedure TViewPresenter.ThreadAddEvent(Path: TSuperViewPath;
+procedure TSuperViewPresenter.ThreadAddEvent(Path: TSuperViewPath;
   Info: TSuperViewInfo; EventType: TSuperViewEventType);
 //todo: var NeedFastSync: boolean;
 begin
@@ -668,7 +698,7 @@ begin
   ThreadListAddLock.Enter;
   try
     //todo: inc overflow count
-    if ThreadListAddItems.Size() < ThreadEventWaitListMaxLen then
+    if ThreadListAddItems.Size() < ThreadEventsMaxCount then
     begin
       ThreadListAddItems.PushBack(SuperViewEvent(Path, Info, EventType, GetTickCount64));
     end
@@ -691,12 +721,12 @@ begin
   //  TThread.Synchronize(nil, @SwapBufferBeetwenThread);
 end;
 
-procedure TViewPresenter.ThreadSync();
+procedure TSuperViewPresenter.ThreadSync();
 begin
   TThread.Synchronize(nil, @DoThreadSync);
 end;
 
-procedure TViewPresenter.DoThreadSync();
+procedure TSuperViewPresenter.DoThreadSync();
 begin
   if ThreadListAddItems.Size > 0 then
     if not TimerSync.Enabled then
@@ -707,9 +737,9 @@ begin
     end;
 end;
 
-procedure TViewPresenter.EnumSelected(Proc: TSuperViewEnumItemsProc);
+procedure TSuperViewPresenter.EnumSelected(Proc: TSuperViewEnumItemsProc; UserData: pointer);
 
-  procedure EnumGrid(Proc: TSuperViewEnumItemsProc);
+  procedure EnumGrid(Proc: TSuperViewEnumItemsProc; UserData: pointer);
   var
     i, x, y, index: integer;
     item: TSuperViewItem;
@@ -728,7 +758,7 @@ procedure TViewPresenter.EnumSelected(Proc: TSuperViewEnumItemsProc);
           if (index < GridArray.Size) and Assigned(GridArray[GridXYToIndex(x, y)]) then
           begin
             item := GridArray[GridXYToIndex(x, y)];
-            Proc(item, del, stop);
+            Proc(self, item, del, stop, UserData);
             if del then
               self.Del(item.Path);
             if stop then
@@ -737,7 +767,7 @@ procedure TViewPresenter.EnumSelected(Proc: TSuperViewEnumItemsProc);
         end;
   end;
 
-  procedure EnumTree(Proc: TSuperViewEnumItemsProc);
+  procedure EnumTree(Proc: TSuperViewEnumItemsProc; UserData: pointer);
   var
     i: PVirtualNode;
     c: integer;
@@ -752,7 +782,7 @@ procedure TViewPresenter.EnumSelected(Proc: TSuperViewEnumItemsProc);
         if GetObjValid(ViewTree, i) then
         begin
           del:=false;
-          Proc((GetObj(ViewTree, i) as TSuperViewItem), del, stop);
+          Proc(self, (GetObj(ViewTree, i) as TSuperViewItem), del, stop, UserData);
           if del then begin
             self.Del((GetObj(ViewTree, i) as TSuperViewItem).Path, True);
             if stop then exit;
@@ -769,12 +799,40 @@ procedure TViewPresenter.EnumSelected(Proc: TSuperViewEnumItemsProc);
 
 begin
   if ViewMode = ViewModeCompactGrid then
-    EnumGrid(Proc)
+    EnumGrid(Proc, UserData)
   else if ViewMode = ViewModeTree then
-    EnumTree(Proc);
+    EnumTree(Proc, UserData);
 end;
 
-procedure TViewPresenter.Clear();
+function TSuperViewPresenter.SelectedPresent(): boolean;
+begin
+  Result := False;
+  if ViewMode = ViewModeCompactGrid then begin
+    Result := GridItemByIndex(
+      GridXYToIndex(ViewGrid.Selection.Left, ViewGrid.Selection.Top)) <> nil;
+  end
+  else if ViewMode = ViewModeTree then begin
+    if (ViewTree.SelectedCount > 0) and
+       (ViewTree.FocusedNode <> nil) and
+       GetObjValid(ViewTree, ViewTree.FocusedNode) then
+      Result := True;
+  end;
+end;
+
+function TSuperViewPresenter.SelectedItem(): TSuperViewItem;
+begin
+  if SelectedPresent() then
+  begin
+    if ViewMode = ViewModeCompactGrid then
+      Result := GridArray[GridXYToIndex(ViewGrid.Selection.Left, ViewGrid.Selection.Top)]
+    else if ViewMode = ViewModeTree then begin
+      Result := GetObj(ViewTree, ViewTree.FocusedNode) as TSuperViewItem;
+    end
+  end else
+    raise ERangeError.Create('No selected item');
+end;
+
+procedure TSuperViewPresenter.Clear();
 var
   itr: TMapSuperView.TIterator;
   i: TSuperViewItem;
@@ -803,14 +861,14 @@ begin
   GridRecalc();
 end;
 
-function TViewPresenter.GetCounters(): TPresenterCounter;
+function TSuperViewPresenter.GetCounters(): TPresenterCounter;
 begin
   CountersLock.Enter;
   Result := Counters;
   CountersLock.Leave;
 end;
 
-function TViewPresenter.Add(Path: TSuperViewPath; Info: TSuperViewInfo): TSuperViewItem;
+function TSuperViewPresenter.Add(Path: TSuperViewPath; Info: TSuperViewInfo): TSuperViewItem;
   {procedure FillUserDataOnCreate(Tree: TVirtualStringTree; Node: PVirtualNode; Name: WideString; Level: integer; UserData: pointer);
   begin
     //Item:=TSuperViewItem.Create(Path, Info);
@@ -841,6 +899,7 @@ begin
       if not Items.contains(PathCut) then
       begin
         if i <> High(PathSlice) then
+        //todo: add fabric
           Item := TSuperViewItem.Create(PathCut, PathSlice[i], Null)
         else
         begin
@@ -886,22 +945,25 @@ begin
       if i = High(PathSlice) then
       begin
         Item := Items.Items[PathCut];
-        Item.Info := Info;
-
-        if (ViewMode = ViewModeCompactGrid) then
-          GridRepaintCell(Items.Items[PathCut].GridIndex)
-        else if (ViewMode = ViewModeTree) then
+        if Item.Info <> Info then
         begin
-          if Items.Items[PathCut].Node = nil then
-            ShowError('add node=nil!', 0); //dbg!
-          ViewTree.InvalidateNode(Items.Items[PathCut].Node);
+          Item.Info := Info;
+
+          if (ViewMode = ViewModeCompactGrid) then
+            GridRepaintCell(Items.Items[PathCut].GridIndex)
+          else if (ViewMode = ViewModeTree) then
+          begin
+            if Items.Items[PathCut].Node = nil then
+              ShowError('add node=nil!', 0); //dbg!
+            ViewTree.InvalidateNode(Items.Items[PathCut].Node);
+          end;
         end;
       end;
     end;
   end;
 end;
 
-function TViewPresenter.Del(Path: TSuperViewPath; DeleteSubItems: boolean): boolean;
+function TSuperViewPresenter.Del(Path: TSuperViewPath; DeleteSubItems: boolean): boolean;
 
   procedure TreeDeleteSubItems(Node: PVirtualNode);
   var
@@ -972,7 +1034,7 @@ begin
   end;
 end;
 
-procedure TViewPresenter.Update(Path: TSuperViewPath; Info: TSuperViewInfo);
+procedure TSuperViewPresenter.Update(Path: TSuperViewPath; Info: TSuperViewInfo);
 var
   Item: TSuperViewItem;
 begin
@@ -986,7 +1048,7 @@ begin
   end;
 end;
 
-function TViewPresenter.Find(Path: TSuperViewPath): TSuperViewItem;
+function TSuperViewPresenter.Find(Path: TSuperViewPath): TSuperViewItem;
 begin
   if Items.contains(Path) then
     Result := Items.Items[Path]
