@@ -102,7 +102,9 @@ msgid "127.0.0.1"
 msgstr ""
 
 #: tfrmmain.cbregformat.text
-msgid "Dectimal (123)"
+#, fuzzy
+#| msgid "Dectimal (123)"
+msgid "Dectimal Int (65535)"
 msgstr "Числовой (123)"
 
 #: tfrmmain.cbregistertype.text
@@ -158,6 +160,10 @@ msgstr "Редактор"
 #: tfrmmain.mnsrvaddsmallrandom.caption
 msgid "Add small random"
 msgstr "Добавить небольшие отклонения"
+
+#: tfrmmain.mnsrvfullrnd.caption
+msgid "Full rnd"
+msgstr ""
 
 #: tfrmmain.mnsrvstart.caption
 msgid "Enable local server"

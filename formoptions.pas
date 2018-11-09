@@ -39,6 +39,7 @@ implementation
 
 procedure TfrmOptions.cbReadUseFunc05Change(Sender: TObject);
 begin
+  ShowMessage('Not support =(');
   //ToDo: WIP!
 end;
 

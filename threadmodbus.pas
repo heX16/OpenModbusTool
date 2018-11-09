@@ -9,6 +9,7 @@ uses
   Classes, SysUtils,
   syncobjs, gdeque,
   SuperViewZone,
+  Variants,
   IdModbusClient, IdGlobal, ModbusTypes;
 
 type
@@ -21,7 +22,8 @@ type
     Float (0.123 - 4 byte)
     Double Float (0.123 - 8 byte)
   }
-  TRegShowFormat = (rfDec=0, rfHex=1, rfDecSign=2, rfBin, tfBool, tfFloat, tfDouble);
+  //todo: rename!!!!!!!!!!!!!!!! rf,tf
+  TRegShowFormat = (rfDec=0, rfDecSign=1, rfHex=2, rfBin=3, tfBool=4, tfFloat=5, tfDouble=6);
 
   {
   1x (bit, RO) - Discrete Input
@@ -42,13 +44,31 @@ type
     RegType: TRegReadType;
   end;
 
+  TQWordReal = record
+    case byte of
+    0: (Words: array [0..3] of Word);
+    1: (W: Word);
+    1: (Float4: Real);
+    2: (Float8: Double)
+  end;
+
   TModbusItemQueue = specialize TDeque<TModbusItem>;
+
+  { TSuperViewPresenterModbus }
+
+  TSuperViewPresenterModbus = class(TSuperViewPresenter)
+    RegStart: integer;
+    RegShowFormat: TRegShowFormat;
+
+    function GetText(Node: TSuperViewItem; Col: integer): UTF8String; override;
+    function GetTextCompactMode(Node: TSuperViewItem): UTF8String; override;
+  end;
 
   { TThreadModBus }
 
   TThreadModBus = class(TThread)
   protected
-    Presenter: TSuperViewPresenter;
+    Presenter: TSuperViewPresenterModbus;
 
     // Main code. thread code (NO access to forms!)
     procedure Execute; override;
@@ -113,7 +133,8 @@ type
     // Critical Section for safety write to 'WriteQueue'
     CritWriteQueueWork: TCriticalSection;
 
-    constructor Create(CreateSuspended : boolean; SetPresenter: TSuperViewPresenter);
+    constructor Create(CreateSuspended: boolean;
+      SetPresenter: TSuperViewPresenterModbus);
 
     // SYNC ZONE:
     // (thread safe zone - can access to forms)
@@ -131,7 +152,7 @@ type
   end;
 
 // convert register(s) to string (for visualisation)
-function RegToString(RegN: integer; Regs: array of word; format: TRegShowFormat): string;
+function RegToString(Regs: TQWordReal; format: TRegShowFormat): string;
 
 resourcestring
   StatusBarErrorCount = 'Errors';
@@ -159,8 +180,7 @@ begin
     Result := '1';
 end;
 
-function RegToString(RegN: integer; Regs: array of word; Format: TRegShowFormat
-  ): string;
+function RegToString(Regs: TQWordReal; format: TRegShowFormat): string;
 var
   i: integer;
 type
@@ -168,37 +188,90 @@ type
   PDouble = ^Double;
 begin
   Result := '';
-  if RegN > High(Regs) then
-    Result := '!' else
-    case Format of
-      rfDec:
-        Result := IntToStr(Regs[RegN]);
-      rfHex:
-        Result := IntToHex(Regs[RegN], 4);
-      rfBin:
-        for i:=0 to 15 do begin
-          Result := Result + BoolStr(GetBit(Regs[RegN], i));
-          if (i <> 15) and (i mod 4 = 3) then Result := Result + '.';
-        end;
-      tfBool:
-        Result := BoolToStr(Boolean(Regs[RegN]), true);
-      tfFloat:
-        if (RegN mod 2) = 0 then
-        begin
-          if RegN+1 <= High(Regs) then
-            Result := FloatToStr(PFloat(@Regs[RegN])^) else
+  case Format of
+    rfDec:
+      Result := IntToStr(UInt16(Regs.W));
+    rfDecSign:
+      Result := IntToStr(Int16(Regs.W));
+    rfHex:
+      Result := IntToHex(Regs.W, 4);
+    rfBin:
+      for i:=0 to 15 do begin
+        Result := Result + BoolStr(GetBit(Regs.W, i));
+        if (i <> 15) and (i mod 4 = 3) then Result := Result + '_';
+      end;
+    tfBool:
+      Result := BoolToStr(Boolean(Regs.W), true);
+    tfFloat:
+      Result := FloatToStr(Regs.Float4);
+    tfDouble:
+      Result := FloatToStr(Regs.Float8);
+  else
+    Result := 'not support';
+  end;
+end;
+
+{ TSuperViewPresenterModbus }
+
+function TSuperViewPresenterModbus.GetText(Node: TSuperViewItem; Col: integer
+  ): UTF8String;
+var
+  RegFirst: integer;
+  RegN: integer;
+  Regs: TQWordReal;
+  r2: TSuperViewItem;
+  r3: TSuperViewItem;
+  r4: TSuperViewItem;
+begin
+  Result := '';
+  RegFirst := StrToIntDef(Node.Path, -1);
+  if Col = 0 then
+    Result:=inherited GetText(Node, Col)
+  else
+    if (RegFirst >= 0) and (VarIsNumeric(Node.Info)) then
+    begin
+      RegN := RegFirst - self.RegStart;
+      Regs.Words[0] := Node.Info;
+
+      if (self.RegShowFormat=tfFloat) then begin
+        if (RegN mod 2) = 0 then begin
+          r2 := Find(IntToStr(RegN+1));
+          if (r2 <> nil) and (VarIsNumeric(r2.Info)) then begin
+            Regs.Words[1] := r2.Info;
+          end else
             Result := '#';
-        end;
-      tfDouble:
-        if (RegN mod 4) = 0 then
-        begin
-          if RegN+3 <= High(Regs) then
-            Result := FloatToStr(PDouble(@Regs[RegN])^) else
+        end else
+          Result := '#';
+      end;
+
+      if (self.RegShowFormat=tfDouble) then begin
+        if (RegN mod 4) = 0 then begin
+          r2 := Find(IntToStr(RegN+1));
+          r3 := Find(IntToStr(RegN+2));
+          r4 := Find(IntToStr(RegN+3));
+          if (r2 <> nil) and (r3 <> nil) and (r4 <> nil) and
+             (VarIsNumeric(r2.Info)) and
+             (VarIsNumeric(r3.Info)) and
+             (VarIsNumeric(r4.Info)) then begin
+            Regs.Words[1] := r2.Info;
+            Regs.Words[2] := r3.Info;
+            Regs.Words[3] := r4.Info;
+          end else
             Result := '#';
-        end;
-    else
-      Result := 'not support';
-    end;
+        end else
+          Result := '#';
+      end;
+
+      if Result = '' then
+        Result := RegToString(Regs, self.RegShowFormat);
+    end else
+      Result := '#';
+end;
+
+function TSuperViewPresenterModbus.GetTextCompactMode(Node: TSuperViewItem
+  ): UTF8String;
+begin
+  Result:=inherited GetTextCompactMode(Node);
 end;
 
 { TThreadModBus }
@@ -206,21 +279,18 @@ end;
 procedure TThreadModBus.SendDataToView();
 var
   i: integer;
-  MainText: WideString;
-  reg: integer;
-  val: string;
-  name: WideString;
+  val: Word;
 begin
   try
     for i:=Low(MBWord) to High(MBWord) do
     begin
       case RegType of
         tRegWordRO, tRegWordRW:
-          val := RegToString(i, MBWord, RegFormat);
+          val := MBWord[i];
         tRegBoolRO, tRegBoolRW:
-          val := BoolStr(MBBool[i]);
+          val := Word(MBBool[i]);
       else
-        val := 'ERROR!!!';
+        val := 0;
       end;
       Presenter.ThreadAddEvent(IntToStr(i+RegStart), val, eventAdd);
     end;
@@ -284,16 +354,20 @@ procedure TThreadModBus.SyncUpdateVars;
 begin
   SetNewSize:=StrToIntDef(frmMain.edRegCount.Text, SetNewSize);
   UpdateRegAddr();
-  if not frmMain.cbRegFormat.DroppedDown then
+  if not frmMain.cbRegFormat.DroppedDown then begin
     RegFormat:=TRegShowFormat(frmMain.cbRegFormat.ItemIndex);
+    Presenter.RegShowFormat:=TRegShowFormat(frmMain.cbRegFormat.ItemIndex);
+  end;
   if SetNewSize<>Length(MBWord) then
     Presenter.SetItemRange(RegStart, RegStart+SetNewSize-1);
 end;
 
 procedure TThreadModBus.SyncUpdateVarsOnChange;
 begin
-  if not frmMain.cbRegFormat.DroppedDown then
+  if not frmMain.cbRegFormat.DroppedDown then begin
     RegFormat:=TRegShowFormat(frmMain.cbRegFormat.ItemIndex);
+    Presenter.RegShowFormat:=TRegShowFormat(frmMain.cbRegFormat.ItemIndex);
+  end;
 end;
 
 procedure TThreadModBus.SyncRemoveFromMainProg;
@@ -334,7 +408,7 @@ begin
 end;
 
 constructor TThreadModBus.Create(CreateSuspended: boolean;
-  SetPresenter: TSuperViewPresenter);
+  SetPresenter: TSuperViewPresenterModbus);
 begin
   inherited Create(CreateSuspended);
   Presenter:=SetPresenter;
@@ -410,6 +484,10 @@ begin
     RegStart:=StrToIntDef(a, RegStart);
     if not frmMain.cbRegisterType.DroppedDown then
       RegType:=TRegReadType(frmMain.cbRegisterType.ItemIndex);
+  end;
+  if Presenter.RegStart <> RegStart then begin
+    Presenter.Clear();
+    Presenter.RegStart:=RegStart;
   end;
 end;
 

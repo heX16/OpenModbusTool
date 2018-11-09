@@ -23,7 +23,7 @@
       <UseVersionInfo Value="True"/>
       <AutoIncrementBuild Value="True"/>
       <MajorVersionNr Value="2"/>
-      <BuildNr Value="80"/>
+      <BuildNr Value="86"/>
       <StringTable Comments="constructor heX (www.hex.name)" ProductVersion="1.9.0.65"/>
     </VersionInfo>
     <BuildModes Count="5">
@@ -102,6 +102,9 @@
         <CompilerOptions>
           <Version Value="11"/>
           <PathDelim Value="\"/>
+          <Target>
+            <Filename Value="OpenModBusTool-32.elf"/>
+          </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
             <OtherUnitFiles Value="\usr\lib\lazarus\default\components\delphimodbus\source;\usr\lib\lazarus\default\components\delphimodbus\packages;\usr\lib\lazarus\default\components\indy\fpc"/>
@@ -111,10 +114,15 @@
             <Checks>
               <RangeChecks Value="True"/>
             </Checks>
+            <TargetProcessor Value="80386"/>
             <TargetCPU Value="i386"/>
             <TargetOS Value="linux"/>
           </CodeGeneration>
           <Linking>
+            <Debugging>
+              <GenerateDebugInfo Value="False"/>
+              <StripSymbols Value="True"/>
+            </Debugging>
             <Options>
               <Win32>
                 <GraphicApplication Value="True"/>
@@ -123,6 +131,9 @@
           </Linking>
           <Other>
             <CustomOptions Value="-dUseCThreads"/>
+            <OtherDefines Count="1">
+              <Define0 Value="UseCThreads"/>
+            </OtherDefines>
           </Other>
         </CompilerOptions>
       </Item4>
@@ -130,19 +141,32 @@
         <CompilerOptions>
           <Version Value="11"/>
           <PathDelim Value="\"/>
+          <Target>
+            <Filename Value="OpenModBusTool-64.elf" ApplyConventions="False"/>
+          </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
             <OtherUnitFiles Value="\usr\lib\lazarus\default\components\delphimodbus\source;\usr\lib\lazarus\default\components\delphimodbus\packages;\usr\lib\lazarus\default\components\indy\fpc"/>
             <UnitOutputDirectory Value="$Env(tmp)\tmp\Lazarus"/>
           </SearchPaths>
           <CodeGeneration>
+            <SmartLinkUnit Value="True"/>
             <Checks>
               <RangeChecks Value="True"/>
             </Checks>
             <TargetCPU Value="x86_64"/>
             <TargetOS Value="linux"/>
+            <Optimizations>
+              <OptimizationLevel Value="3"/>
+            </Optimizations>
+            <SmallerCode Value="True"/>
           </CodeGeneration>
           <Linking>
+            <Debugging>
+              <GenerateDebugInfo Value="False"/>
+              <StripSymbols Value="True"/>
+            </Debugging>
+            <LinkSmart Value="True"/>
             <Options>
               <Win32>
                 <GraphicApplication Value="True"/>
@@ -151,6 +175,9 @@
           </Linking>
           <Other>
             <CustomOptions Value="-dUseCThreads"/>
+            <OtherDefines Count="1">
+              <Define0 Value="UseCThreads"/>
+            </OtherDefines>
           </Other>
         </CompilerOptions>
       </Item5>

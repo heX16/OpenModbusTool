@@ -71,6 +71,7 @@ type
     MenuItem14: TMenuItem;
     MenuItem15: TMenuItem;
     MenuItem16: TMenuItem;
+    mnSrvFullRnd: TMenuItem;
     mnSrvTestRead: TMenuItem;
     mnSrvAddSmallRandom: TMenuItem;
     MenuItem19: TMenuItem;
@@ -148,6 +149,8 @@ type
     procedure IdModBusServerTestWriteRegisters(const Sender: TIdContext;
       const RegNr, Count: Integer; const Data: TModRegisterData;
       const RequestBuffer: TModBusRequestBuffer; var ErrorCode: Byte);
+    procedure mnSrvFullRndClick(Sender: TObject);
+    procedure mnSrvAddSmallRandomClick(Sender: TObject);
     procedure mnStartServer1Click(Sender: TObject);
     procedure rgViewStyleClick(Sender: TObject);
     procedure TimerInitTimer(Sender: TObject);
@@ -162,7 +165,7 @@ type
   private
     { private declarations }
   public
-    Presenter: TSuperViewPresenter;
+    Presenter: TSuperViewPresenterModbus;
     { public declarations }
     threadRead: TThreadModBus;
     SetToXValue: string;
@@ -547,7 +550,7 @@ end;
 
 procedure TfrmMain.FormCreate(Sender: TObject);
 begin
-  Presenter := TSuperViewPresenter.Create();
+  Presenter := TSuperViewPresenterModbus.Create();
 end;
 
 procedure TfrmMain.FormDestroy(Sender: TObject);
@@ -586,8 +589,8 @@ begin
 
     //SetDefaultLang('ru', '', true); // manual localization
 
-    {
     //todo: add param support
+    {
     if Application.ParamCount < 1 then
     begin
       Halt(666);
@@ -638,6 +641,7 @@ begin
   begin
     item := GetObj(Sender, Node) as TSuperViewItem;
 
+    //todo: add multi format!
     v := StrToIntDef(NewText, 100000);
     if (v > 0) and (v < 65536) then
     begin
@@ -726,6 +730,9 @@ var i: integer;
 begin
   for i:=0 to Count-1 do begin
     Data[i]:=RegNr+i;
+    //todo: add random seed???
+    if mnSrvFullRnd.Checked then
+      Data[i]:=Random(65536);
     if mnSrvAddSmallRandom.Checked then
       Data[i]:=Data[i]+random(2);
   end;
@@ -738,6 +745,8 @@ var i: integer;
 begin
   for i:=0 to Count-1 do begin
     Data[i]:=RegNr+i+random(1);
+    if mnSrvFullRnd.Checked then
+      Data[i]:=Random(65536);
     if mnSrvAddSmallRandom.Checked then
       Data[i]:=Data[i]+random(2);
   end;
@@ -755,6 +764,16 @@ procedure TfrmMain.IdModBusServerTestWriteRegisters(const Sender: TIdContext;
   const RequestBuffer: TModBusRequestBuffer; var ErrorCode: Byte);
 begin
   ErrorCode:=1;
+end;
+
+procedure TfrmMain.mnSrvFullRndClick(Sender: TObject);
+begin
+  (Sender as TMenuItem).Checked := not (Sender as TMenuItem).Checked;
+end;
+
+procedure TfrmMain.mnSrvAddSmallRandomClick(Sender: TObject);
+begin
+  (Sender as TMenuItem).Checked := not (Sender as TMenuItem).Checked;
 end;
 
 end.

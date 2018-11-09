@@ -12,7 +12,7 @@ object frmMain: TfrmMain
   OnDestroy = FormDestroy
   Position = poScreenCenter
   SessionProperties = 'cbIP.Text;edRegAddr.Text;edRegCount.Text;rgViewStyle.ItemIndex;cbIP.Items'
-  LCLVersion = '1.8.0.6'
+  LCLVersion = '1.8.4.0'
   Visible = True
   object Panel1: TPanel
     Left = 0
@@ -182,7 +182,8 @@ object frmMain: TfrmMain
       ItemHeight = 17
       ItemIndex = 0
       Items.Strings = (
-        'Dectimal (123)'
+        'Dectimal Int (65535)'
+        'Dectimal Signed Int (-32768)'
         'Hex (F0A5)'
         'Bin (0000 0000 0000 0001)'
         'Boolean (0-gray, 1-green)'
@@ -193,7 +194,7 @@ object frmMain: TfrmMain
       ParentFont = False
       Style = csDropDownList
       TabOrder = 6
-      Text = 'Dectimal (123)'
+      Text = 'Dectimal Int (65535)'
     end
     object rgViewStyle: TRadioGroup
       Left = 730
@@ -445,6 +446,11 @@ object frmMain: TfrmMain
       object mnSrvAddSmallRandom: TMenuItem
         Caption = 'Add small random'
         Checked = True
+        OnClick = mnSrvAddSmallRandomClick
+      end
+      object mnSrvFullRnd: TMenuItem
+        Caption = 'Full rnd'
+        OnClick = mnSrvFullRndClick
       end
     end
     object mnEdit1: TMenuItem

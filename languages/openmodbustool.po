@@ -101,7 +101,7 @@ msgid "127.0.0.1"
 msgstr ""
 
 #: tfrmmain.cbregformat.text
-msgid "Dectimal (123)"
+msgid "Dectimal Int (65535)"
 msgstr ""
 
 #: tfrmmain.cbregistertype.text
@@ -154,6 +154,10 @@ msgstr ""
 
 #: tfrmmain.mnsrvaddsmallrandom.caption
 msgid "Add small random"
+msgstr ""
+
+#: tfrmmain.mnsrvfullrnd.caption
+msgid "Full rnd"
 msgstr ""
 
 #: tfrmmain.mnsrvstart.caption
