@@ -218,6 +218,7 @@ function TSuperViewPresenterModbus.GetText(Node: TSuperViewItem; Col: integer
 var
   RegFirst: integer;
   RegN: integer;
+  RegMBN: integer;
   Regs: TQWordReal;
   r2: TSuperViewItem;
   r3: TSuperViewItem;
@@ -235,7 +236,9 @@ begin
 
       if (self.RegShowFormat=tfFloat) then begin
         if (RegN mod 2) = 0 then begin
-          r2 := Find(IntToStr(RegN+1));
+          RegMBN := StrToInt(Node.Name);
+          //todo: BUG!!!! почемуто Node.Name=20000 но при этом Node.Path=2000
+          r2 := Find(IntToStr(RegMBN+1));
           if (r2 <> nil) and (VarIsNumeric(r2.Info)) then begin
             Regs.Words[1] := r2.Info;
           end else
@@ -350,16 +353,47 @@ begin
   frmMain.StatusBar1.Panels[ciStatusBarMainText].Text := StatusBarMsg;
 end;
 
+procedure TThreadModBus.UpdateRegAddr;
+var a: String;
+begin
+  a := Trim(frmMain.edRegAddr.Text);
+  if (Length(a)=6) and (IsNumber(UnicodeString(a), 1)) then
+  begin
+    // 6 digit format
+    if not frmMain.cbRegisterType.DroppedDown then
+    begin
+      RegStart:=StrToIntDef(Copy(a, 2, 5), RegStart);
+      RegType:=TRegReadType(frmMain.cbRegisterType.ItemIndex);
+      case a[1] of
+        '1': frmMain.cbRegisterType.ItemIndex := 0; // 1x (bit, RO) - Discrete Input
+        '0': frmMain.cbRegisterType.ItemIndex := 1; // 0x (bit, RW) - Discrete Coils
+        '3': frmMain.cbRegisterType.ItemIndex := 2; // 3x (word, RO) - Input Registers
+        '4': frmMain.cbRegisterType.ItemIndex := 3; // 4x (word, RW) - Holding Registers
+      end;
+    end;
+  end else
+  begin
+    // normal format - just address
+    RegStart:=StrToIntDef(a, RegStart);
+    if not frmMain.cbRegisterType.DroppedDown then
+      RegType:=TRegReadType(frmMain.cbRegisterType.ItemIndex);
+  end;
+  if Presenter.RegStart <> RegStart then begin
+    Presenter.RegStart:=RegStart;
+    Presenter.SetItemRange(RegStart, RegStart+Length(MBWord)-1);
+  end;
+end;
+
 procedure TThreadModBus.SyncUpdateVars;
 begin
   SetNewSize:=StrToIntDef(frmMain.edRegCount.Text, SetNewSize);
-  UpdateRegAddr();
   if not frmMain.cbRegFormat.DroppedDown then begin
     RegFormat:=TRegShowFormat(frmMain.cbRegFormat.ItemIndex);
     Presenter.RegShowFormat:=TRegShowFormat(frmMain.cbRegFormat.ItemIndex);
   end;
   if SetNewSize<>Length(MBWord) then
     Presenter.SetItemRange(RegStart, RegStart+SetNewSize-1);
+  UpdateRegAddr();
 end;
 
 procedure TThreadModBus.SyncUpdateVarsOnChange;
@@ -457,37 +491,6 @@ begin
       WriteQueue.PushFront(itm);
       CritWriteQueueWork.Leave;
     end;
-  end;
-end;
-
-procedure TThreadModBus.UpdateRegAddr;
-var a: String;
-begin
-  a := Trim(frmMain.edRegAddr.Text);
-  if (Length(a)=6) and (IsNumber(UnicodeString(a), 1)) then
-  begin
-    // 6 digit format
-    RegStart:=StrToIntDef(Copy(a, 2, 5), RegStart);
-    if not frmMain.cbRegisterType.DroppedDown then
-    begin
-      RegType:=TRegReadType(frmMain.cbRegisterType.ItemIndex);
-      case a[1] of
-        '1': frmMain.cbRegisterType.ItemIndex := 0; // 1x (bit, RO) - Discrete Input
-        '0': frmMain.cbRegisterType.ItemIndex := 1; // 0x (bit, RW) - Discrete Coils
-        '3': frmMain.cbRegisterType.ItemIndex := 2; // 3x (word, RO) - Input Registers
-        '4': frmMain.cbRegisterType.ItemIndex := 3; // 4x (word, RW) - Holding Registers
-      end;
-    end;
-  end else
-  begin
-    // normal format - just address
-    RegStart:=StrToIntDef(a, RegStart);
-    if not frmMain.cbRegisterType.DroppedDown then
-      RegType:=TRegReadType(frmMain.cbRegisterType.ItemIndex);
-  end;
-  if Presenter.RegStart <> RegStart then begin
-    Presenter.Clear();
-    Presenter.RegStart:=RegStart;
   end;
 end;
 

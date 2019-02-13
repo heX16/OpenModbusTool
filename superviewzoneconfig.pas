@@ -8,7 +8,7 @@ uses
   Classes, SysUtils;
 
 type
-  TSuperViewPath = string[5];
+  TSuperViewPath = string[6];
   //TSuperViewPath = WideString;
   TSuperViewInfo = variant;
 
