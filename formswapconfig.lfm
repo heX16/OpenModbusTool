@@ -1,0 +1,63 @@
+object frmSwapConfig: TfrmSwapConfig
+  Left = 373
+  Height = 143
+  Top = 138
+  Width = 292
+  BorderStyle = bsDialog
+  Caption = 'Swap config (byte order)'
+  ClientHeight = 143
+  ClientWidth = 292
+  DesignTimePPI = 120
+  Position = poMainFormCenter
+  LCLVersion = '1.8.4.0'
+  object BitBtn1: TBitBtn
+    Left = 208
+    Height = 30
+    Top = 103
+    Width = 75
+    Anchors = [akLeft, akBottom]
+    Cancel = True
+    DefaultCaption = True
+    Kind = bkCancel
+    ModalResult = 2
+    TabOrder = 0
+    Visible = False
+  end
+  object BitBtn2: TBitBtn
+    Left = 8
+    Height = 30
+    Top = 103
+    Width = 136
+    Anchors = [akLeft, akBottom]
+    Default = True
+    DefaultCaption = True
+    Kind = bkOK
+    ModalResult = 1
+    OnClick = BitBtn2Click
+    TabOrder = 1
+  end
+  object cbSwap2byte: TCheckBox
+    Left = 8
+    Height = 21
+    Top = 8
+    Width = 201
+    Caption = 'Swap 2 byte (in one register)'
+    TabOrder = 2
+  end
+  object cbSwap2word: TCheckBox
+    Left = 8
+    Height = 21
+    Top = 32
+    Width = 193
+    Caption = 'Swap 2 reg/word (for Float)'
+    TabOrder = 3
+  end
+  object cbSwap2dword: TCheckBox
+    Left = 8
+    Height = 21
+    Top = 56
+    Width = 204
+    Caption = 'Swap 2 DWORD (for Double)'
+    TabOrder = 4
+  end
+end

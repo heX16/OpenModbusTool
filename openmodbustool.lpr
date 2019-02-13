@@ -11,7 +11,7 @@ uses
   formOptions, ThreadModBus, FormAbout, formBitEdit,
   { you can add units after this }
   //modbuslib,//todo: WIP!
-  DefaultTranslator // - forced translation
+  DefaultTranslator, formswapconfig // - forced translation
   ;
 
 {$R *.res}
@@ -24,6 +24,7 @@ begin
   Application.CreateForm(TfrmOptions, frmOptions);
   Application.CreateForm(TfrmAbout, frmAbout);
   Application.CreateForm(TfrmBitEdit, frmBitEdit);
+  Application.CreateForm(TfrmSwapConfig, frmSwapConfig);
   Application.Run;
 end.
 

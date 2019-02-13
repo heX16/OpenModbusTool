@@ -83,12 +83,26 @@ msgstr ""
 msgid "Set X"
 msgstr ""
 
+#: tfrmmain.actswapconfig.caption
+msgctxt "tfrmmain.actswapconfig.caption"
+msgid "Swap config"
+msgstr ""
+
+#: tfrmmain.actswapconfig.hint
+msgctxt "tfrmmain.actswapconfig.hint"
+msgid "Swap config"
+msgstr ""
+
 #: tfrmmain.acttestserverenable.caption
 msgid "Test server"
 msgstr ""
 
 #: tfrmmain.btnpause.caption
 msgid "btnPause"
+msgstr ""
+
+#: tfrmmain.btnswapconfig.caption
+msgid "..."
 msgstr ""
 
 #: tfrmmain.caption
@@ -230,6 +244,22 @@ msgstr ""
 
 #: tfrmoptions.lbreloadregtime.caption
 msgid "Reload reg time"
+msgstr ""
+
+#: tfrmswapconfig.caption
+msgid "Swap config (byte order)"
+msgstr ""
+
+#: tfrmswapconfig.cbswap2byte.caption
+msgid "Swap 2 byte (in one register)"
+msgstr ""
+
+#: tfrmswapconfig.cbswap2dword.caption
+msgid "Swap 2 DWORD (for Double)"
+msgstr ""
+
+#: tfrmswapconfig.cbswap2word.caption
+msgid "Swap 2 reg/word (for Float)"
 msgstr ""
 
 #: threadmodbus.statusbardisconnect

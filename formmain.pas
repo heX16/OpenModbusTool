@@ -43,6 +43,7 @@ type
     actCopy: TAction;
     actCopyValue: TAction;
     actEditExt: TAction;
+    actSwapConfig: TAction;
     actTestServerEnable: TAction;
     actSetX: TAction;
     actSet1: TAction;
@@ -53,6 +54,7 @@ type
     ApplicationProperties1: TApplicationProperties;
     btnConnect: TButton;
     btnDissconect: TButton;
+    btnSwapConfig: TButton;
     cbIP: TComboBox;
     cbRegisterType: TComboBox;
     cbRegFormat: TComboBox;
@@ -120,6 +122,7 @@ type
     procedure actSet0Execute(Sender: TObject);
     procedure actSet1Execute(Sender: TObject);
     procedure actSetXExecute(Sender: TObject);
+    procedure actSwapConfigExecute(Sender: TObject);
     procedure actTestServerEnableExecute(Sender: TObject);
     procedure cbIPKeyPress(Sender: TObject; var Key: char);
     procedure cbRegFormatChange(Sender: TObject);
@@ -199,6 +202,7 @@ uses
   modbuslib,//<-TEMP!
   FormBitEdit,
   FormAbout,
+  FormSwapConfig,
   Clipbrd,
   csvreadwrite;
 
@@ -515,6 +519,11 @@ begin
   SetToXValue := Trim(InputBox(strEnterValue, strEnterValue, ''));
   if SetToXValue <> '' then
     listMainDoOnSelected(@SetToX);
+end;
+
+procedure TfrmMain.actSwapConfigExecute(Sender: TObject);
+begin
+  frmSwapConfig.Show();
 end;
 
 procedure TfrmMain.actTestServerEnableExecute(Sender: TObject);

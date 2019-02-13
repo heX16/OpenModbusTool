@@ -23,7 +23,14 @@ type
     Double Float (0.123 - 8 byte)
   }
   //todo: rename!!!!!!!!!!!!!!!! rf,tf
-  TRegShowFormat = (rfDec=0, rfDecSign=1, rfHex=2, rfBin=3, tfBool=4, tfFloat=5, tfDouble=6);
+  TRegShowFormat = (
+    rfDec=0,
+    rfDecSign=1,
+    rfHex=2,
+    rfBin=3,
+    tfBool=4,
+    tfFloat4=5,
+    tfFloat8=6);
 
   {
   1x (bit, RO) - Discrete Input
@@ -44,12 +51,14 @@ type
     RegType: TRegReadType;
   end;
 
-  TQWordReal = record
+  TQWordReal = packed record
     case byte of
     0: (Words: array [0..3] of Word);
     1: (W: Word);
-    1: (Float4: Real);
-    2: (Float8: Double)
+    1: (Float4: Single);
+    2: (Float8: Double);
+    3: (DWords: array [0..1] of DWord);
+    4: (varQWord: QWord);
   end;
 
   TModbusItemQueue = specialize TDeque<TModbusItem>;
@@ -59,6 +68,9 @@ type
   TSuperViewPresenterModbus = class(TSuperViewPresenter)
     RegStart: integer;
     RegShowFormat: TRegShowFormat;
+    Swap2byte: boolean;
+    Swap2reg: boolean;
+    Swap2Dword: boolean;
 
     function GetText(Node: TSuperViewItem; Col: integer): UTF8String; override;
     function GetTextCompactMode(Node: TSuperViewItem): UTF8String; override;
@@ -152,7 +164,7 @@ type
   end;
 
 // convert register(s) to string (for visualisation)
-function RegToString(Regs: TQWordReal; format: TRegShowFormat): string;
+function RegToString(Regs: TQWordReal; format: TRegShowFormat; Swap2byte, Swap2reg, Swap2dword: boolean): string;
 
 resourcestring
   StatusBarErrorCount = 'Errors';
@@ -170,6 +182,7 @@ uses
   StrUtils,
   FormMain,
   FormOptions,
+  FormSwapConfig,
   Graphics,
   ComCtrls, IdStack, {IdException,} IdExceptionCore, Character;
 
@@ -180,7 +193,7 @@ begin
     Result := '1';
 end;
 
-function RegToString(Regs: TQWordReal; format: TRegShowFormat): string;
+function RegToString(Regs: TQWordReal; format: TRegShowFormat; Swap2byte, Swap2reg, Swap2dword: boolean): string;
 var
   i: integer;
 type
@@ -202,10 +215,10 @@ begin
       end;
     tfBool:
       Result := BoolToStr(Boolean(Regs.W), true);
-    tfFloat:
-      Result := FloatToStr(Regs.Float4);
-    tfDouble:
-      Result := FloatToStr(Regs.Float8);
+    tfFloat4:
+      Result := FloatToStrF(Regs.Float4, ffFixed, 0, 3, DefaultFormatSettings);
+    tfFloat8:
+      Result := FloatToStrF(Regs.Float8, ffFixed, 0, 3, DefaultFormatSettings);
   else
     Result := 'not support';
   end;
@@ -226,6 +239,7 @@ var
 begin
   Result := '';
   RegFirst := StrToIntDef(Node.Path, -1);
+  Regs.varQWord:=0;
   if Col = 0 then
     Result:=inherited GetText(Node, Col)
   else
@@ -233,21 +247,29 @@ begin
     begin
       RegN := RegFirst - self.RegStart;
       Regs.Words[0] := Node.Info;
+      if Swap2byte then
+        Regs.Words[0] := swap(Regs.Words[0]);
 
-      if (self.RegShowFormat=tfFloat) then begin
+      if (self.RegShowFormat=tfFloat4) then begin
         if (RegN mod 2) = 0 then begin
           RegMBN := StrToInt(Node.Name);
           //todo: BUG!!!! почемуто Node.Name=20000 но при этом Node.Path=2000
           r2 := Find(IntToStr(RegMBN+1));
           if (r2 <> nil) and (VarIsNumeric(r2.Info)) then begin
             Regs.Words[1] := r2.Info;
+
+            // swap bytes
+            if Swap2byte then
+              Regs.Words[1] := swap(Regs.Words[1]);
+            if Swap2reg then
+              Regs.DWords[0] := swap(Regs.DWords[0]);
           end else
             Result := '#';
         end else
           Result := '#';
       end;
 
-      if (self.RegShowFormat=tfDouble) then begin
+      if (self.RegShowFormat=tfFloat8) then begin
         if (RegN mod 4) = 0 then begin
           r2 := Find(IntToStr(RegN+1));
           r3 := Find(IntToStr(RegN+2));
@@ -255,10 +277,26 @@ begin
           if (r2 <> nil) and (r3 <> nil) and (r4 <> nil) and
              (VarIsNumeric(r2.Info)) and
              (VarIsNumeric(r3.Info)) and
-             (VarIsNumeric(r4.Info)) then begin
+             (VarIsNumeric(r4.Info)) then
+          begin
+            // load data
             Regs.Words[1] := r2.Info;
             Regs.Words[2] := r3.Info;
             Regs.Words[3] := r4.Info;
+
+            // swap bytes
+            if Swap2byte then begin
+              Regs.Words[1] := swap(Regs.Words[1]);
+              Regs.Words[2] := swap(Regs.Words[2]);
+              Regs.Words[3] := swap(Regs.Words[3]);
+            end;
+            if Swap2reg then begin
+              Regs.DWords[0] := swap(Regs.DWords[0]);
+              Regs.DWords[1] := swap(Regs.DWords[1]);
+            end;
+            if Swap2dword then begin
+              Regs.varQWord := swap(Regs.varQWord);
+            end;
           end else
             Result := '#';
         end else
@@ -266,7 +304,7 @@ begin
       end;
 
       if Result = '' then
-        Result := RegToString(Regs, self.RegShowFormat);
+        Result := RegToString(Regs, self.RegShowFormat, Swap2byte, Swap2reg, Swap2Dword);
     end else
       Result := '#';
 end;
@@ -394,6 +432,9 @@ begin
   if SetNewSize<>Length(MBWord) then
     Presenter.SetItemRange(RegStart, RegStart+SetNewSize-1);
   UpdateRegAddr();
+  Presenter.Swap2byte:=frmSwapConfig.cbSwap2byte.Checked;
+  Presenter.Swap2reg:=frmSwapConfig.cbSwap2word.Checked;
+  Presenter.Swap2Dword:=frmSwapConfig.cbSwap2dword.Checked;
 end;
 
 procedure TThreadModBus.SyncUpdateVarsOnChange;

@@ -178,7 +178,7 @@ object frmMain: TfrmMain
       Left = 560
       Height = 25
       Top = 50
-      Width = 160
+      Width = 136
       ItemHeight = 17
       ItemIndex = 0
       Items.Strings = (
@@ -237,6 +237,15 @@ object frmMain: TfrmMain
       Top = 12
       Width = 24
       Shape = stCircle
+    end
+    object btnSwapConfig: TButton
+      Left = 696
+      Height = 26
+      Top = 50
+      Width = 24
+      Action = actSwapConfig
+      Caption = '...'
+      TabOrder = 9
     end
   end
   object DrawGrid1: TDrawGrid
@@ -374,6 +383,11 @@ object frmMain: TfrmMain
     object actTestServerEnable: TAction
       Caption = 'Test server'
       OnExecute = actTestServerEnableExecute
+    end
+    object actSwapConfig: TAction
+      Caption = 'Swap config'
+      Hint = 'Swap config'
+      OnExecute = actSwapConfigExecute
     end
   end
   object menuMainList: TPopupMenu

@@ -23,7 +23,7 @@
       <UseVersionInfo Value="True"/>
       <AutoIncrementBuild Value="True"/>
       <MajorVersionNr Value="2"/>
-      <RevisionNr Value="1"/>
+      <MinorVersionNr Value="1"/>
       <BuildNr Value="87"/>
       <StringTable Comments="constructor heX (www.hex.name)" ProductVersion="1.9.0.65"/>
     </VersionInfo>
@@ -207,7 +207,7 @@
         <PackageName Value="LCL"/>
       </Item4>
     </RequiredPackages>
-    <Units Count="6">
+    <Units Count="7">
       <Unit0>
         <Filename Value="openmodbustool.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -250,6 +250,14 @@
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="formBitEdit"/>
       </Unit5>
+      <Unit6>
+        <Filename Value="formswapconfig.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="frmSwapConfig"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="FormSwapConfig"/>
+      </Unit6>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
