@@ -12,6 +12,11 @@ type
   //TSuperViewPath = WideString;
   TSuperViewInfo = variant;
 
+const
+  cSuperViewLogCount = 1000;
+  // must be smallest that cSuperViewLogCount
+  cSuperViewLogCountWithObj = cSuperViewLogCount;
+
 implementation
 
 end.

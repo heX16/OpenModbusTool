@@ -18,6 +18,7 @@ uses
   VTUtils,
   Forms,
   ExtCtrls,
+  StdCtrls,
   Dialogs,//dbg!
   Graphics,
   //ArrayUtils,
@@ -30,6 +31,7 @@ type
   TSuperViewItem = class
   public
     Name: TSuperViewPath;
+    //todo: rename to Data!
     Info: TSuperViewInfo;
     Node: PVirtualNode;
     Path: TSuperViewPath;
@@ -110,8 +112,13 @@ type
     TimerEnabled: boolean;
     TimerSync: TTimer;
 
+    // swap ThreadListAddItems2 and ThreadListAddItems1
+    // call from GUI thread.
+    procedure AfterAddToLog(MoveCursor: boolean); virtual;
     procedure SwapBufferBeetwenThread();
 
+    // read data from ThreadListAddItems2
+    // call from GUI thread.
     procedure MainThreadProcessBuffer();
 
     procedure EventTimerProcessBuffer(Sender: TObject);
@@ -136,10 +143,13 @@ type
     //todo: update tree? move to public?
     procedure DeleteItem(Item: TSuperViewItem);
 
+    procedure ClearItemsFast();
   public
     ViewGrid: TCustomDrawGrid;
     ViewTree: TVirtualStringTree;
     ViewMode: TViewPresenterViewMode;
+
+    ViewLog: TListBox;
 
     OnChanged: TNotifyEvent;
 
@@ -155,15 +165,15 @@ type
     constructor Create();
     destructor Destroy(); override;
 
+    procedure Setup(AViewTree: TVirtualStringTree; AViewGrid: TCustomDrawGrid;
+      ATimer: TTimer; AViewLog: TListBox = nil);
+
     procedure GridRepaintCell(Index: integer);
 
     function GridXYToIndex(x, y: integer): integer;
     function GridIndexToXY(index: integer): TPoint;
 
     function GridItemByIndex(index: integer): TSuperViewItem;
-
-    procedure Setup(AViewTree: TVirtualStringTree; AViewGrid: TCustomDrawGrid;
-      ATimer: TTimer);
 
     procedure SetViewMode(NewViewMode: TViewPresenterViewMode);
 
@@ -176,14 +186,32 @@ type
     procedure DrawCell(aCol, aRow: integer; aRect: TRect; aState: TGridDrawState;
       Node: TSuperViewItem); virtual;
 
+    // MainThreadProcessBuffer read from ThreadListAddItems2,
+    // call Add -> call AddToLog.
+    // call from GUI thread.
+    procedure AddToLog(item: TSuperViewItem); virtual;
+
+    // call from AddToLog
+    function LogFilter(item: TSuperViewItem): boolean; virtual;
+
+    // create or update
     function Add(Path: TSuperViewPath; Info: TSuperViewInfo): TSuperViewItem; virtual;
+
+    // delete if present
     function Del(Path: TSuperViewPath; DeleteSubItems: boolean = False): boolean;
       virtual;
+
+    // not create, olny update
     procedure Update(Path: TSuperViewPath; Info: TSuperViewInfo); virtual;
+
+    // find
     function Find(Path: TSuperViewPath): TSuperViewItem; virtual;
 
     function GetText(Node: TSuperViewItem; Col: integer): UTF8String; virtual;
+
     function GetTextCompactMode(Node: TSuperViewItem): UTF8String; virtual;
+
+    function GetTextLog(Node: TSuperViewItem): UTF8String; virtual;
 
     procedure SetItemRange(RangeBegin, RangeEnd: integer; DelaultValue: variant;
       Clear: boolean); overload;
@@ -299,10 +327,12 @@ begin
     begin
       i := ThreadListAddItems2.Items[j];
       ic := ic + 1;
+
       if i.Action = eventAdd then
         Add(i.Path, i.Info)
       else if i.Action = eventDel then
         Del(i.Path);
+
       if (ic mod 50 = 9) and (icount - ic > 9) then
         Application.ProcessMessages();//todo: ???
     end;
@@ -314,6 +344,60 @@ begin
   finally
     TransferInProcess := False;
   end;
+end;
+
+procedure TSuperViewPresenter.AddToLog(item: TSuperViewItem);
+var
+  copyItem: TSuperViewItem;
+  m: boolean;
+begin
+  if (ViewLog <> nil) and LogFilter(item) then begin
+    copyItem := TSuperViewItem.Create(item.Path, item.Name, item.Info);
+
+    if ViewLog.ItemIndex=ViewLog.Count-1 then
+      m := true else
+      m := false;
+
+    ViewLog.AddItem(GetTextLog(copyItem), copyItem);
+
+    AfterAddToLog(m);
+  end;
+end;
+
+procedure TSuperViewPresenter.AfterAddToLog(MoveCursor: boolean);
+var
+  o: TObject;
+  i: integer;
+begin
+  if MoveCursor then begin
+    ViewLog.ItemIndex := ViewLog.Count-1;
+    ViewLog.TopIndex := ViewLog.ItemIndex;
+  end;
+
+  //todo: log count!!!
+  // cut too big log
+  if ViewLog.Count > cSuperViewLogCount then begin
+    i:=0;
+    o := ViewLog.Items.Objects[i];
+    ViewLog.Items.Objects[i] := nil;
+    if o <> nil then
+      o.Free();
+
+    ViewLog.Items.Delete(0);
+  end;
+
+  if ViewLog.Count > cSuperViewLogCountWithObj then begin
+    i:=cSuperViewLogCountWithObj;
+    o := ViewLog.Items.Objects[i];
+    ViewLog.Items.Objects[i] := nil;
+    if o <> nil then
+      o.Free();
+  end;
+end;
+
+function TSuperViewPresenter.LogFilter(item: TSuperViewItem): boolean;
+begin
+  Result := not VarIsNull(item.Info);
 end;
 
 procedure TSuperViewPresenter.EventTimerProcessBuffer(Sender: TObject);
@@ -446,15 +530,7 @@ var
   //i: TSuperViewItem;
   itr: TMapSuperView.TIterator;
 begin
-  // clear
-  itr := Items.Iterator;
-  if itr <> nil then
-  begin
-    repeat
-      itr.GetMutable()^.Free;
-    until not itr.Next;
-    FreeAndNil(itr);
-  end;
+  ClearItemsFast();
 
   //todo: free items before!!!
   FreeAndNil(GridArray);
@@ -489,7 +565,7 @@ begin
 end;
 
 procedure TSuperViewPresenter.Setup(AViewTree: TVirtualStringTree;
-  AViewGrid: TCustomDrawGrid; ATimer: TTimer);
+  AViewGrid: TCustomDrawGrid; ATimer: TTimer; AViewLog: TListBox);
 begin
   if Assigned(AViewGrid) then
   begin
@@ -497,6 +573,8 @@ begin
     ViewGrid.OnDrawCell := @EventGridDrawCell;
     ViewGrid.OnResize := @EventGridResize;
   end;
+  ViewLog := AViewLog;
+
   //todo: add "if ass"
   ViewTree := AViewTree;
   ViewTree.NodeDataSize := sizeof(pointer);
@@ -666,6 +744,11 @@ begin
   end;
 end;
 
+function TSuperViewPresenter.GetTextLog(Node: TSuperViewItem): UTF8String;
+begin
+  Result := VarToStrDef(Node.Info, '----');
+end;
+
 procedure TSuperViewPresenter.SetItemRange(RangeBegin, RangeEnd: integer;
   DelaultValue: variant; Clear: boolean);
 var
@@ -832,28 +915,47 @@ begin
     raise ERangeError.Create('No selected item');
 end;
 
-procedure TSuperViewPresenter.Clear();
+procedure TSuperViewPresenter.ClearItemsFast();
 var
   itr: TMapSuperView.TIterator;
-  i: TSuperViewItem;
+  itm: TSuperViewItem;
+  i: integer;
+  o: TObject;
 begin
-  // clear tree
-  ViewTree.Clear();
-
   // clear items
   itr := Items.Iterator();
   try
     if itr <> nil then
       repeat
-        i := itr.GetValue;
-        i.Free;
+        itm := itr.GetValue;
+        itm.Free();
       until not itr.Next;
   finally
     if itr <> nil then
       FreeAndNil(itr);
   end;
+  // delete and recreate
   FreeAndNil(Items);
   Items := TMapSuperView.Create;
+
+  if ViewLog <> nil then
+    for i:=ViewLog.Items.Count-1 downto 0 do begin
+      o := ViewLog.Items.Objects[i];
+      ViewLog.Items.Objects[i] := nil;
+      if o <> nil then
+        o.Free();
+  end;
+end;
+
+procedure TSuperViewPresenter.Clear();
+begin
+  // clear tree
+  ViewTree.Clear();
+
+  ClearItemsFast();
+
+  if ViewLog <> nil then
+    ViewLog.Clear();
 
   // clear grid
   GridEmptyCell := 0;
@@ -881,6 +983,7 @@ var
   NodeTarget, NodeTmp: PVirtualNode;
   i: integer;
 begin
+  Item := nil;
   Result := nil;
   PathSlice := explode(PathSplit, WideString(Path));
 
@@ -896,6 +999,7 @@ begin
       // this path not present - create
 
       // create empty path object
+      //todo: удалить двойное условие - выше уже есть "not Items.contains(PathCut)"???
       if not Items.contains(PathCut) then
       begin
         if i <> High(PathSlice) then
@@ -933,6 +1037,8 @@ begin
           end;
         end;
       end;
+
+      AddToLog(Item);
     end
     else
     begin
@@ -958,6 +1064,7 @@ begin
             ViewTree.InvalidateNode(Items.Items[PathCut].Node);
           end;
         end;
+        AddToLog(Item);
       end;
     end;
   end;
