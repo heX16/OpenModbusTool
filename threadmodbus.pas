@@ -10,7 +10,7 @@ uses
   syncobjs, gdeque,
   SuperViewZone,
   Variants,
-  IdModbusClient, IdGlobal, ModbusTypes;
+  IdModbusClient, IdGlobal, IdLogDebug, IdIntercept, ModbusTypes;
 
 type
   {
@@ -92,9 +92,15 @@ type
     // callback from "IdModBusClient" for error process errors.
     procedure ModBusClientErrorEvent(const FunctionCode: Byte;
       const ErrorCode: Byte; const ResponseBuffer: TModBusResponseBuffer);
+    // logging
+    procedure IdTCPLogDebugReceive(ASender: TIdConnectionIntercept;
+      var ABuffer: TIdBytes);
+    // logging
+    procedure IdTCPLogDebugSend(ASender: TIdConnectionIntercept;
+      var ABuffer: TIdBytes);
     // callback from "IdModBusClient" for process disconnect.
     procedure TCP_Disconnect(Sender: TObject);
-
+    // call "Presenter.ThreadAddEvent" for new readed regs to event list
     procedure SendDataToView();
   public
     // status bar message. using in SyncWriteStatusBar.
@@ -106,6 +112,8 @@ type
     ModbusRTU: boolean;
     // ModbusTCP client
     IdModBusClient: TIdModBusClient;
+    // TCP Logging
+    IdTCPIPLogDebug: TIdLogDebug;
     // flag - connected?
     Connected: boolean;
     // flag - is dissconect by user command?
@@ -153,6 +161,7 @@ type
     // (thread safe zone - can access to forms)
     procedure SyncEventConnect;
     procedure SyncEventDissconect;
+    //todo: remove old code
     procedure SyncDrawList;
     procedure SyncWriteStatusBar;
     procedure SyncUpdateVars;
@@ -330,6 +339,13 @@ end;
 
 { TThreadModBus }
 
+constructor TThreadModBus.Create(CreateSuspended: boolean;
+  SetPresenter: TSuperViewPresenterModbus);
+begin
+  inherited Create(CreateSuspended);
+  Presenter:=SetPresenter;
+end;
+
 procedure TThreadModBus.SendDataToView();
 var
   i: integer;
@@ -495,11 +511,18 @@ begin
   end;
 end;
 
-constructor TThreadModBus.Create(CreateSuspended: boolean;
-  SetPresenter: TSuperViewPresenterModbus);
+
+procedure TThreadModBus.IdTCPLogDebugReceive(ASender: TIdConnectionIntercept;
+  var ABuffer: TIdBytes);
 begin
-  inherited Create(CreateSuspended);
-  Presenter:=SetPresenter;
+  //Presenter. ...;
+  //ShowMessage(inttostr(ABuffer[0]));
+end;
+
+procedure TThreadModBus.IdTCPLogDebugSend(ASender: TIdConnectionIntercept;
+  var ABuffer: TIdBytes);
+begin
+  //ShowMessage(inttostr(ABuffer[0]));
 end;
 
 procedure TThreadModBus.SyncEventConnect;
@@ -630,8 +653,14 @@ begin
   if not ModbusRTU then
   begin
     // Modbus TCP
-    IdModBusClient := TIdModBusClient.Create;
+    IdModBusClient := TIdModBusClient.Create();
     IdModBusClient.AutoConnect:=false;
+
+    IdTCPIPLogDebug := TIdLogDebug.Create();
+    IdTCPIPLogDebug.OnReceive:=@IdTCPLogDebugReceive;
+    IdTCPIPLogDebug.OnSend:=@IdTCPLogDebugSend;
+    IdModBusClient.Intercept:=IdTCPIPLogDebug;
+
     ip := Trim(frmMain.cbIP.Text);
     if (Pos('[', ip) <> 0) or (Pos('::', ip) <> 0) then
       IdModBusClient.IPVersion:=Id_IPv6;
@@ -654,6 +683,7 @@ begin
     try
       IdModBusClient.Connect;
     except
+      //todo: MEM LEAK!!!
       on e: EIdSocketError do
       begin
         StatusBarMsg := e.Message;
@@ -797,7 +827,11 @@ begin
     end;
 
     Synchronize(@SyncRemoveFromMainProg);
-    if not ModbusRTU then FreeAndNil(IdModBusClient);
+    if not ModbusRTU then begin
+      IdModBusClient.Intercept:=nil;
+      FreeAndNil(IdTCPIPLogDebug);
+      FreeAndNil(IdModBusClient);
+    end;
     FreeAndNil(EventPauseAfterRead);
     FreeAndNil(WriteQueue);
     FreeAndNil(CritWriteQueueWork);

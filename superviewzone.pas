@@ -40,7 +40,7 @@ type
     destructor Destroy(); override;
   end;
 
-  TSuperViewEventType = (eventAdd, eventDel);
+  TSuperViewEventType = (eventAdd, eventDel, eventLog);
 
   TSuperViewEvent = record
     Path: TSuperViewPath;

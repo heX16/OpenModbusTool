@@ -110,10 +110,6 @@ msgstr ""
 msgid "..."
 msgstr ""
 
-#: tfrmmain.button1.caption
-msgid "Button1"
-msgstr ""
-
 #: tfrmmain.caption
 msgctxt "tfrmmain.caption"
 msgid "OpenModbusTool"

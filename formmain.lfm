@@ -324,15 +324,6 @@ object frmMain: TfrmMain
     ResizeAnchor = akBottom
     Visible = False
   end
-  object Button1: TButton
-    Left = 513
-    Height = 31
-    Top = 283
-    Width = 94
-    Caption = 'Button1'
-    OnClick = Button1Click
-    TabOrder = 7
-  end
   object TimerReadMB: TTimer
     left = 60
     top = 312
@@ -565,32 +556,5 @@ object frmMain: TfrmMain
     Interval = 100
     left = 200
     top = 490
-  end
-  object IdHTTP1: TIdHTTP
-    Intercept = IdLogDebug1
-    AllowCookies = True
-    ProxyParams.BasicAuthentication = False
-    ProxyParams.ProxyPort = 0
-    Request.ContentLength = -1
-    Request.ContentRangeEnd = -1
-    Request.ContentRangeStart = -1
-    Request.ContentRangeInstanceLength = -1
-    Request.Date = 0
-    Request.Expires = 0
-    Request.LastModified = 0
-    Request.Accept = 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8'
-    Request.BasicAuthentication = False
-    Request.UserAgent = 'Mozilla/3.0 (compatible; Indy Library)'
-    Request.Ranges.Units = 'bytes'
-    Request.Ranges = <>
-    HTTPOptions = [hoForceEncodeParams]
-    left = 440
-    top = 208
-  end
-  object IdLogDebug1: TIdLogDebug
-    OnReceive = IdLogDebug1Receive
-    OnSend = IdLogDebug1Send
-    left = 512
-    top = 208
   end
 end

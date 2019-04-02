@@ -54,14 +54,11 @@ type
     btnConnect: TButton;
     btnDissconect: TButton;
     btnSwapConfig: TButton;
-    Button1: TButton;
     cbIP: TComboBox;
     cbRegisterType: TComboBox;
     cbRegFormat: TComboBox;
     DrawGrid1: TDrawGrid;
     edRegCount: TEdit;
-    IdHTTP1: TIdHTTP;
-    IdLogDebug1: TIdLogDebug;
     IdModBusServerTest: TIdModBusServer;
     IniPropStorage1: TIniPropStorage;
     lbRegCount: TLabel;
@@ -131,16 +128,11 @@ type
     procedure actShowLogExecute(Sender: TObject);
     procedure actSwapConfigExecute(Sender: TObject);
     procedure actTestServerEnableExecute(Sender: TObject);
-    procedure Button1Click(Sender: TObject);
     procedure cbIPKeyPress(Sender: TObject; var Key: char);
     procedure cbRegFormatChange(Sender: TObject);
     procedure cbRegisterTypeChange(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
-    procedure IdLogDebug1Receive(ASender: TIdConnectionIntercept;
-      var ABuffer: TIdBytes);
-    procedure IdLogDebug1Send(ASender: TIdConnectionIntercept;
-      var ABuffer: TIdBytes);
     procedure IdModBusServerTestConnect(AContext: TIdContext);
     procedure IdModBusServerTestDisconnect(AContext: TIdContext);
     procedure IdModBusServerTestInvalidFunction(const Sender: TIdContext;
@@ -551,11 +543,6 @@ begin
   IdModBusServerTest.Active:=actTestServerEnable.Checked;
 end;
 
-procedure TfrmMain.Button1Click(Sender: TObject);
-begin
-  IdHTTP1.Get('http://127.0.0.1:8384/');
-end;
-
 procedure TfrmMain.cbIPKeyPress(Sender: TObject; var Key: char);
 begin
   if Key=#13 then
@@ -592,18 +579,6 @@ begin
   if threadRead <> nil then
     actDissconect.Execute;
   FreeAndNil(Presenter);
-end;
-
-procedure TfrmMain.IdLogDebug1Receive(ASender: TIdConnectionIntercept;
-  var ABuffer: TIdBytes);
-begin
-  ShowMessage(inttostr(ABuffer[0]));
-end;
-
-procedure TfrmMain.IdLogDebug1Send(ASender: TIdConnectionIntercept;
-  var ABuffer: TIdBytes);
-begin
-  ShowMessage(inttostr(ABuffer[0]));
 end;
 
 procedure TfrmMain.mnStartServer1Click(Sender: TObject);
