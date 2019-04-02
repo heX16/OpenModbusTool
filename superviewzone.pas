@@ -96,8 +96,11 @@ type
 
     // Double Buffer
     ThreadListAddLock: TCriticalSection;
+
+    // List of changes from Thread. for add to buffer.
+    ThreadListAddItems1: TVectorSuperViewEvent;
+    // List of changes from Thread. for add to GUI.
     ThreadListAddItems2: TVectorSuperViewEvent;
-    ThreadListAddItems: TVectorSuperViewEvent;
 
     // grid remap array
     GridArray: TVectorSuperViewItems;
@@ -163,6 +166,7 @@ type
     PathSplit: WideString;
 
     constructor Create();
+
     destructor Destroy(); override;
 
     procedure Setup(AViewTree: TVirtualStringTree; AViewGrid: TCustomDrawGrid;
@@ -171,6 +175,7 @@ type
     procedure GridRepaintCell(Index: integer);
 
     function GridXYToIndex(x, y: integer): integer;
+
     function GridIndexToXY(index: integer): TPoint;
 
     function GridItemByIndex(index: integer): TSuperViewItem;
@@ -289,7 +294,7 @@ end;
 
 procedure TSuperViewPresenter.SwapBufferBeetwenThread();
 var
-  ThreadListAddItems1: TVectorSuperViewEvent;
+  ThreadListAddItemsTemp: TVectorSuperViewEvent;
 begin
   if SyncInProcess or TransferInProcess then
     exit;
@@ -298,9 +303,9 @@ begin
   try
     Assert(ThreadListAddItems2.Size = 0, 'ThreadListAddItems2.Count <> 0');
     // swap buffer
-    ThreadListAddItems1 := ThreadListAddItems;
-    ThreadListAddItems := ThreadListAddItems2;
-    ThreadListAddItems2 := ThreadListAddItems1;
+    ThreadListAddItemsTemp := ThreadListAddItems1;
+    ThreadListAddItems1 := ThreadListAddItems2;
+    ThreadListAddItems2 := ThreadListAddItemsTemp;
     Counters.DequeSize := ThreadListAddItems2.Size;
   finally
     ThreadListAddLock.Leave;
@@ -520,7 +525,7 @@ begin
   ViewMode := ViewModeTree;
   Items := TMapSuperView.Create;
   ThreadListAddLock := TCriticalSection.Create;
-  ThreadListAddItems := TVectorSuperViewEvent.Create;
+  ThreadListAddItems1 := TVectorSuperViewEvent.Create;
   ThreadListAddItems2 := TVectorSuperViewEvent.Create;
   CountersLock := TCriticalSection.Create;
 end;
@@ -536,7 +541,7 @@ begin
   FreeAndNil(GridArray);
   FreeAndNil(Items);
   FreeAndNil(ThreadListAddItems2);
-  FreeAndNil(ThreadListAddItems);
+  FreeAndNil(ThreadListAddItems1);
   FreeAndNil(ThreadListAddLock);
   FreeAndNil(CountersLock);
   inherited Destroy();
@@ -781,9 +786,9 @@ begin
   ThreadListAddLock.Enter;
   try
     //todo: inc overflow count
-    if ThreadListAddItems.Size() < ThreadEventsMaxCount then
+    if ThreadListAddItems1.Size() < ThreadEventsMaxCount then
     begin
-      ThreadListAddItems.PushBack(SuperViewEvent(Path, Info, EventType, GetTickCount64));
+      ThreadListAddItems1.PushBack(SuperViewEvent(Path, Info, EventType, GetTickCount64));
     end
     else
       InterLockedIncrement(Counters.LostEvents);
@@ -811,7 +816,7 @@ end;
 
 procedure TSuperViewPresenter.DoThreadSync();
 begin
-  if ThreadListAddItems.Size > 0 then
+  if ThreadListAddItems1.Size > 0 then
     if not TimerSync.Enabled then
     begin
       TimerSync.Enabled := True;

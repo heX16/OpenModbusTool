@@ -83,6 +83,11 @@ msgstr ""
 msgid "Set X"
 msgstr ""
 
+#: tfrmmain.actshowlog.caption
+msgctxt "tfrmmain.actshowlog.caption"
+msgid "Show log"
+msgstr ""
+
 #: tfrmmain.actswapconfig.caption
 msgctxt "tfrmmain.actswapconfig.caption"
 msgid "Swap config"
@@ -103,6 +108,10 @@ msgstr ""
 
 #: tfrmmain.btnswapconfig.caption
 msgid "..."
+msgstr ""
+
+#: tfrmmain.button1.caption
+msgid "Button1"
 msgstr ""
 
 #: tfrmmain.caption
@@ -159,6 +168,10 @@ msgstr ""
 
 #: tfrmmain.menuitem16.caption
 msgid "Server"
+msgstr ""
+
+#: tfrmmain.menuitem17.caption
+msgid "View"
 msgstr ""
 
 #: tfrmmain.mnedit1.caption

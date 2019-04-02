@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CONFIG>
   <ProjectOptions>
-    <Version Value="11"/>
+    <Version Value="10"/>
     <PathDelim Value="\"/>
     <General>
       <Flags>
@@ -188,32 +188,27 @@
     </PublishOptions>
     <RunParams>
       <local>
+        <FormatVersion Value="1"/>
         <CommandLineParams Value="192.168.200.10 list.csv"/>
         <WorkingDirectory Value=".\"/>
       </local>
-      <FormatVersion Value="2"/>
-      <Modes Count="1">
-        <Mode0 Name="default">
-          <local>
-            <CommandLineParams Value="192.168.200.10 list.csv"/>
-            <WorkingDirectory Value=".\"/>
-          </local>
-        </Mode0>
-      </Modes>
     </RunParams>
-    <RequiredPackages Count="4">
+    <RequiredPackages Count="5">
       <Item1>
-        <PackageName Value="virtualtreeview_package"/>
+        <PackageName Value="indylaz"/>
       </Item1>
       <Item2>
-        <PackageName Value="DelphiModbusLazarus"/>
+        <PackageName Value="virtualtreeview_package"/>
       </Item2>
       <Item3>
-        <PackageName Value="LazControls"/>
+        <PackageName Value="DelphiModbusLazarus"/>
       </Item3>
       <Item4>
-        <PackageName Value="LCL"/>
+        <PackageName Value="LazControls"/>
       </Item4>
+      <Item5>
+        <PackageName Value="LCL"/>
+      </Item5>
     </RequiredPackages>
     <Units Count="7">
       <Unit0>

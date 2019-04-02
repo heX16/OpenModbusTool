@@ -84,6 +84,11 @@ msgstr "Установить 0"
 msgid "Set X"
 msgstr "Установить Х"
 
+#: tfrmmain.actshowlog.caption
+msgctxt "tfrmmain.actshowlog.caption"
+msgid "Show log"
+msgstr ""
+
 #: tfrmmain.actswapconfig.caption
 msgctxt "tfrmmain.actswapconfig.caption"
 msgid "Swap config"
@@ -104,6 +109,10 @@ msgstr "Пауза"
 
 #: tfrmmain.btnswapconfig.caption
 msgid "..."
+msgstr ""
+
+#: tfrmmain.button1.caption
+msgid "Button1"
 msgstr ""
 
 #: tfrmmain.caption
@@ -165,6 +174,10 @@ msgstr "Клиент"
 #: tfrmmain.menuitem16.caption
 msgid "Server"
 msgstr "Сервер"
+
+#: tfrmmain.menuitem17.caption
+msgid "View"
+msgstr ""
 
 #: tfrmmain.mnedit1.caption
 msgctxt "tfrmmain.mnedit1.caption"

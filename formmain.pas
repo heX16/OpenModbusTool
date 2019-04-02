@@ -16,14 +16,12 @@ interface
 uses
   //DefaultTranslator, // - forced translation
   //LCLTranslator,
-  LCLType,
-  VTUtils,
-  variants,
-  Classes, SysUtils, FileUtil, ListViewFilterEdit, Forms, Controls, Graphics,
-  Dialogs, ExtCtrls, ComCtrls, IdComponent, IdTCPClient, StdCtrls, ActnList,
-  Menus, IniPropStorage, Grids, ThreadModBus, IdModBusServer, ModbusTypes,
-  IdModBusClient, IdContext, IdCustomTCPServer, VirtualTrees,
-  SuperViewZone, SuperViewZoneConfig;
+  LCLType, VTUtils, variants, Classes, SysUtils, FileUtil, ListViewFilterEdit,
+  Forms, Controls, Graphics, Dialogs, ExtCtrls, ComCtrls, IdComponent,
+  IdTCPClient, StdCtrls, ActnList, Menus, IniPropStorage, Grids, ThreadModBus,
+  IdModBusServer, ModbusTypes, IdModBusClient, IdContext, IdCustomTCPServer,
+  IdLogDebug, IdHTTP, IdServerInterceptLogEvent, VirtualTrees, SuperViewZone,
+  SuperViewZoneConfig, IdIntercept, IdGlobal;
 
 {
 0x (bit, RW) - Discrete Output Coils
@@ -43,6 +41,7 @@ type
     actCopy: TAction;
     actCopyValue: TAction;
     actEditExt: TAction;
+    actShowLog: TAction;
     actSwapConfig: TAction;
     actTestServerEnable: TAction;
     actSetX: TAction;
@@ -55,16 +54,20 @@ type
     btnConnect: TButton;
     btnDissconect: TButton;
     btnSwapConfig: TButton;
+    Button1: TButton;
     cbIP: TComboBox;
     cbRegisterType: TComboBox;
     cbRegFormat: TComboBox;
     DrawGrid1: TDrawGrid;
     edRegCount: TEdit;
+    IdHTTP1: TIdHTTP;
+    IdLogDebug1: TIdLogDebug;
     IdModBusServerTest: TIdModBusServer;
     IniPropStorage1: TIniPropStorage;
     lbRegCount: TLabel;
     lbAddr: TLabel;
     edRegAddr: TLabeledEdit;
+    listLog: TListBox;
     ListViewFilterEdit1: TListViewFilterEdit;
     MenuItem10: TMenuItem;
     MenuItem11: TMenuItem;
@@ -73,6 +76,8 @@ type
     MenuItem14: TMenuItem;
     MenuItem15: TMenuItem;
     MenuItem16: TMenuItem;
+    MenuItem17: TMenuItem;
+    mnShowLog: TMenuItem;
     mnSrvFullRnd: TMenuItem;
     mnSrvTestRead: TMenuItem;
     mnSrvAddSmallRandom: TMenuItem;
@@ -101,6 +106,7 @@ type
     menuMainList: TPopupMenu;
     rgViewStyle: TRadioGroup;
     shapeState: TShape;
+    SplitterLog: TSplitter;
     StatusBar1: TStatusBar;
     TimerUpdateData: TTimer;
     TimerInit: TTimer;
@@ -122,13 +128,19 @@ type
     procedure actSet0Execute(Sender: TObject);
     procedure actSet1Execute(Sender: TObject);
     procedure actSetXExecute(Sender: TObject);
+    procedure actShowLogExecute(Sender: TObject);
     procedure actSwapConfigExecute(Sender: TObject);
     procedure actTestServerEnableExecute(Sender: TObject);
+    procedure Button1Click(Sender: TObject);
     procedure cbIPKeyPress(Sender: TObject; var Key: char);
     procedure cbRegFormatChange(Sender: TObject);
     procedure cbRegisterTypeChange(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
+    procedure IdLogDebug1Receive(ASender: TIdConnectionIntercept;
+      var ABuffer: TIdBytes);
+    procedure IdLogDebug1Send(ASender: TIdConnectionIntercept;
+      var ABuffer: TIdBytes);
     procedure IdModBusServerTestConnect(AContext: TIdContext);
     procedure IdModBusServerTestDisconnect(AContext: TIdContext);
     procedure IdModBusServerTestInvalidFunction(const Sender: TIdContext;
@@ -521,6 +533,13 @@ begin
     listMainDoOnSelected(@SetToX);
 end;
 
+procedure TfrmMain.actShowLogExecute(Sender: TObject);
+begin
+  actShowLog.Checked:=not actShowLog.Checked;
+  listLog.Visible:=actShowLog.Checked;
+  SplitterLog.Visible:=actShowLog.Checked;
+end;
+
 procedure TfrmMain.actSwapConfigExecute(Sender: TObject);
 begin
   frmSwapConfig.Show();
@@ -530,6 +549,11 @@ procedure TfrmMain.actTestServerEnableExecute(Sender: TObject);
 begin
   actTestServerEnable.Checked:=not actTestServerEnable.Checked;
   IdModBusServerTest.Active:=actTestServerEnable.Checked;
+end;
+
+procedure TfrmMain.Button1Click(Sender: TObject);
+begin
+  IdHTTP1.Get('http://127.0.0.1:8384/');
 end;
 
 procedure TfrmMain.cbIPKeyPress(Sender: TObject; var Key: char);
@@ -570,6 +594,18 @@ begin
   FreeAndNil(Presenter);
 end;
 
+procedure TfrmMain.IdLogDebug1Receive(ASender: TIdConnectionIntercept;
+  var ABuffer: TIdBytes);
+begin
+  ShowMessage(inttostr(ABuffer[0]));
+end;
+
+procedure TfrmMain.IdLogDebug1Send(ASender: TIdConnectionIntercept;
+  var ABuffer: TIdBytes);
+begin
+  ShowMessage(inttostr(ABuffer[0]));
+end;
+
 procedure TfrmMain.mnStartServer1Click(Sender: TObject);
 begin
   IdModBusServerTest.Active:=true;
@@ -589,7 +625,7 @@ begin
   if frmMain.Visible then
   begin
     TimerInit.Enabled:=false;
-    Presenter.Setup(VirtualStringTree1, DrawGrid1, TimerUpdateData);
+    Presenter.Setup(VirtualStringTree1, DrawGrid1, TimerUpdateData, listLog);
     Presenter.ThreadEventsMaxCount := 65536;
 
     Application.ProcessMessages;

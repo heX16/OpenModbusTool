@@ -11,7 +11,7 @@ uses
   formOptions, ThreadModBus, FormAbout, formBitEdit,
   { you can add units after this }
   //modbuslib,//todo: WIP!
-  DefaultTranslator, formswapconfig // - forced translation
+  DefaultTranslator, formswapconfig, indylaz // - forced translation
   ;
 
 {$R *.res}

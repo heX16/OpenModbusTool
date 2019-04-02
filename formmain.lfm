@@ -12,7 +12,7 @@ object frmMain: TfrmMain
   OnDestroy = FormDestroy
   Position = poScreenCenter
   SessionProperties = 'cbIP.Text;edRegAddr.Text;edRegCount.Text;rgViewStyle.ItemIndex;cbIP.Items'
-  LCLVersion = '1.9.0.0'
+  LCLVersion = '1.8.4.0'
   Visible = True
   object Panel1: TPanel
     Left = 0
@@ -250,7 +250,7 @@ object frmMain: TfrmMain
   end
   object DrawGrid1: TDrawGrid
     Left = 0
-    Height = 512
+    Height = 409
     Top = 120
     Width = 923
     Align = alClient
@@ -264,7 +264,7 @@ object frmMain: TfrmMain
   end
   object VirtualStringTree1: TVirtualStringTree
     Left = 0
-    Height = 512
+    Height = 409
     Top = 120
     Width = 923
     Align = alClient
@@ -304,24 +304,53 @@ object frmMain: TfrmMain
     OnKeyUp = VirtualStringTree1KeyUp
     OnNewText = VirtualStringTree1NewText
   end
+  object listLog: TListBox
+    Left = 0
+    Height = 100
+    Top = 532
+    Width = 923
+    Align = alBottom
+    ItemHeight = 0
+    TabOrder = 5
+    Visible = False
+  end
+  object SplitterLog: TSplitter
+    Cursor = crVSplit
+    Left = 0
+    Height = 3
+    Top = 529
+    Width = 923
+    Align = alBottom
+    ResizeAnchor = akBottom
+    Visible = False
+  end
+  object Button1: TButton
+    Left = 513
+    Height = 31
+    Top = 283
+    Width = 94
+    Caption = 'Button1'
+    OnClick = Button1Click
+    TabOrder = 7
+  end
   object TimerReadMB: TTimer
-    Left = 60
-    Top = 312
+    left = 60
+    top = 312
   end
   object ApplicationProperties1: TApplicationProperties
     CaptureExceptions = False
-    Left = 60
-    Top = 400
+    left = 60
+    top = 400
   end
   object TimerInit: TTimer
     Interval = 10
     OnTimer = TimerInitTimer
-    Left = 200
-    Top = 400
+    left = 200
+    top = 400
   end
   object ActionList1: TActionList
-    Left = 200
-    Top = 310
+    left = 200
+    top = 310
     object actDissconect: TAction
       Caption = 'Dissconect'
       Enabled = False
@@ -389,10 +418,14 @@ object frmMain: TfrmMain
       Hint = 'Swap config'
       OnExecute = actSwapConfigExecute
     end
+    object actShowLog: TAction
+      Caption = 'Show log'
+      OnExecute = actShowLogExecute
+    end
   end
   object menuMainList: TPopupMenu
-    Left = 200
-    Top = 220
+    left = 200
+    top = 220
     object mnEditExt: TMenuItem
       Action = actEditExt
       Default = True
@@ -419,12 +452,12 @@ object frmMain: TfrmMain
   object IniPropStorage1: TIniPropStorage
     StoredValues = <>
     IniFileName = 'openmodbustool.ini'
-    Left = 60
-    Top = 490
+    left = 60
+    top = 490
   end
   object menuMainForm: TMainMenu
-    Left = 60
-    Top = 220
+    left = 60
+    top = 220
     object MenuItem1: TMenuItem
       Caption = 'Client'
       object MenuItem2: TMenuItem
@@ -443,28 +476,10 @@ object frmMain: TfrmMain
         Action = actExit
       end
     end
-    object MenuItem16: TMenuItem
-      Caption = 'Server'
-      object mnSrvStart: TMenuItem
-        Action = actTestServerEnable
-        Caption = 'Enable local server'
-      end
-      object MenuItem19: TMenuItem
-        Caption = '-'
-      end
-      object mnSrvTestRead: TMenuItem
-        Caption = 'Test mode - read only'
-        Checked = True
-        Enabled = False
-      end
-      object mnSrvAddSmallRandom: TMenuItem
-        Caption = 'Add small random'
-        Checked = True
-        OnClick = mnSrvAddSmallRandomClick
-      end
-      object mnSrvFullRnd: TMenuItem
-        Caption = 'Full rnd'
-        OnClick = mnSrvFullRndClick
+    object MenuItem17: TMenuItem
+      Caption = 'View'
+      object mnShowLog: TMenuItem
+        Action = actShowLog
       end
     end
     object mnEdit1: TMenuItem
@@ -494,6 +509,30 @@ object frmMain: TfrmMain
         Action = actSetX
       end
     end
+    object MenuItem16: TMenuItem
+      Caption = 'Server'
+      object mnSrvStart: TMenuItem
+        Action = actTestServerEnable
+        Caption = 'Enable local server'
+      end
+      object MenuItem19: TMenuItem
+        Caption = '-'
+      end
+      object mnSrvTestRead: TMenuItem
+        Caption = 'Test mode - read only'
+        Checked = True
+        Enabled = False
+      end
+      object mnSrvAddSmallRandom: TMenuItem
+        Caption = 'Add small random'
+        Checked = True
+        OnClick = mnSrvAddSmallRandomClick
+      end
+      object mnSrvFullRnd: TMenuItem
+        Caption = 'Full rnd'
+        OnClick = mnSrvFullRndClick
+      end
+    end
     object MenuItem6: TMenuItem
       Action = actAbout
     end
@@ -518,13 +557,40 @@ object frmMain: TfrmMain
     OnReadInputRegisters = IdModBusServerTestReadInputRegisters
     OnWriteCoils = IdModBusServerTestWriteCoils
     OnWriteRegisters = IdModBusServerTestWriteRegisters
-    Left = 440
-    Top = 300
+    left = 440
+    top = 300
   end
   object TimerUpdateData: TTimer
     Enabled = False
     Interval = 100
-    Left = 200
-    Top = 490
+    left = 200
+    top = 490
+  end
+  object IdHTTP1: TIdHTTP
+    Intercept = IdLogDebug1
+    AllowCookies = True
+    ProxyParams.BasicAuthentication = False
+    ProxyParams.ProxyPort = 0
+    Request.ContentLength = -1
+    Request.ContentRangeEnd = -1
+    Request.ContentRangeStart = -1
+    Request.ContentRangeInstanceLength = -1
+    Request.Date = 0
+    Request.Expires = 0
+    Request.LastModified = 0
+    Request.Accept = 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8'
+    Request.BasicAuthentication = False
+    Request.UserAgent = 'Mozilla/3.0 (compatible; Indy Library)'
+    Request.Ranges.Units = 'bytes'
+    Request.Ranges = <>
+    HTTPOptions = [hoForceEncodeParams]
+    left = 440
+    top = 208
+  end
+  object IdLogDebug1: TIdLogDebug
+    OnReceive = IdLogDebug1Receive
+    OnSend = IdLogDebug1Send
+    left = 512
+    top = 208
   end
 end

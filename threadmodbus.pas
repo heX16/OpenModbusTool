@@ -74,6 +74,7 @@ type
 
     function GetText(Node: TSuperViewItem; Col: integer): UTF8String; override;
     function GetTextCompactMode(Node: TSuperViewItem): UTF8String; override;
+    function GetTextLog(Node: TSuperViewItem): UTF8String; override;
   end;
 
   { TThreadModBus }
@@ -313,6 +314,18 @@ function TSuperViewPresenterModbus.GetTextCompactMode(Node: TSuperViewItem
   ): UTF8String;
 begin
   Result:=inherited GetTextCompactMode(Node);
+end;
+
+function TSuperViewPresenterModbus.GetTextLog(Node: TSuperViewItem): UTF8String;
+var i: integer;
+begin
+  Result := '';
+  if not VarIsNull(Node.Info) and VarIsArray(Node.Info) then begin
+    for i:=VarArrayLowBound(Node.Info, 1) to VarArrayHighBound(Node.Info, 1) do begin
+      Result := Result + ',' + Node.Info[i];
+    end;
+  end;
+  //Result:=inherited GetTextLog(Node);
 end;
 
 { TThreadModBus }
