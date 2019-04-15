@@ -17,5 +17,5 @@ Note: ModbusTRU not support (work in progress).
 
 Screenshots and documentation: https://bitbucket.org/heXor/openmodbustool/wiki/Home
 
-Main reposytory source code: https://bitbucket.org/heXor/OpenModbusTool
+Source code (main reposytory): https://bitbucket.org/heXor/OpenModbusTool
 
