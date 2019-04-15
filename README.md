@@ -2,9 +2,18 @@
 
 This is free, crossplatform, multilanguages and opensource Modbus-TCP client.
 
-Feature: ModbusTCP master, ModbusTCP slave test server, IPv6 support, read and write registers, multiselect, clipboard copy and paste, massive write to registers.
+**Download**: https://bitbucket.org/heXor/openmodbustool/downloads
 
-Download last version: https://bitbucket.org/heXor/openmodbustool/downloads
+Feature:
+
+* ModbusTCP master
+* ModbusTCP slave (test server)
+* IPv6 support
+* Read and write registers
+* View mode: dectimal int, dectimal signed int, hex, bin, float, double float, word and byte swap
+* multiselect, clipboard copy and paste, massive write to registers
+
+Note: ModbusTRU not support (work in progress).
 
 Screenshots and documentation: https://bitbucket.org/heXor/openmodbustool/wiki/Home
 
