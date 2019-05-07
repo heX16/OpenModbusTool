@@ -423,7 +423,7 @@ begin
     shapeState.Color:=clYellow;
     threadRead.Terminate;
     // wake up! - time for death
-    threadRead.EventPauseAfterRead.SetEvent;
+    threadRead.EventPauseAfterRead.SetEvent();
   end;
   {
   TThreadModBus.SyncRemoveFromMainProg and TfrmMain.threadReadTerminating
@@ -552,7 +552,7 @@ end;
 procedure TfrmMain.cbRegFormatChange(Sender: TObject);
 begin
   if threadRead <> nil then
-    threadRead.EventPauseAfterRead.SetEvent;
+    threadRead.EventPauseAfterRead.SetEvent();
   rgViewStyleClick(nil);
 end;
 

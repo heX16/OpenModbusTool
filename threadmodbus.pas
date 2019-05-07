@@ -149,8 +149,10 @@ type
     // when user write date, is data wait queue here. sync vars!
     WriteQueue: TModbusItemQueue;
 
-    // ??? wait reading. using MBReadErr.
+    // wait reading. using MBReadErr.
+    //todo: небезопасен - к нему есть обращение снаружи треда. переделать - чтобы сюда отдавался внешний TEventObject при инициализации.
     EventPauseAfterRead: TEventObject;
+
     // Critical Section for safety write to 'WriteQueue'
     CritWriteQueueWork: TCriticalSection;
 
@@ -161,8 +163,10 @@ type
     // (thread safe zone - can access to forms)
     procedure SyncEventConnect;
     procedure SyncEventDissconect;
-    //todo: remove old code
+
+    //todo: remove old code!!!
     procedure SyncDrawList;
+
     procedure SyncWriteStatusBar;
     procedure SyncUpdateVars;
     procedure SyncUpdateVarsOnChange;
@@ -761,6 +765,8 @@ begin
           end;
 
           SendDataToView();
+
+          //todo:??? почему я закомментил???
           //Synchronize(@SyncDrawList);
 
           if (ErrorPresent) and (ErrorLastCode <> 0) then
@@ -797,12 +803,15 @@ begin
       // pause between reads
       pauseResult := EventPauseAfterRead.WaitFor(ReadMBTime);
 
-      // analize pause result
+      Synchronize(@SyncUpdateVarsOnChange);
+      CheckSize();
+      Synchronize(@SyncDrawList);
+
+      // analize pause result:
       if (pauseResult=wrSignaled) and (not Terminated) then
       begin
-        Synchronize(@SyncUpdateVarsOnChange);
-        CheckSize();
-        Synchronize(@SyncDrawList);
+        // pause again after change
+        // такой подход дает двойную паузу чтения
         goto pauseAgain;
       end;
 

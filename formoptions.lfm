@@ -2,10 +2,10 @@ object frmOptions: TfrmOptions
   Left = 395
   Height = 271
   Top = 213
-  Width = 430
+  Width = 551
   Caption = 'frmOptions'
   ClientHeight = 271
-  ClientWidth = 430
+  ClientWidth = 551
   DesignTimePPI = 120
   SessionProperties = 'chBaseRegisterIs1.Checked'
   LCLVersion = '1.8.4.0'
@@ -51,7 +51,7 @@ object frmOptions: TfrmOptions
     Visible = False
   end
   object BitBtn1: TBitBtn
-    Left = 283
+    Left = 404
     Height = 30
     Top = 229
     Width = 143
@@ -100,7 +100,7 @@ object frmOptions: TfrmOptions
     Height = 80
     Hint = 'This is a classic problem for modbus.'#13#10'"Base Register", "base at 1", "First Register"'#13#10'Checked - 1.'#13#10'Unchecked - 0.'
     Top = 8
-    Width = 417
+    Width = 538
     Anchors = [akTop, akLeft, akRight]
     AutoFill = True
     Caption = 'Base register is:'
@@ -112,10 +112,10 @@ object frmOptions: TfrmOptions
     ChildSizing.Layout = cclLeftToRightThenTopToBottom
     ChildSizing.ControlsPerLine = 1
     ClientHeight = 58
-    ClientWidth = 413
+    ClientWidth = 534
     ItemIndex = 0
     Items.Strings = (
-      '0 - first register is 0 (GUI reg. = 0, reg. in packet = 0).'
+      '0 - first register is 0 (GUI reg. = 0, reg. in packet = 0). recommended.'
       '1 - first register is 1 (GUI reg. = 1, reg. in packet = 0).'
     )
     TabOrder = 5
