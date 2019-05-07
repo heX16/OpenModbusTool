@@ -468,6 +468,10 @@ end;
 
 procedure TThreadModBus.SyncUpdateVarsOnChange;
 begin
+  if frmOptions.chBaseRegisterIs.ItemIndex = 0 then
+    IdModBusClient.BaseRegister:=0 else
+    IdModBusClient.BaseRegister:=1;
+
   if not frmMain.cbRegFormat.DroppedDown then begin
     RegFormat:=TRegShowFormat(frmMain.cbRegFormat.ItemIndex);
     Presenter.RegShowFormat:=TRegShowFormat(frmMain.cbRegFormat.ItemIndex);
@@ -633,6 +637,7 @@ var
   i, RegCountMax, Count, Max: integer;
   itm: TModbusItem;
   ip: string;
+  pauseResult: TWaitResult;
 
 label
   pauseAgain;
@@ -676,9 +681,9 @@ begin
     IdModBusClient.OnResponseError:=@ModBusClientErrorEvent;
     IdModBusClient.ConnectTimeout:=2000;
     IdModBusClient.ReadTimeout:=1000;
-    if frmOptions.chBaseRegisterIs1.Checked then
-      IdModBusClient.BaseRegister:=1 else
-      IdModBusClient.BaseRegister:=0;
+    if frmOptions.chBaseRegisterIs.ItemIndex = 0 then
+      IdModBusClient.BaseRegister:=0 else
+      IdModBusClient.BaseRegister:=1;
 
     try
       IdModBusClient.Connect;
@@ -772,7 +777,7 @@ begin
         //...
 
         Synchronize(@SyncUpdateVars);
-        CheckSize;
+        CheckSize();
       except
         on e: EIdSocketError do
           TCP_Disconnect(nil);
@@ -789,7 +794,11 @@ begin
       end;
 
       pauseAgain:
-      if (EventPauseAfterRead.WaitFor(ReadMBTime)=wrSignaled) and (not Terminated) then
+      // pause between reads
+      pauseResult := EventPauseAfterRead.WaitFor(ReadMBTime);
+
+      // analize pause result
+      if (pauseResult=wrSignaled) and (not Terminated) then
       begin
         Synchronize(@SyncUpdateVarsOnChange);
         CheckSize();

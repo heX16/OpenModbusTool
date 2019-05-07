@@ -17,10 +17,10 @@ type
     BitBtn2: TBitBtn;
     cbReloadRegTime: TComboBox;
     cbReadUseFunc05: TCheckBox;
-    chBaseRegisterIs1: TCheckBox;
     edUnitID: TLabeledEdit;
     IniPropStorage2: TIniPropStorage;
     lbReloadRegTime: TLabel;
+    chBaseRegisterIs: TRadioGroup;
     procedure cbReadUseFunc05Change(Sender: TObject);
   private
     { private declarations }

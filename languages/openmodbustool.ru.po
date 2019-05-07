@@ -234,13 +234,12 @@ msgctxt "tfrmoptions.cbreloadregtime.text"
 msgid "1"
 msgstr ""
 
-#: tfrmoptions.chbaseregisteris1.caption
-msgctxt "tfrmoptions.chbaseregisteris1.caption"
-msgid "base at 1"
-msgstr "Базовый регистр (base register) равен 1"
+#: tfrmoptions.chbaseregisteris.caption
+msgid "Base register is:"
+msgstr ""
 
-#: tfrmoptions.chbaseregisteris1.hint
-msgctxt "tfrmoptions.chbaseregisteris1.hint"
+#: tfrmoptions.chbaseregisteris.hint
+msgctxt "tfrmoptions.chbaseregisteris.hint"
 msgid ""
 "This is a classic problem for modbus.\n"
 "\"Base Register\", \"base at 1\", \"First Register\"\n"

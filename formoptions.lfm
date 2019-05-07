@@ -1,18 +1,18 @@
 object frmOptions: TfrmOptions
-  Left = 628
-  Height = 192
-  Top = 362
-  Width = 320
+  Left = 395
+  Height = 271
+  Top = 213
+  Width = 430
   Caption = 'frmOptions'
-  ClientHeight = 192
-  ClientWidth = 320
+  ClientHeight = 271
+  ClientWidth = 430
   DesignTimePPI = 120
   SessionProperties = 'chBaseRegisterIs1.Checked'
-  LCLVersion = '1.8.0.6'
+  LCLVersion = '1.8.4.0'
   object cbReloadRegTime: TComboBox
     Left = 8
     Height = 25
-    Top = 60
+    Top = 116
     Width = 72
     Enabled = False
     ItemHeight = 17
@@ -32,7 +32,7 @@ object frmOptions: TfrmOptions
   object lbReloadRegTime: TLabel
     Left = 8
     Height = 17
-    Top = 40
+    Top = 96
     Width = 95
     Caption = 'Reload reg time'
     Enabled = False
@@ -42,7 +42,7 @@ object frmOptions: TfrmOptions
   object cbReadUseFunc05: TCheckBox
     Left = 8
     Height = 21
-    Top = 93
+    Top = 149
     Width = 143
     Caption = 'Read use "func 05"'
     Enabled = False
@@ -51,11 +51,11 @@ object frmOptions: TfrmOptions
     Visible = False
   end
   object BitBtn1: TBitBtn
-    Left = 232
+    Left = 283
     Height = 30
-    Top = 150
-    Width = 75
-    Anchors = [akLeft, akBottom]
+    Top = 229
+    Width = 143
+    Anchors = [akRight, akBottom]
     Cancel = True
     DefaultCaption = True
     Kind = bkCancel
@@ -66,7 +66,7 @@ object frmOptions: TfrmOptions
   object BitBtn2: TBitBtn
     Left = 8
     Height = 30
-    Top = 150
+    Top = 229
     Width = 152
     Anchors = [akLeft, akBottom]
     Default = True
@@ -78,7 +78,7 @@ object frmOptions: TfrmOptions
   object edUnitID: TLabeledEdit
     Left = 8
     Height = 25
-    Top = 136
+    Top = 192
     Width = 80
     EditLabel.AnchorSideLeft.Control = edUnitID
     EditLabel.AnchorSideRight.Control = edUnitID
@@ -86,7 +86,7 @@ object frmOptions: TfrmOptions
     EditLabel.AnchorSideBottom.Control = edUnitID
     EditLabel.Left = 8
     EditLabel.Height = 17
-    EditLabel.Top = 116
+    EditLabel.Top = 172
     EditLabel.Width = 80
     EditLabel.Caption = 'Master unit ID'
     EditLabel.ParentColor = False
@@ -95,24 +95,36 @@ object frmOptions: TfrmOptions
     Text = '255'
     Visible = False
   end
-  object chBaseRegisterIs1: TCheckBox
+  object chBaseRegisterIs: TRadioGroup
     Left = 8
-    Height = 21
+    Height = 80
     Hint = 'This is a classic problem for modbus.'#13#10'"Base Register", "base at 1", "First Register"'#13#10'Checked - 1.'#13#10'Unchecked - 0.'
     Top = 8
-    Width = 80
-    Caption = 'base at 1'
-    Checked = True
-    ParentShowHint = False
-    ShowHint = True
-    State = cbChecked
+    Width = 417
+    Anchors = [akTop, akLeft, akRight]
+    AutoFill = True
+    Caption = 'Base register is:'
+    ChildSizing.LeftRightSpacing = 6
+    ChildSizing.EnlargeHorizontal = crsHomogenousChildResize
+    ChildSizing.EnlargeVertical = crsHomogenousChildResize
+    ChildSizing.ShrinkHorizontal = crsScaleChilds
+    ChildSizing.ShrinkVertical = crsScaleChilds
+    ChildSizing.Layout = cclLeftToRightThenTopToBottom
+    ChildSizing.ControlsPerLine = 1
+    ClientHeight = 58
+    ClientWidth = 413
+    ItemIndex = 0
+    Items.Strings = (
+      '0 - first register is 0 (GUI reg. = 0, reg. in packet = 0).'
+      '1 - first register is 1 (GUI reg. = 1, reg. in packet = 0).'
+    )
     TabOrder = 5
   end
   object IniPropStorage2: TIniPropStorage
     StoredValues = <>
     IniFileName = 'openmodbustool.ini'
     IniSection = 'options'
-    left = 256
-    top = 16
+    left = 384
+    top = 160
   end
 end
