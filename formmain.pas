@@ -54,14 +54,14 @@ type
     btnConnect: TButton;
     btnDissconect: TButton;
     btnSwapConfig: TButton;
+    btnSetReadCount: TButton;
     cbIP: TComboBox;
     cbRegisterType: TComboBox;
     cbRegFormat: TComboBox;
     DrawGrid1: TDrawGrid;
-    edRegCount: TEdit;
+    edRegCount: TLabeledEdit;
     IdModBusServerTest: TIdModBusServer;
     IniPropStorage1: TIniPropStorage;
-    lbRegCount: TLabel;
     lbAddr: TLabel;
     edRegAddr: TLabeledEdit;
     listLog: TListBox;

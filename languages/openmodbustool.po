@@ -106,6 +106,10 @@ msgstr ""
 msgid "btnPause"
 msgstr ""
 
+#: tfrmmain.btnsetreadcount.caption
+msgid "ok"
+msgstr ""
+
 #: tfrmmain.btnswapconfig.caption
 msgid "..."
 msgstr ""
@@ -141,6 +145,11 @@ msgctxt "tfrmmain.edregaddr.text"
 msgid "1"
 msgstr ""
 
+#: tfrmmain.edregcount.editlabel.caption
+msgctxt "tfrmmain.edregcount.editlabel.caption"
+msgid "Count"
+msgstr ""
+
 #: tfrmmain.edregcount.hint
 msgid "register count"
 msgstr ""
@@ -151,10 +160,6 @@ msgstr ""
 
 #: tfrmmain.lbaddr.caption
 msgid "Addr:"
-msgstr ""
-
-#: tfrmmain.lbregcount.caption
-msgid "count:"
 msgstr ""
 
 #: tfrmmain.menuitem1.caption

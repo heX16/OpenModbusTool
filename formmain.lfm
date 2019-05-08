@@ -113,27 +113,6 @@ object frmMain: TfrmMain
       ParentFont = False
       TabOrder = 2
     end
-    object edRegCount: TEdit
-      Left = 250
-      Height = 25
-      Hint = 'register count'
-      Top = 50
-      Width = 70
-      ParentFont = False
-      ParentShowHint = False
-      TabOrder = 4
-      Text = '125'
-    end
-    object lbRegCount: TLabel
-      Left = 200
-      Height = 17
-      Top = 55
-      Width = 41
-      Alignment = taRightJustify
-      Caption = 'count:'
-      ParentColor = False
-      ParentFont = False
-    end
     object lbAddr: TLabel
       Left = 36
       Height = 17
@@ -171,7 +150,7 @@ object frmMain: TfrmMain
       OnChange = cbRegisterTypeChange
       ParentFont = False
       Style = csDropDownList
-      TabOrder = 5
+      TabOrder = 4
       Text = '4x (word, RW) - Holding Registers'
     end
     object cbRegFormat: TComboBox
@@ -193,7 +172,7 @@ object frmMain: TfrmMain
       OnChange = cbRegFormatChange
       ParentFont = False
       Style = csDropDownList
-      TabOrder = 6
+      TabOrder = 5
       Text = 'Dectimal Int (65535)'
     end
     object rgViewStyle: TRadioGroup
@@ -219,7 +198,7 @@ object frmMain: TfrmMain
       )
       OnClick = rgViewStyleClick
       ParentFont = False
-      TabOrder = 7
+      TabOrder = 6
     end
     object btnPause: TToggleBox
       Left = 616
@@ -228,7 +207,7 @@ object frmMain: TfrmMain
       Width = 104
       Caption = 'btnPause'
       ParentFont = False
-      TabOrder = 8
+      TabOrder = 7
       Visible = False
     end
     object shapeState: TShape
@@ -245,7 +224,41 @@ object frmMain: TfrmMain
       Width = 24
       Action = actSwapConfig
       Caption = '...'
+      TabOrder = 8
+    end
+    object edRegCount: TLabeledEdit
+      Left = 224
+      Height = 25
+      Hint = 'register count'
+      Top = 50
+      Width = 70
+      EditLabel.AnchorSideTop.Control = edRegCount
+      EditLabel.AnchorSideTop.Side = asrCenter
+      EditLabel.AnchorSideRight.Control = edRegCount
+      EditLabel.AnchorSideBottom.Control = edRegCount
+      EditLabel.AnchorSideBottom.Side = asrBottom
+      EditLabel.Left = 183
+      EditLabel.Height = 17
+      EditLabel.Top = 54
+      EditLabel.Width = 38
+      EditLabel.Caption = 'Count'
+      EditLabel.ParentColor = False
+      EditLabel.ParentFont = False
+      LabelPosition = lpLeft
+      ParentFont = False
+      ParentShowHint = False
+      ShowHint = True
       TabOrder = 9
+      Text = '125'
+    end
+    object btnSetReadCount: TButton
+      Left = 296
+      Height = 27
+      Top = 50
+      Width = 24
+      Caption = 'ok'
+      Enabled = False
+      TabOrder = 10
     end
   end
   object DrawGrid1: TDrawGrid

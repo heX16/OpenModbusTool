@@ -107,6 +107,10 @@ msgstr "Вкл. тестовый сервер"
 msgid "btnPause"
 msgstr "Пауза"
 
+#: tfrmmain.btnsetreadcount.caption
+msgid "ok"
+msgstr ""
+
 #: tfrmmain.btnswapconfig.caption
 msgid "..."
 msgstr ""
@@ -145,6 +149,13 @@ msgctxt "tfrmmain.edregaddr.text"
 msgid "1"
 msgstr ""
 
+#: tfrmmain.edregcount.editlabel.caption
+#, fuzzy
+#| msgid "Reg"
+msgctxt "tfrmmain.edregcount.editlabel.caption"
+msgid "Count"
+msgstr "Регистр:"
+
 #: tfrmmain.edregcount.hint
 msgid "register count"
 msgstr ""
@@ -156,10 +167,6 @@ msgstr ""
 #: tfrmmain.lbaddr.caption
 msgid "Addr:"
 msgstr "Адрес:"
-
-#: tfrmmain.lbregcount.caption
-msgid "count:"
-msgstr "Кол-во:"
 
 #: tfrmmain.menuitem1.caption
 #| msgid "Connect"

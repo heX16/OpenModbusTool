@@ -472,6 +472,7 @@ end;
 
 procedure TThreadModBus.SyncUpdateVarsOnChange;
 begin
+  //todo: глобальный баг - при закрытии главного окна, окно frmOptions разрушается, но тред еще работает, нужно налаживать синхронизацию...
   if frmOptions.chBaseRegisterIs.ItemIndex = 0 then
     IdModBusClient.BaseRegister:=0 else
     IdModBusClient.BaseRegister:=1;
@@ -803,9 +804,11 @@ begin
       // pause between reads
       pauseResult := EventPauseAfterRead.WaitFor(ReadMBTime);
 
-      Synchronize(@SyncUpdateVarsOnChange);
-      CheckSize();
-      Synchronize(@SyncDrawList);
+      if not Terminated then begin
+        Synchronize(@SyncUpdateVarsOnChange);
+        CheckSize();
+        Synchronize(@SyncDrawList);
+      end;
 
       // analize pause result:
       if (pauseResult=wrSignaled) and (not Terminated) then
