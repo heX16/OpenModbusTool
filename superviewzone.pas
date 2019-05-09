@@ -220,6 +220,7 @@ type
 
     procedure SetItemRange(RangeBegin, RangeEnd: integer; DelaultValue: variant;
       Clear: boolean); overload;
+
     procedure SetItemRange(RangeBegin, RangeEnd: integer); overload;
 
     procedure EnumSelected(Proc: TSuperViewEnumItemsProc; UserData: pointer);
@@ -230,7 +231,12 @@ type
 
     procedure Clear();
 
+    procedure ClearThreadEventBuffer();
+
     function GetCounters(): TPresenterCounter;
+
+    // WIP!
+    procedure RemoveItems(TargetDetector: TSuperViewEnumItemsProcClass);
 
     //todo: procedure SortItemsByName ...
     //todo: procedure SortItemsByProc ...
@@ -325,8 +331,7 @@ begin
   TransferInProcess := True;
   try
     ic := 0;
-    icount := ThreadListAddItems2.Size;
-    icount := icount - 1;
+    icount := ThreadListAddItems2.Size-1;
 
     for j := 0 to icount do
     begin
@@ -340,6 +345,10 @@ begin
 
       if (ic mod 50 = 9) and (icount - ic > 9) then
         Application.ProcessMessages();//todo: ???
+
+      //todo: !!! - data lost
+      if ThreadListAddItems2.Size-1 <> icount then
+        break;
     end;
 
     ThreadListAddItems2.Clear();
@@ -531,9 +540,6 @@ begin
 end;
 
 destructor TSuperViewPresenter.Destroy();
-var
-  //i: TSuperViewItem;
-  itr: TMapSuperView.TIterator;
 begin
   ClearItemsFast();
 
@@ -762,8 +768,10 @@ begin
   ViewTree.BeginUpdate;
   if ViewGrid <> nil then
     ViewGrid.BeginUpdate;
-  if Clear then
+  if Clear then begin
     self.Clear();
+    //Note: ViewTree.Clear(); - present in self.Clear
+  end;
   for i := RangeBegin to RangeEnd do
   begin
     Add(TSuperViewPath(IntToStr(i)), DelaultValue);
@@ -968,11 +976,56 @@ begin
   GridRecalc();
 end;
 
+procedure TSuperViewPresenter.ClearThreadEventBuffer();
+begin
+  ThreadListAddLock.Enter;
+  try
+    ThreadListAddItems1.Clear();
+    ThreadListAddItems2.Clear();
+  finally
+    ThreadListAddLock.Leave;
+  end;
+end;
+
 function TSuperViewPresenter.GetCounters(): TPresenterCounter;
 begin
   CountersLock.Enter;
   Result := Counters;
   CountersLock.Leave;
+end;
+
+procedure TSuperViewPresenter.RemoveItems(
+  TargetDetector: TSuperViewEnumItemsProcClass);
+var
+  itr: TMapSuperView.TIterator;
+  itm: TSuperViewItem;
+  i: integer;
+  o: TObject;
+begin
+  // сначало удалить все элементы в карте
+  {itr := Items.Iterator();
+  try
+    if itr <> nil then
+      repeat
+        itm := itr.GetValue;
+        if TargetDetector(itm...) ...
+        del from itm.GridIndex
+        del from itm.Node
+        itm.Free();
+      until not itr.Next;
+  finally
+    if itr <> nil then
+      FreeAndNil(itr);
+  end;}
+  // затем удалить все элементы в буфере!
+
+  // затем удалить все ссылки в логе (нужно переделывать архитуктуру лога)
+    {if ViewLog <> nil then
+      for i:=ViewLog.Items.Count-1 downto 0 do begin
+        o := ViewLog.Items.Objects[i];
+        ViewLog.Items.Objects[i] := nil;
+        if o <> nil then
+          o.Free();}
 end;
 
 function TSuperViewPresenter.Add(Path: TSuperViewPath; Info: TSuperViewInfo): TSuperViewItem;

@@ -67,10 +67,12 @@ type
 
   TSuperViewPresenterModbus = class(TSuperViewPresenter)
     RegStart: integer;
+    RegCount: integer;
     RegShowFormat: TRegShowFormat;
     Swap2byte: boolean;
     Swap2reg: boolean;
     Swap2Dword: boolean;
+    ChangeCountNeedUpdateVisual: boolean;
 
     function GetText(Node: TSuperViewItem; Col: integer): UTF8String; override;
     function GetTextCompactMode(Node: TSuperViewItem): UTF8String; override;
@@ -88,7 +90,7 @@ type
     // Read modbus registers. (run from thread)
     procedure ReadMB(RegType: TRegReadType; Addr, ArrOffs: word; Count: word);
     // Check buffer size, if needed then resize
-    procedure CheckSize();
+    procedure UpdateRegCount();
     // callback from "IdModBusClient" for error process errors.
     procedure ModBusClientErrorEvent(const FunctionCode: Byte;
       const ErrorCode: Byte; const ResponseBuffer: TModBusResponseBuffer);
@@ -141,8 +143,6 @@ type
     RegType: TRegReadType;
     // sync vars.
     RegStart: integer;
-    // sync vars.
-    SetNewSize: integer;
     // sync vars.
     RegFormat: TRegShowFormat;
 
@@ -457,21 +457,31 @@ end;
 
 procedure TThreadModBus.SyncUpdateVars;
 begin
-  SetNewSize:=StrToIntDef(frmMain.edRegCount.Text, SetNewSize);
-  if not frmMain.cbRegFormat.DroppedDown then begin
-    RegFormat:=TRegShowFormat(frmMain.cbRegFormat.ItemIndex);
-    Presenter.RegShowFormat:=TRegShowFormat(frmMain.cbRegFormat.ItemIndex);
+  if not Terminated then begin
+    if not frmMain.cbRegFormat.DroppedDown then begin
+      RegFormat:=TRegShowFormat(frmMain.cbRegFormat.ItemIndex);
+      Presenter.RegShowFormat:=TRegShowFormat(frmMain.cbRegFormat.ItemIndex);
+    end;
+    UpdateRegAddr();
+    if frmSwapConfig <> nil then begin
+      //todo: unsafe! (см "глобальный баг")
+      Presenter.Swap2byte:=frmSwapConfig.cbSwap2byte.Checked;
+      Presenter.Swap2reg:=frmSwapConfig.cbSwap2word.Checked;
+      Presenter.Swap2Dword:=frmSwapConfig.cbSwap2dword.Checked;
+    end;
   end;
-  if SetNewSize<>Length(MBWord) then
-    Presenter.SetItemRange(RegStart, RegStart+SetNewSize-1);
-  UpdateRegAddr();
-  Presenter.Swap2byte:=frmSwapConfig.cbSwap2byte.Checked;
-  Presenter.Swap2reg:=frmSwapConfig.cbSwap2word.Checked;
-  Presenter.Swap2Dword:=frmSwapConfig.cbSwap2dword.Checked;
 end;
 
 procedure TThreadModBus.SyncUpdateVarsOnChange;
 begin
+  if Presenter.ChangeCountNeedUpdateVisual then begin
+    // need remove old event, else event add old items to new list
+    Presenter.ClearThreadEventBuffer();
+    Presenter.SetItemRange(RegStart, RegStart+Presenter.RegCount-1);
+    Presenter.ChangeCountNeedUpdateVisual := false;
+    Presenter.ClearThreadEventBuffer();
+  end;
+
   //todo: глобальный баг - при закрытии главного окна, окно frmOptions разрушается, но тред еще работает, нужно налаживать синхронизацию...
   if frmOptions.chBaseRegisterIs.ItemIndex = 0 then
     IdModBusClient.BaseRegister:=0 else
@@ -489,16 +499,18 @@ begin
     frmMain.threadRead := nil; // just drop pointer!   (FreeOnTerminate=true, give error - very strange...)
 end;
 
-procedure TThreadModBus.CheckSize();
+procedure TThreadModBus.UpdateRegCount();
 begin
-  if SetNewSize <> Length(MBWord) then
+  if Presenter.RegCount <> Length(MBWord) then
   begin
     //if RegStart + SetNewSize > 65535 then
-    if SetNewSize > 65535 then
-      SetNewSize := 65535;
-    SetLength(MBWord, SetNewSize);
-    SetLength(MBBool, SetNewSize);
-    SetLength(MBReadErr, SetNewSize);
+    //todo: if read coil - can more
+    if Presenter.RegCount > 65535 then
+      Presenter.RegCount := 65535;
+    SetLength(MBWord, Presenter.RegCount);
+    SetLength(MBBool, Presenter.RegCount);
+    SetLength(MBReadErr, Presenter.RegCount);
+    Presenter.ChangeCountNeedUpdateVisual := true;
   end;
 end;
 
@@ -658,7 +670,7 @@ begin
   EventPauseAfterRead := TEventObject.Create(nil, false, false, '');
 
   SyncUpdateVars();
-  CheckSize();
+  UpdateRegCount();
 
   if not ModbusRTU then
   begin
@@ -784,7 +796,7 @@ begin
         //...
 
         Synchronize(@SyncUpdateVars);
-        CheckSize();
+        UpdateRegCount();
       except
         on e: EIdSocketError do
           TCP_Disconnect(nil);
@@ -805,8 +817,8 @@ begin
       pauseResult := EventPauseAfterRead.WaitFor(ReadMBTime);
 
       if not Terminated then begin
+        UpdateRegCount();
         Synchronize(@SyncUpdateVarsOnChange);
-        CheckSize();
         Synchronize(@SyncDrawList);
       end;
 

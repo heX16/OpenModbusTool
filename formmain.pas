@@ -128,9 +128,12 @@ type
     procedure actShowLogExecute(Sender: TObject);
     procedure actSwapConfigExecute(Sender: TObject);
     procedure actTestServerEnableExecute(Sender: TObject);
+    procedure btnSetReadCountClick(Sender: TObject);
     procedure cbIPKeyPress(Sender: TObject; var Key: char);
     procedure cbRegFormatChange(Sender: TObject);
     procedure cbRegisterTypeChange(Sender: TObject);
+    procedure edRegCountChange(Sender: TObject);
+    procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure IdModBusServerTestConnect(AContext: TIdContext);
@@ -543,6 +546,22 @@ begin
   IdModBusServerTest.Active:=actTestServerEnable.Checked;
 end;
 
+procedure TfrmMain.btnSetReadCountClick(Sender: TObject);
+var c: integer;
+begin
+  if Presenter<>nil then begin
+    c := StrToIntDef(frmMain.edRegCount.Text, -1);
+    if c = -1
+    then
+      ShowMessage('Invalid number')
+    else
+      begin
+        Presenter.RegCount := c;
+        btnSetReadCount.Enabled:=False;
+      end;
+  end;
+end;
+
 procedure TfrmMain.cbIPKeyPress(Sender: TObject; var Key: char);
 begin
   if Key=#13 then
@@ -568,9 +587,21 @@ begin
     end;
 end;
 
+procedure TfrmMain.edRegCountChange(Sender: TObject);
+begin
+  btnSetReadCount.Enabled:=True;
+end;
+
 procedure TfrmMain.FormCreate(Sender: TObject);
 begin
   Presenter := TSuperViewPresenterModbus.Create();
+end;
+
+procedure TfrmMain.FormClose(Sender: TObject; var CloseAction: TCloseAction);
+begin
+  IdModBusServerTest.Active:=false;
+  if threadRead <> nil then
+    actDissconect.Execute;
 end;
 
 procedure TfrmMain.FormDestroy(Sender: TObject);
@@ -602,6 +633,12 @@ begin
     TimerInit.Enabled:=false;
     Presenter.Setup(VirtualStringTree1, DrawGrid1, TimerUpdateData, listLog);
     Presenter.ThreadEventsMaxCount := 65536;
+
+    Presenter.RegCount:=StrToIntDef(frmMain.edRegCount.Text, -1);
+    if Presenter.RegCount = -1 then begin
+      Presenter.RegCount := 125;
+      frmMain.edRegCount.Text := '125';
+    end;
 
     Application.ProcessMessages;
     // update
@@ -749,7 +786,7 @@ procedure TfrmMain.IdModBusServerTestReadHoldingRegisters(
 var i: integer;
 begin
   for i:=0 to Count-1 do begin
-    Data[i]:=RegNr+i;
+    Data[i]:=RegNr+i-1;
     //todo: add random seed???
     if mnSrvFullRnd.Checked then
       Data[i]:=Random(65536);
