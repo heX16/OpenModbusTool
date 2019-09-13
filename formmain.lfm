@@ -13,7 +13,7 @@ object frmMain: TfrmMain
   OnDestroy = FormDestroy
   Position = poScreenCenter
   SessionProperties = 'cbIP.Text;edRegAddr.Text;edRegCount.Text;rgViewStyle.ItemIndex;cbIP.Items'
-  LCLVersion = '1.9.0.0'
+  LCLVersion = '1.8.4.0'
   Visible = True
   object Panel1: TPanel
     Left = 0
@@ -341,23 +341,23 @@ object frmMain: TfrmMain
     Visible = False
   end
   object TimerReadMB: TTimer
-    Left = 560
-    Top = 424
+    left = 560
+    top = 424
   end
   object ApplicationProperties1: TApplicationProperties
     CaptureExceptions = False
-    Left = 60
-    Top = 400
+    left = 60
+    top = 400
   end
   object TimerInit: TTimer
     Interval = 10
     OnTimer = TimerInitTimer
-    Left = 200
-    Top = 400
+    left = 200
+    top = 400
   end
   object ActionList1: TActionList
-    Left = 200
-    Top = 310
+    left = 200
+    top = 310
     object actDissconect: TAction
       Caption = 'Dissconect'
       Enabled = False
@@ -431,8 +431,8 @@ object frmMain: TfrmMain
     end
   end
   object menuMainList: TPopupMenu
-    Left = 200
-    Top = 220
+    left = 200
+    top = 220
     object mnEditExt: TMenuItem
       Action = actEditExt
       Default = True
@@ -459,12 +459,12 @@ object frmMain: TfrmMain
   object IniPropStorage1: TIniPropStorage
     StoredValues = <>
     IniFileName = 'openmodbustool.ini'
-    Left = 60
-    Top = 490
+    left = 60
+    top = 490
   end
   object menuMainForm: TMainMenu
-    Left = 60
-    Top = 220
+    left = 60
+    top = 220
     object MenuItem1: TMenuItem
       Caption = 'Client'
       object MenuItem2: TMenuItem
@@ -485,6 +485,17 @@ object frmMain: TfrmMain
     end
     object MenuItem17: TMenuItem
       Caption = 'View'
+      object mnViewAsTable: TMenuItem
+        Caption = 'Table'
+        OnClick = mnViewAsTableClick
+      end
+      object mnViewAsShortList: TMenuItem
+        Caption = 'Short list'
+        OnClick = mnViewAsShortListClick
+      end
+      object MenuItem18: TMenuItem
+        Caption = '-'
+      end
       object mnShowLog: TMenuItem
         Action = actShowLog
       end
@@ -564,13 +575,13 @@ object frmMain: TfrmMain
     OnReadInputRegisters = IdModBusServerTestReadInputRegisters
     OnWriteCoils = IdModBusServerTestWriteCoils
     OnWriteRegisters = IdModBusServerTestWriteRegisters
-    Left = 440
-    Top = 300
+    left = 440
+    top = 300
   end
   object TimerUpdateData: TTimer
     Enabled = False
     Interval = 100
-    Left = 496
-    Top = 448
+    left = 496
+    top = 448
   end
 end

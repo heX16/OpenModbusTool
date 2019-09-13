@@ -156,6 +156,8 @@ type
 
     OnChanged: TNotifyEvent;
 
+    OnChangedViewMode: TNotifyEvent;
+
     GridEmptyCell: integer;
     GridMaxEmptyCell: integer;
 
@@ -180,7 +182,7 @@ type
 
     function GridItemByIndex(index: integer): TSuperViewItem;
 
-    procedure SetViewMode(NewViewMode: TViewPresenterViewMode);
+    procedure SetViewMode(NewViewMode: TViewPresenterViewMode; Force: boolean = False);
 
     procedure GridRecalc();
 
@@ -598,9 +600,10 @@ begin
   TimerSync.OnTimer := @EventTimerProcessBuffer;
 end;
 
-procedure TSuperViewPresenter.SetViewMode(NewViewMode: TViewPresenterViewMode);
+procedure TSuperViewPresenter.SetViewMode(NewViewMode: TViewPresenterViewMode;
+  Force: boolean);
 begin
-  if NewViewMode <> ViewMode then
+  if (NewViewMode <> ViewMode) or Force then
   begin
     //todo: add "if ass"
     if NewViewMode = ViewModeTree then
@@ -609,6 +612,8 @@ begin
       ViewTree.Visible := True;
       if ViewGrid <> nil then
         ViewGrid.Visible := False;
+      if OnChangedViewMode <> nil then
+        OnChangedViewMode(self);
     end
     else
     if (NewViewMode = ViewModeCompactGrid) and (ViewGrid <> nil) then
@@ -618,6 +623,8 @@ begin
       ViewMode := NewViewMode;
       ViewGrid.Visible := True;
       ViewTree.Visible := False;
+      if OnChangedViewMode <> nil then
+        OnChangedViewMode(self);
     end;
   end;
 end;

@@ -196,6 +196,14 @@ msgstr ""
 msgid "Test mode - read only"
 msgstr ""
 
+#: tfrmmain.mnviewasshortlist.caption
+msgid "Short list"
+msgstr ""
+
+#: tfrmmain.mnviewastable.caption
+msgid "Table"
+msgstr ""
+
 #: tfrmmain.rgviewstyle.caption
 msgid "View style"
 msgstr ""

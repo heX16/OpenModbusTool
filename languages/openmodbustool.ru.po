@@ -203,6 +203,14 @@ msgstr "Вкл. локальный сервер"
 msgid "Test mode - read only"
 msgstr "Тестовый режим - только чтение"
 
+#: tfrmmain.mnviewasshortlist.caption
+msgid "Short list"
+msgstr ""
+
+#: tfrmmain.mnviewastable.caption
+msgid "Table"
+msgstr ""
+
 #: tfrmmain.rgviewstyle.caption
 msgid "View style"
 msgstr "Отображение:"

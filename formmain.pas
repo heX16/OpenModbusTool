@@ -74,6 +74,9 @@ type
     MenuItem15: TMenuItem;
     MenuItem16: TMenuItem;
     MenuItem17: TMenuItem;
+    MenuItem18: TMenuItem;
+    mnViewAsShortList: TMenuItem;
+    mnViewAsTable: TMenuItem;
     mnShowLog: TMenuItem;
     mnSrvFullRnd: TMenuItem;
     mnSrvTestRead: TMenuItem;
@@ -162,6 +165,8 @@ type
     procedure mnSrvFullRndClick(Sender: TObject);
     procedure mnSrvAddSmallRandomClick(Sender: TObject);
     procedure mnStartServer1Click(Sender: TObject);
+    procedure mnViewAsShortListClick(Sender: TObject);
+    procedure mnViewAsTableClick(Sender: TObject);
     procedure rgViewStyleClick(Sender: TObject);
     procedure TimerInitTimer(Sender: TObject);
     procedure treeMainDblClick(Sender: TObject);
@@ -173,6 +178,7 @@ type
     procedure VirtualStringTree1NewText(Sender: TBaseVirtualTree;
       Node: PVirtualNode; Column: TColumnIndex; const NewText: String);
   private
+    procedure OnChangedViewMode(Sender: TObject);
     { private declarations }
   public
     Presenter: TSuperViewPresenterModbus;
@@ -617,6 +623,27 @@ begin
   IdModBusServerTest.Active:=true;
 end;
 
+procedure TfrmMain.OnChangedViewMode(Sender: TObject);
+begin
+  mnViewAsTable.Checked := Presenter.ViewMode = ViewModeCompactGrid;
+  mnViewAsShortList.Checked := Presenter.ViewMode = ViewModeTree;
+  if Presenter.ViewMode = ViewModeCompactGrid then
+    rgViewStyle.ItemIndex:=0 else
+    rgViewStyle.ItemIndex:=1;
+end;
+
+procedure TfrmMain.mnViewAsShortListClick(Sender: TObject);
+begin
+  Presenter.SetViewMode(ViewModeTree);
+end;
+
+procedure TfrmMain.mnViewAsTableClick(Sender: TObject);
+begin
+  Presenter.SetViewMode(ViewModeCompactGrid);
+  mnViewAsTable.Checked:=True;
+  mnViewAsShortList.Checked:=False;
+end;
+
 procedure TfrmMain.rgViewStyleClick(Sender: TObject);
 begin
   case rgViewStyle.ItemIndex of
@@ -634,6 +661,8 @@ begin
     Presenter.Setup(VirtualStringTree1, DrawGrid1, TimerUpdateData, listLog);
     Presenter.ThreadEventsMaxCount := 65536;
 
+    Presenter.OnChangedViewMode:=@OnChangedViewMode;
+
     Presenter.RegCount:=StrToIntDef(frmMain.edRegCount.Text, -1);
     if Presenter.RegCount = -1 then begin
       Presenter.RegCount := 125;
@@ -642,7 +671,10 @@ begin
 
     Application.ProcessMessages;
     // update
-    rgViewStyleClick(nil);
+    if rgViewStyle.ItemIndex = 0 then
+      Presenter.SetViewMode(ViewModeCompactGrid, True)
+    else
+      Presenter.SetViewMode(ViewModeTree, True);
 
     //SetDefaultLang('ru', '', true); // manual localization
 
