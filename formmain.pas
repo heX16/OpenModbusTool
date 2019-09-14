@@ -53,6 +53,7 @@ type
     ApplicationProperties1: TApplicationProperties;
     btnConnect: TButton;
     btnDissconect: TButton;
+    btnSetRegAddr: TButton;
     btnSwapConfig: TButton;
     btnSetReadCount: TButton;
     cbIP: TComboBox;
@@ -104,14 +105,12 @@ type
     Panel1: TPanel;
     Panel2: TPanel;
     menuMainList: TPopupMenu;
-    rgViewStyle: TRadioGroup;
     shapeState: TShape;
     SplitterLog: TSplitter;
     StatusBar1: TStatusBar;
     TimerUpdateData: TTimer;
     TimerInit: TTimer;
     TimerReadMB: TTimer;
-    btnPause: TToggleBox;
     VirtualStringTree1: TVirtualStringTree;
     procedure actAboutExecute(Sender: TObject);
     procedure actConnectExecute(Sender: TObject);
@@ -132,9 +131,11 @@ type
     procedure actSwapConfigExecute(Sender: TObject);
     procedure actTestServerEnableExecute(Sender: TObject);
     procedure btnSetReadCountClick(Sender: TObject);
+    procedure btnSetRegAddrClick(Sender: TObject);
     procedure cbIPKeyPress(Sender: TObject; var Key: char);
     procedure cbRegFormatChange(Sender: TObject);
     procedure cbRegisterTypeChange(Sender: TObject);
+    procedure edRegAddrChange(Sender: TObject);
     procedure edRegCountChange(Sender: TObject);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure FormCreate(Sender: TObject);
@@ -167,7 +168,6 @@ type
     procedure mnStartServer1Click(Sender: TObject);
     procedure mnViewAsShortListClick(Sender: TObject);
     procedure mnViewAsTableClick(Sender: TObject);
-    procedure rgViewStyleClick(Sender: TObject);
     procedure TimerInitTimer(Sender: TObject);
     procedure treeMainDblClick(Sender: TObject);
     procedure threadReadTerminating(Sender: TObject);
@@ -568,6 +568,22 @@ begin
   end;
 end;
 
+procedure TfrmMain.btnSetRegAddrClick(Sender: TObject);
+var c: integer;
+begin
+  if Presenter<>nil then begin
+    c := StrToIntDef(frmMain.edRegAddr.Text, -1);
+    if c = -1
+    then
+      ShowMessage('Invalid address')
+    else
+      begin
+        Presenter.RegStart := c;
+        btnSetRegAddr.Enabled:=False;
+      end;
+  end;
+end;
+
 procedure TfrmMain.cbIPKeyPress(Sender: TObject; var Key: char);
 begin
   if Key=#13 then
@@ -578,7 +594,7 @@ procedure TfrmMain.cbRegFormatChange(Sender: TObject);
 begin
   if threadRead <> nil then
     threadRead.EventPauseAfterRead.SetEvent();
-  rgViewStyleClick(nil);
+  Presenter.RepaintAll();
 end;
 
 procedure TfrmMain.cbRegisterTypeChange(Sender: TObject);
@@ -591,6 +607,11 @@ begin
       tRegWordRO, tRegWordRW:
         ;//VirtualStringTree1.Header.Columns[idxColumnMainText].Width:=150;
     end;
+end;
+
+procedure TfrmMain.edRegAddrChange(Sender: TObject);
+begin
+  btnSetRegAddr.Enabled:=True;
 end;
 
 procedure TfrmMain.edRegCountChange(Sender: TObject);
@@ -627,9 +648,6 @@ procedure TfrmMain.OnChangedViewMode(Sender: TObject);
 begin
   mnViewAsTable.Checked := Presenter.ViewMode = ViewModeCompactGrid;
   mnViewAsShortList.Checked := Presenter.ViewMode = ViewModeTree;
-  if Presenter.ViewMode = ViewModeCompactGrid then
-    rgViewStyle.ItemIndex:=0 else
-    rgViewStyle.ItemIndex:=1;
 end;
 
 procedure TfrmMain.mnViewAsShortListClick(Sender: TObject);
@@ -642,14 +660,6 @@ begin
   Presenter.SetViewMode(ViewModeCompactGrid);
   mnViewAsTable.Checked:=True;
   mnViewAsShortList.Checked:=False;
-end;
-
-procedure TfrmMain.rgViewStyleClick(Sender: TObject);
-begin
-  case rgViewStyle.ItemIndex of
-  0: Presenter.SetViewMode(ViewModeCompactGrid);
-  1: Presenter.SetViewMode(ViewModeTree);
-  end;
 end;
 
 procedure TfrmMain.TimerInitTimer(Sender: TObject);
@@ -669,12 +679,13 @@ begin
       frmMain.edRegCount.Text := '125';
     end;
 
-    Application.ProcessMessages;
-    // update
-    if rgViewStyle.ItemIndex = 0 then
+    //TODO: add to config ViewStyle
+    {if rgViewStyle.ItemIndex = 0 then
       Presenter.SetViewMode(ViewModeCompactGrid, True)
     else
-      Presenter.SetViewMode(ViewModeTree, True);
+      Presenter.SetViewMode(ViewModeTree, True);}
+
+    Application.ProcessMessages;
 
     //SetDefaultLang('ru', '', true); // manual localization
 

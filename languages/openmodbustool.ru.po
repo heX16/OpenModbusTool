@@ -103,11 +103,13 @@ msgstr ""
 msgid "Test server"
 msgstr "Вкл. тестовый сервер"
 
-#: tfrmmain.btnpause.caption
-msgid "btnPause"
-msgstr "Пауза"
-
 #: tfrmmain.btnsetreadcount.caption
+msgctxt "tfrmmain.btnsetreadcount.caption"
+msgid "ok"
+msgstr ""
+
+#: tfrmmain.btnsetregaddr.caption
+msgctxt "tfrmmain.btnsetregaddr.caption"
 msgid "ok"
 msgstr ""
 
@@ -210,10 +212,6 @@ msgstr ""
 #: tfrmmain.mnviewastable.caption
 msgid "Table"
 msgstr ""
-
-#: tfrmmain.rgviewstyle.caption
-msgid "View style"
-msgstr "Отображение:"
 
 #: tfrmmain.statusbar1.panels[0].text
 msgctxt "tfrmmain.statusbar1.panels[0].text"

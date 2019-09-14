@@ -13,12 +13,54 @@ object frmMain: TfrmMain
   OnDestroy = FormDestroy
   Position = poScreenCenter
   SessionProperties = 'cbIP.Text;edRegAddr.Text;edRegCount.Text;rgViewStyle.ItemIndex;cbIP.Items'
-  LCLVersion = '1.8.4.0'
+  LCLVersion = '1.9.0.0'
   Visible = True
+  object VirtualStringTree1: TVirtualStringTree
+    Left = 0
+    Height = 414
+    Top = 115
+    Width = 923
+    Align = alClient
+    DefaultText = 'Node'
+    Header.AutoSizeIndex = 0
+    Header.Columns = <    
+      item
+        Position = 0
+        Text = 'Register'
+        Width = 200
+      end    
+      item
+        Position = 1
+        Text = 'Value'
+        Width = 100
+      end    
+      item
+        Options = [coAllowClick, coDraggable, coEnabled, coParentBidiMode, coParentColor, coResizable, coShowDropMark, coAllowFocus, coEditable]
+        Position = 2
+        Text = 'Reg.num'
+        Width = 100
+      end    
+      item
+        Options = [coAllowClick, coDraggable, coEnabled, coParentBidiMode, coParentColor, coResizable, coShowDropMark, coAllowFocus, coEditable]
+        Position = 3
+        Text = 'Type'
+        Width = 100
+      end>
+    Header.MainColumn = 1
+    Header.Options = [hoColumnResize, hoDrag, hoShowSortGlyphs, hoVisible]
+    PopupMenu = menuMainList
+    TabOrder = 3
+    TreeOptions.MiscOptions = [toAcceptOLEDrop, toEditable, toFullRepaintOnResize, toInitOnSave, toToggleOnDblClick, toWheelPanning, toEditOnClick]
+    TreeOptions.PaintOptions = [toShowButtons, toShowDropmark, toShowHorzGridLines, toShowRoot, toShowVertGridLines, toThemeAware, toUseBlendedImages]
+    TreeOptions.SelectionOptions = [toFullRowSelect, toMultiSelect]
+    OnEditing = VirtualStringTree1Editing
+    OnKeyUp = VirtualStringTree1KeyUp
+    OnNewText = VirtualStringTree1NewText
+  end
   object Panel1: TPanel
     Left = 0
     Height = 35
-    Top = 85
+    Top = 80
     Width = 923
     Align = alTop
     BorderWidth = 2
@@ -63,11 +105,11 @@ object frmMain: TfrmMain
   end
   object Panel2: TPanel
     Left = 0
-    Height = 85
+    Height = 80
     Top = 0
     Width = 923
     Align = alTop
-    ClientHeight = 85
+    ClientHeight = 80
     ClientWidth = 923
     ParentFont = False
     TabOrder = 0
@@ -75,8 +117,8 @@ object frmMain: TfrmMain
       Left = 80
       Height = 25
       Hint = 'Examples: 0 / 1 / 400001 / 1234 / 101234'
-      Top = 50
-      Width = 70
+      Top = 48
+      Width = 88
       EditLabel.AnchorSideTop.Control = edRegAddr
       EditLabel.AnchorSideTop.Side = asrCenter
       EditLabel.AnchorSideRight.Control = edRegAddr
@@ -84,7 +126,7 @@ object frmMain: TfrmMain
       EditLabel.AnchorSideBottom.Side = asrBottom
       EditLabel.Left = 53
       EditLabel.Height = 17
-      EditLabel.Top = 54
+      EditLabel.Top = 52
       EditLabel.Width = 24
       EditLabel.Caption = 'Reg'
       EditLabel.ParentColor = False
@@ -95,10 +137,11 @@ object frmMain: TfrmMain
       ShowHint = True
       TabOrder = 3
       Text = '1'
+      OnChange = edRegAddrChange
     end
     object btnConnect: TButton
-      Left = 330
-      Height = 41
+      Left = 376
+      Height = 32
       Top = 6
       Width = 140
       Action = actConnect
@@ -106,9 +149,9 @@ object frmMain: TfrmMain
       TabOrder = 1
     end
     object btnDissconect: TButton
-      Left = 474
-      Height = 41
-      Top = 6
+      Left = 376
+      Height = 32
+      Top = 42
       Width = 140
       Action = actDissconect
       ParentFont = False
@@ -127,8 +170,8 @@ object frmMain: TfrmMain
     object cbIP: TComboBox
       Left = 80
       Height = 25
-      Top = 9
-      Width = 210
+      Top = 8
+      Width = 256
       ItemHeight = 17
       OnKeyPress = cbIPKeyPress
       ParentFont = False
@@ -136,9 +179,9 @@ object frmMain: TfrmMain
       Text = '127.0.0.1'
     end
     object cbRegisterType: TComboBox
-      Left = 330
+      Left = 528
       Height = 25
-      Top = 50
+      Top = 8
       Width = 220
       ItemHeight = 17
       ItemIndex = 3
@@ -155,10 +198,10 @@ object frmMain: TfrmMain
       Text = '4x (word, RW) - Holding Registers'
     end
     object cbRegFormat: TComboBox
-      Left = 560
+      Left = 528
       Height = 25
-      Top = 50
-      Width = 136
+      Top = 44
+      Width = 192
       ItemHeight = 17
       ItemIndex = 0
       Items.Strings = (
@@ -176,69 +219,34 @@ object frmMain: TfrmMain
       TabOrder = 5
       Text = 'Dectimal Int (65535)'
     end
-    object rgViewStyle: TRadioGroup
-      Left = 730
-      Height = 75
-      Top = 4
-      Width = 188
-      AutoFill = True
-      Caption = 'View style'
-      ChildSizing.LeftRightSpacing = 6
-      ChildSizing.EnlargeHorizontal = crsHomogenousChildResize
-      ChildSizing.EnlargeVertical = crsHomogenousChildResize
-      ChildSizing.ShrinkHorizontal = crsScaleChilds
-      ChildSizing.ShrinkVertical = crsScaleChilds
-      ChildSizing.Layout = cclLeftToRightThenTopToBottom
-      ChildSizing.ControlsPerLine = 1
-      ClientHeight = 53
-      ClientWidth = 184
-      ItemIndex = 0
-      Items.Strings = (
-        'Table'
-        'Short list'
-      )
-      OnClick = rgViewStyleClick
-      ParentFont = False
-      TabOrder = 6
-    end
-    object btnPause: TToggleBox
-      Left = 616
-      Height = 41
-      Top = 6
-      Width = 104
-      Caption = 'btnPause'
-      ParentFont = False
-      TabOrder = 7
-      Visible = False
-    end
     object shapeState: TShape
-      Left = 296
+      Left = 344
       Height = 24
       Top = 12
       Width = 24
       Shape = stCircle
     end
     object btnSwapConfig: TButton
-      Left = 696
-      Height = 26
-      Top = 50
+      Left = 724
+      Height = 24
+      Top = 44
       Width = 24
       Action = actSwapConfig
       Caption = '...'
-      TabOrder = 8
+      TabOrder = 6
     end
     object edRegCount: TLabeledEdit
-      Left = 224
+      Left = 280
       Height = 25
       Hint = 'register count'
       Top = 48
-      Width = 70
+      Width = 62
       EditLabel.AnchorSideTop.Control = edRegCount
       EditLabel.AnchorSideTop.Side = asrCenter
       EditLabel.AnchorSideRight.Control = edRegCount
       EditLabel.AnchorSideBottom.Control = edRegCount
       EditLabel.AnchorSideBottom.Side = asrBottom
-      EditLabel.Left = 183
+      EditLabel.Left = 239
       EditLabel.Height = 17
       EditLabel.Top = 52
       EditLabel.Width = 38
@@ -249,76 +257,20 @@ object frmMain: TfrmMain
       ParentFont = False
       ParentShowHint = False
       ShowHint = True
-      TabOrder = 9
+      TabOrder = 7
       Text = '125'
       OnChange = edRegCountChange
     end
     object btnSetReadCount: TButton
-      Left = 296
+      Left = 344
       Height = 25
       Top = 48
       Width = 24
       Caption = 'ok'
       Enabled = False
       OnClick = btnSetReadCountClick
-      TabOrder = 10
+      TabOrder = 8
     end
-  end
-  object DrawGrid1: TDrawGrid
-    Left = 0
-    Height = 409
-    Top = 120
-    Width = 923
-    Align = alClient
-    ExtendedSelect = False
-    FixedCols = 0
-    FixedRows = 0
-    Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goDrawFocusSelected, goEditing, goThumbTracking, goSmoothScroll]
-    PopupMenu = menuMainList
-    RowCount = 1
-    TabOrder = 4
-  end
-  object VirtualStringTree1: TVirtualStringTree
-    Left = 0
-    Height = 409
-    Top = 120
-    Width = 923
-    Align = alClient
-    DefaultText = 'Node'
-    Header.AutoSizeIndex = 0
-    Header.Columns = <    
-      item
-        Position = 0
-        Text = 'Register'
-        Width = 200
-      end    
-      item
-        Position = 1
-        Text = 'Value'
-        Width = 100
-      end    
-      item
-        Options = [coAllowClick, coDraggable, coEnabled, coParentBidiMode, coParentColor, coResizable, coShowDropMark, coAllowFocus, coEditable]
-        Position = 2
-        Text = 'Reg.num'
-        Width = 100
-      end    
-      item
-        Options = [coAllowClick, coDraggable, coEnabled, coParentBidiMode, coParentColor, coResizable, coShowDropMark, coAllowFocus, coEditable]
-        Position = 3
-        Text = 'Type'
-        Width = 100
-      end>
-    Header.MainColumn = 1
-    Header.Options = [hoColumnResize, hoDrag, hoShowSortGlyphs, hoVisible]
-    PopupMenu = menuMainList
-    TabOrder = 3
-    TreeOptions.MiscOptions = [toAcceptOLEDrop, toEditable, toFullRepaintOnResize, toInitOnSave, toToggleOnDblClick, toWheelPanning, toEditOnClick]
-    TreeOptions.PaintOptions = [toShowButtons, toShowDropmark, toShowHorzGridLines, toShowRoot, toShowVertGridLines, toThemeAware, toUseBlendedImages]
-    TreeOptions.SelectionOptions = [toFullRowSelect]
-    OnEditing = VirtualStringTree1Editing
-    OnKeyUp = VirtualStringTree1KeyUp
-    OnNewText = VirtualStringTree1NewText
   end
   object listLog: TListBox
     Left = 0
@@ -327,7 +279,7 @@ object frmMain: TfrmMain
     Width = 923
     Align = alBottom
     ItemHeight = 0
-    TabOrder = 5
+    TabOrder = 4
     Visible = False
   end
   object SplitterLog: TSplitter
@@ -340,24 +292,51 @@ object frmMain: TfrmMain
     ResizeAnchor = akBottom
     Visible = False
   end
+  object btnSetRegAddr: TButton
+    Left = 171
+    Height = 25
+    Top = 48
+    Width = 24
+    Caption = 'ok'
+    Enabled = False
+    OnClick = btnSetRegAddrClick
+    TabOrder = 6
+  end
+  object DrawGrid1: TDrawGrid
+    Left = 0
+    Height = 414
+    Top = 115
+    Width = 923
+    Align = alClient
+    ColCount = 7
+    ExtendedSelect = False
+    FixedCols = 0
+    FixedRows = 0
+    Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goDrawFocusSelected, goSmoothScroll]
+    PopupMenu = menuMainList
+    RangeSelectMode = rsmMulti
+    RowCount = 1
+    TabOrder = 7
+    Visible = False
+  end
   object TimerReadMB: TTimer
-    left = 560
-    top = 424
+    Left = 560
+    Top = 424
   end
   object ApplicationProperties1: TApplicationProperties
     CaptureExceptions = False
-    left = 60
-    top = 400
+    Left = 60
+    Top = 400
   end
   object TimerInit: TTimer
     Interval = 10
     OnTimer = TimerInitTimer
-    left = 200
-    top = 400
+    Left = 200
+    Top = 400
   end
   object ActionList1: TActionList
-    left = 200
-    top = 310
+    Left = 200
+    Top = 310
     object actDissconect: TAction
       Caption = 'Dissconect'
       Enabled = False
@@ -431,8 +410,8 @@ object frmMain: TfrmMain
     end
   end
   object menuMainList: TPopupMenu
-    left = 200
-    top = 220
+    Left = 200
+    Top = 220
     object mnEditExt: TMenuItem
       Action = actEditExt
       Default = True
@@ -459,12 +438,12 @@ object frmMain: TfrmMain
   object IniPropStorage1: TIniPropStorage
     StoredValues = <>
     IniFileName = 'openmodbustool.ini'
-    left = 60
-    top = 490
+    Left = 60
+    Top = 490
   end
   object menuMainForm: TMainMenu
-    left = 60
-    top = 220
+    Left = 60
+    Top = 220
     object MenuItem1: TMenuItem
       Caption = 'Client'
       object MenuItem2: TMenuItem
@@ -487,10 +466,14 @@ object frmMain: TfrmMain
       Caption = 'View'
       object mnViewAsTable: TMenuItem
         Caption = 'Table'
+        GroupIndex = 1
+        RadioItem = True
         OnClick = mnViewAsTableClick
       end
       object mnViewAsShortList: TMenuItem
         Caption = 'Short list'
+        GroupIndex = 1
+        RadioItem = True
         OnClick = mnViewAsShortListClick
       end
       object MenuItem18: TMenuItem
@@ -575,13 +558,13 @@ object frmMain: TfrmMain
     OnReadInputRegisters = IdModBusServerTestReadInputRegisters
     OnWriteCoils = IdModBusServerTestWriteCoils
     OnWriteRegisters = IdModBusServerTestWriteRegisters
-    left = 440
-    top = 300
+    Left = 440
+    Top = 300
   end
   object TimerUpdateData: TTimer
     Enabled = False
     Interval = 100
-    left = 496
-    top = 448
+    Left = 496
+    Top = 448
   end
 end

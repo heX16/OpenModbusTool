@@ -176,6 +176,8 @@ type
 
     procedure GridRepaintCell(Index: integer);
 
+    procedure RepaintAll();
+
     function GridXYToIndex(x, y: integer): integer;
 
     function GridIndexToXY(index: integer): TPoint;
@@ -489,6 +491,14 @@ begin
 
     //ViewGrid.Invalidate();
   end;
+end;
+
+procedure TSuperViewPresenter.RepaintAll();
+begin
+  if (ViewMode = ViewModeCompactGrid) and (ViewGrid <> nil) then
+    ViewGrid.Repaint()
+  else if (ViewMode = ViewModeTree) and (ViewTree <> nil) then
+    ViewTree.Repaint();
 end;
 
 procedure TSuperViewPresenter.EventVirtualTreeGetText(Sender: TBaseVirtualTree;
