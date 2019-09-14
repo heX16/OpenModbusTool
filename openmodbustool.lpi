@@ -24,7 +24,7 @@
       <AutoIncrementBuild Value="True"/>
       <MajorVersionNr Value="2"/>
       <MinorVersionNr Value="3"/>
-      <BuildNr Value="97"/>
+      <BuildNr Value="99"/>
       <StringTable Comments="constructor heX (www.hex.name)" OriginalFilename="OpenModbusTool" ProductName="OpenModbusTool"/>
     </VersionInfo>
     <BuildModes Count="5">

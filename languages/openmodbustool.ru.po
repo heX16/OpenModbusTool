@@ -92,12 +92,12 @@ msgstr ""
 #: tfrmmain.actswapconfig.caption
 msgctxt "tfrmmain.actswapconfig.caption"
 msgid "Swap config"
-msgstr ""
+msgstr "Переворот байтов"
 
 #: tfrmmain.actswapconfig.hint
 msgctxt "tfrmmain.actswapconfig.hint"
 msgid "Swap config"
-msgstr ""
+msgstr "Переворот байтов и слов (byte, word)"
 
 #: tfrmmain.acttestserverenable.caption
 msgid "Test server"
@@ -127,8 +127,6 @@ msgid "127.0.0.1"
 msgstr ""
 
 #: tfrmmain.cbregformat.text
-#, fuzzy
-#| msgid "Dectimal (123)"
 msgid "Dectimal Int (65535)"
 msgstr "Числовой (123)"
 
@@ -152,15 +150,13 @@ msgid "1"
 msgstr ""
 
 #: tfrmmain.edregcount.editlabel.caption
-#, fuzzy
-#| msgid "Reg"
 msgctxt "tfrmmain.edregcount.editlabel.caption"
 msgid "Count"
-msgstr "Регистр:"
+msgstr "Кол-во:"
 
 #: tfrmmain.edregcount.hint
 msgid "register count"
-msgstr ""
+msgstr "кол-во регистров для чтения"
 
 #: tfrmmain.edregcount.text
 msgid "125"
@@ -171,7 +167,6 @@ msgid "Addr:"
 msgstr "Адрес:"
 
 #: tfrmmain.menuitem1.caption
-#| msgid "Connect"
 msgctxt "tfrmmain.menuitem1.caption"
 msgid "Client"
 msgstr "Клиент"
@@ -182,7 +177,7 @@ msgstr "Сервер"
 
 #: tfrmmain.menuitem17.caption
 msgid "View"
-msgstr ""
+msgstr "Вид"
 
 #: tfrmmain.mnedit1.caption
 msgctxt "tfrmmain.mnedit1.caption"
@@ -195,7 +190,7 @@ msgstr "Добавить небольшие отклонения"
 
 #: tfrmmain.mnsrvfullrnd.caption
 msgid "Full rnd"
-msgstr ""
+msgstr "Полностью случайные значения"
 
 #: tfrmmain.mnsrvstart.caption
 msgid "Enable local server"
@@ -207,11 +202,11 @@ msgstr "Тестовый режим - только чтение"
 
 #: tfrmmain.mnviewasshortlist.caption
 msgid "Short list"
-msgstr ""
+msgstr "Лист"
 
 #: tfrmmain.mnviewastable.caption
 msgid "Table"
-msgstr ""
+msgstr "Таблица"
 
 #: tfrmmain.statusbar1.panels[0].text
 msgctxt "tfrmmain.statusbar1.panels[0].text"
