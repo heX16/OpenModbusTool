@@ -136,7 +136,9 @@ type
     procedure cbRegFormatChange(Sender: TObject);
     procedure cbRegisterTypeChange(Sender: TObject);
     procedure edRegAddrChange(Sender: TObject);
+    procedure edRegAddrKeyPress(Sender: TObject; var Key: char);
     procedure edRegCountChange(Sender: TObject);
+    procedure edRegCountKeyPress(Sender: TObject; var Key: char);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -187,6 +189,7 @@ type
     SetToXValue: string;
     function LoadListRegs(Filename: String): boolean;
     procedure listMainDoOnSelected(Proc: TSuperViewEnumItemsProc);
+    procedure UpdateVarsFromGUI();
   end;
 
 var
@@ -211,6 +214,8 @@ implementation
 {$R *.lfm}
 
 uses
+  Character, // IsNumber
+  StrUtils,
   FormOptions,
   modbuslib,//<-TEMP!
   FormBitEdit,
@@ -367,12 +372,21 @@ begin
   Presenter.EnumSelected(Proc, nil);
 end;
 
+procedure TfrmMain.UpdateVarsFromGUI();
+begin
+  cbRegFormat.OnChange(cbRegFormat);
+  cbRegisterType.OnChange(cbRegisterType);
+  btnSetRegAddr.OnClick(btnSetRegAddr);
+  btnSetReadCount.OnClick(btnSetReadCount);
+end;
+
 procedure TfrmMain.actConnectExecute(Sender: TObject);
 var ip: string;
 begin
   ip := Trim(cbIP.Text);
   if ip <> '' then
   begin
+    UpdateVarsFromGUI();
     threadRead := TThreadModBus.Create(false, Presenter);
     actDissconect.Enabled:=true;
   end else
@@ -543,7 +557,12 @@ end;
 
 procedure TfrmMain.actSwapConfigExecute(Sender: TObject);
 begin
-  frmSwapConfig.Show();
+  if frmSwapConfig.ShowModal() = mrOK then begin
+    //todo: unsafe! (см "глобальный баг")
+    Presenter.Swap2byte:=frmSwapConfig.cbSwap2byte.Checked;
+    Presenter.Swap2reg:=frmSwapConfig.cbSwap2word.Checked;
+    Presenter.Swap2Dword:=frmSwapConfig.cbSwap2dword.Checked;
+  end;
 end;
 
 procedure TfrmMain.actTestServerEnableExecute(Sender: TObject);
@@ -569,18 +588,35 @@ begin
 end;
 
 procedure TfrmMain.btnSetRegAddrClick(Sender: TObject);
-var c: integer;
+var a: String;
 begin
   if Presenter<>nil then begin
-    c := StrToIntDef(frmMain.edRegAddr.Text, -1);
-    if c = -1
-    then
-      ShowMessage('Invalid address')
-    else
-      begin
-        Presenter.RegStart := c;
-        btnSetRegAddr.Enabled:=False;
+    a := Trim(frmMain.edRegAddr.Text);
+    if IsNumber(UnicodeString(a), 1) then begin
+      if (Length(a)=6) then begin
+        // 6 digit format. Example: '465535'
+        if not frmMain.cbRegisterType.DroppedDown then
+        begin
+          Presenter.RegStart:=StrToInt(Copy(a, 2, 5));
+          case a[1] of
+            '1': frmMain.cbRegisterType.ItemIndex := 0; // 1x (bit, RO) - Discrete Input
+            '0': frmMain.cbRegisterType.ItemIndex := 1; // 0x (bit, RW) - Discrete Coils
+            '3': frmMain.cbRegisterType.ItemIndex := 2; // 3x (word, RO) - Input Registers
+            '4': frmMain.cbRegisterType.ItemIndex := 3; // 4x (word, RW) - Holding Registers
+          else
+            ShowMessage('Invalid address');
+          end;
+          Presenter.RegType:=TRegReadType(frmMain.cbRegisterType.ItemIndex);
+        end;
+      end else begin
+        // normal format - just address. Example: '1', '65535'
+          if StrToInt(a) <= 65535 then begin
+            Presenter.RegStart:=StrToInt(a);
+            if not frmMain.cbRegisterType.DroppedDown then
+              Presenter.RegType:=TRegReadType(frmMain.cbRegisterType.ItemIndex);
+          end;
       end;
+    end;
   end;
 end;
 
@@ -592,21 +628,28 @@ end;
 
 procedure TfrmMain.cbRegFormatChange(Sender: TObject);
 begin
-  if threadRead <> nil then
-    threadRead.EventPauseAfterRead.SetEvent();
+  if not self.cbRegFormat.DroppedDown then begin
+    Presenter.RegShowFormat:=TRegShowFormat(self.cbRegFormat.ItemIndex);
+  end;
   Presenter.RepaintAll();
 end;
 
 procedure TfrmMain.cbRegisterTypeChange(Sender: TObject);
 begin
-  //todo: OLD?
-  if threadRead <> nil then
+  if threadRead <> nil then begin
+    Presenter.RegType:=TRegReadType(cbRegisterType.ItemIndex);
+
     case threadRead.RegType of
-      tRegBoolRO, tRegBoolRW:
-        ;//VirtualStringTree1.Header.Columns[idxColumnMainText].Width:=50;
-      tRegWordRO, tRegWordRW:
-        ;//VirtualStringTree1.Header.Columns[idxColumnMainText].Width:=150;
+      tRegBoolRO, tRegBoolRW: begin
+        //VirtualStringTree1.Header.Columns[idxColumnMainText].Width:=50;
+      end;
+      tRegWordRO, tRegWordRW: begin
+        //VirtualStringTree1.Header.Columns[idxColumnMainText].Width:=150;
+      end;
     end;
+    // force update
+    threadRead.EventPauseAfterRead.SetEvent();
+  end;
 end;
 
 procedure TfrmMain.edRegAddrChange(Sender: TObject);
@@ -614,9 +657,21 @@ begin
   btnSetRegAddr.Enabled:=True;
 end;
 
+procedure TfrmMain.edRegAddrKeyPress(Sender: TObject; var Key: char);
+begin
+  if Key=#13 then
+    btnSetRegAddrClick(self);
+end;
+
 procedure TfrmMain.edRegCountChange(Sender: TObject);
 begin
   btnSetReadCount.Enabled:=True;
+end;
+
+procedure TfrmMain.edRegCountKeyPress(Sender: TObject; var Key: char);
+begin
+  if Key=#13 then
+    btnSetReadCountClick(self);
 end;
 
 procedure TfrmMain.FormCreate(Sender: TObject);

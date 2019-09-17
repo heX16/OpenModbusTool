@@ -13,7 +13,7 @@ object frmMain: TfrmMain
   OnDestroy = FormDestroy
   Position = poScreenCenter
   SessionProperties = 'cbIP.Text;edRegAddr.Text;edRegCount.Text;rgViewStyle.ItemIndex;cbIP.Items'
-  LCLVersion = '1.9.0.0'
+  LCLVersion = '1.8.4.0'
   Visible = True
   object VirtualStringTree1: TVirtualStringTree
     Left = 0
@@ -138,6 +138,7 @@ object frmMain: TfrmMain
       TabOrder = 3
       Text = '1'
       OnChange = edRegAddrChange
+      OnKeyPress = edRegAddrKeyPress
     end
     object btnConnect: TButton
       Left = 376
@@ -260,6 +261,7 @@ object frmMain: TfrmMain
       TabOrder = 7
       Text = '125'
       OnChange = edRegCountChange
+      OnKeyPress = edRegCountKeyPress
     end
     object btnSetReadCount: TButton
       Left = 344
@@ -270,6 +272,16 @@ object frmMain: TfrmMain
       Enabled = False
       OnClick = btnSetReadCountClick
       TabOrder = 8
+    end
+    object btnSetRegAddr: TButton
+      Left = 171
+      Height = 25
+      Top = 48
+      Width = 24
+      Caption = 'ok'
+      Enabled = False
+      OnClick = btnSetRegAddrClick
+      TabOrder = 9
     end
   end
   object listLog: TListBox
@@ -292,16 +304,6 @@ object frmMain: TfrmMain
     ResizeAnchor = akBottom
     Visible = False
   end
-  object btnSetRegAddr: TButton
-    Left = 171
-    Height = 25
-    Top = 48
-    Width = 24
-    Caption = 'ok'
-    Enabled = False
-    OnClick = btnSetRegAddrClick
-    TabOrder = 6
-  end
   object DrawGrid1: TDrawGrid
     Left = 0
     Height = 414
@@ -316,27 +318,27 @@ object frmMain: TfrmMain
     PopupMenu = menuMainList
     RangeSelectMode = rsmMulti
     RowCount = 1
-    TabOrder = 7
+    TabOrder = 6
     Visible = False
   end
   object TimerReadMB: TTimer
-    Left = 560
-    Top = 424
+    left = 560
+    top = 424
   end
   object ApplicationProperties1: TApplicationProperties
     CaptureExceptions = False
-    Left = 60
-    Top = 400
+    left = 60
+    top = 400
   end
   object TimerInit: TTimer
     Interval = 10
     OnTimer = TimerInitTimer
-    Left = 200
-    Top = 400
+    left = 200
+    top = 400
   end
   object ActionList1: TActionList
-    Left = 200
-    Top = 310
+    left = 200
+    top = 310
     object actDissconect: TAction
       Caption = 'Dissconect'
       Enabled = False
@@ -410,8 +412,8 @@ object frmMain: TfrmMain
     end
   end
   object menuMainList: TPopupMenu
-    Left = 200
-    Top = 220
+    left = 200
+    top = 220
     object mnEditExt: TMenuItem
       Action = actEditExt
       Default = True
@@ -438,12 +440,12 @@ object frmMain: TfrmMain
   object IniPropStorage1: TIniPropStorage
     StoredValues = <>
     IniFileName = 'openmodbustool.ini'
-    Left = 60
-    Top = 490
+    left = 60
+    top = 490
   end
   object menuMainForm: TMainMenu
-    Left = 60
-    Top = 220
+    left = 60
+    top = 220
     object MenuItem1: TMenuItem
       Caption = 'Client'
       object MenuItem2: TMenuItem
@@ -558,13 +560,13 @@ object frmMain: TfrmMain
     OnReadInputRegisters = IdModBusServerTestReadInputRegisters
     OnWriteCoils = IdModBusServerTestWriteCoils
     OnWriteRegisters = IdModBusServerTestWriteRegisters
-    Left = 440
-    Top = 300
+    left = 440
+    top = 300
   end
   object TimerUpdateData: TTimer
     Enabled = False
     Interval = 100
-    Left = 496
-    Top = 448
+    left = 496
+    top = 448
   end
 end

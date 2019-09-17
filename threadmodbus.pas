@@ -67,6 +67,7 @@ type
 
   TSuperViewPresenterModbus = class(TSuperViewPresenter)
     RegStart: integer;
+    RegType: TRegReadType;
     RegCount: integer;
     RegShowFormat: TRegShowFormat;
     Swap2byte: boolean;
@@ -143,8 +144,6 @@ type
     RegType: TRegReadType;
     // sync vars.
     RegStart: integer;
-    // sync vars.
-    RegFormat: TRegShowFormat;
 
     // when user write date, is data wait queue here. sync vars!
     WriteQueue: TModbusItemQueue;
@@ -198,7 +197,7 @@ uses
   FormOptions,
   FormSwapConfig,
   Graphics,
-  ComCtrls, IdStack, {IdException,} IdExceptionCore, Character;
+  ComCtrls, IdStack, {IdException,} IdExceptionCore;
 
 function BoolStr(Data: boolean): string;
 begin
@@ -425,50 +424,18 @@ begin
 end;
 
 procedure TThreadModBus.UpdateRegAddr;
-var a: String;
 begin
-  a := Trim(frmMain.edRegAddr.Text);
-  if (Length(a)=6) and (IsNumber(UnicodeString(a), 1)) then
-  begin
-    // 6 digit format
-    if not frmMain.cbRegisterType.DroppedDown then
-    begin
-      RegStart:=StrToIntDef(Copy(a, 2, 5), RegStart);
-      RegType:=TRegReadType(frmMain.cbRegisterType.ItemIndex);
-      case a[1] of
-        '1': frmMain.cbRegisterType.ItemIndex := 0; // 1x (bit, RO) - Discrete Input
-        '0': frmMain.cbRegisterType.ItemIndex := 1; // 0x (bit, RW) - Discrete Coils
-        '3': frmMain.cbRegisterType.ItemIndex := 2; // 3x (word, RO) - Input Registers
-        '4': frmMain.cbRegisterType.ItemIndex := 3; // 4x (word, RW) - Holding Registers
-      end;
-    end;
-  end else
-  begin
-    // normal format - just address
-    RegStart:=StrToIntDef(a, RegStart);
-    if not frmMain.cbRegisterType.DroppedDown then
-      RegType:=TRegReadType(frmMain.cbRegisterType.ItemIndex);
-  end;
-  if Presenter.RegStart <> RegStart then begin
-    Presenter.RegStart:=RegStart;
-    Presenter.SetItemRange(RegStart, RegStart+Length(MBWord)-1);
+  if (Presenter.RegStart <> self.RegStart) or (Presenter.RegType <> self.RegType) then begin
+    self.RegType:=Presenter.RegType;
+    self.RegStart:=Presenter.RegStart;
+    Presenter.SetItemRange(self.RegStart, self.RegStart+Length(MBWord)-1);
   end;
 end;
 
 procedure TThreadModBus.SyncUpdateVars;
 begin
   if not Terminated then begin
-    if not frmMain.cbRegFormat.DroppedDown then begin
-      RegFormat:=TRegShowFormat(frmMain.cbRegFormat.ItemIndex);
-      Presenter.RegShowFormat:=TRegShowFormat(frmMain.cbRegFormat.ItemIndex);
-    end;
     UpdateRegAddr();
-    if frmSwapConfig <> nil then begin
-      //todo: unsafe! (см "глобальный баг")
-      Presenter.Swap2byte:=frmSwapConfig.cbSwap2byte.Checked;
-      Presenter.Swap2reg:=frmSwapConfig.cbSwap2word.Checked;
-      Presenter.Swap2Dword:=frmSwapConfig.cbSwap2dword.Checked;
-    end;
   end;
 end;
 
@@ -486,11 +453,6 @@ begin
   if frmOptions.chBaseRegisterIs.ItemIndex = 0 then
     IdModBusClient.BaseRegister:=0 else
     IdModBusClient.BaseRegister:=1;
-
-  if not frmMain.cbRegFormat.DroppedDown then begin
-    RegFormat:=TRegShowFormat(frmMain.cbRegFormat.ItemIndex);
-    Presenter.RegShowFormat:=TRegShowFormat(frmMain.cbRegFormat.ItemIndex);
-  end;
 end;
 
 procedure TThreadModBus.SyncRemoveFromMainProg;
