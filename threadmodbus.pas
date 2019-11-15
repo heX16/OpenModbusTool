@@ -47,8 +47,9 @@ type
 
   TModbusItem = record
     Addr: word;
-    Value: word;
+    Value: qword;
     RegType: TRegReadType;
+    ValueFormat: TRegShowFormat;
   end;
 
   TQWordReal = packed record
@@ -540,6 +541,7 @@ end;
 procedure TThreadModBus.Send(Addr, Value: string);
 var itm: TModbusItem;
 begin
+  //todo: float value write (Issue #3)
   if StrToIntDef(Addr, 65536) < 65536 then
   begin
     itm.Addr:=StrToInt(Addr);
@@ -712,6 +714,7 @@ begin
             WriteQueue.PopBack();
             CritWriteQueueWork.Leave;
             // write
+            //todo: float value write (Issue #3)
             if not ModbusRTU then
             begin
               case itm.RegType of
